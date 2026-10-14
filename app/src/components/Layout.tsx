@@ -13,7 +13,8 @@ import {
   Sun,
   Moon,
   Scale,
-  Languages
+  Languages,
+  Github
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import AudioPlayerBar from "./AudioPlayerBar";
@@ -140,6 +141,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
             </button>
 
+            {/* GitHub Repository Link */}
+            <a
+              href="https://github.com/zvexdev/ruhani-web"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="GitHub Repository"
+              className="p-2 rounded-full border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm flex items-center justify-center"
+            >
+              <Github className="w-4 h-4" />
+            </a>
+
             {/* Mobile Menu Button */}
             <button
               className="lg:hidden p-2 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
@@ -178,6 +190,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </Link>
                   );
                 })}
+                <div className="pt-3 mt-2 border-t border-gray-200/60 dark:border-slate-800/80 flex items-center justify-around text-xs">
+                  <a
+                    href="https://github.com/zvexdev/ruhani-web"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 py-2 px-3 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-900 font-semibold transition-colors"
+                  >
+                    <Github className="w-4 h-4" />
+                    <span>GitHub</span>
+                  </a>
+                  <a
+                    href="https://discord.gg/XTPc3QSM4B"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 py-2 px-3 rounded-lg text-[#5865F2] hover:bg-gray-100 dark:hover:bg-slate-900 font-semibold transition-colors"
+                  >
+                    <span>Discord</span>
+                  </a>
+                </div>
               </nav>
             </motion.div>
           )}
@@ -234,13 +265,25 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 {t.footerProjectAndLicense}
               </p>
               <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                <button
-                  onClick={() => setShowLicenseModal(true)}
-                  className="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                >
-                  <Scale className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>{t.footerMitLicense}</span>
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setShowLicenseModal(true)}
+                    className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    <Scale className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span>{t.footerMitLicense}</span>
+                  </button>
+
+                  <a
+                    href="https://github.com/zvexdev/ruhani-web"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
+                  >
+                    <Github className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
+                    <span>GitHub</span>
+                  </a>
+                </div>
 
                 {/* Explicit UmmahAPI Badge */}
                 <div className="p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-500/20 text-xs text-emerald-900 dark:text-emerald-200 space-y-1">
@@ -277,9 +320,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" />
             </p>
 
-            <p>
-              &copy; {new Date().getFullYear()} {t.brandName}. {t.footerCopyright}
-            </p>
+            <div className="flex items-center gap-3">
+              <a
+                href="https://github.com/zvexdev/ruhani-web"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="GitHub Repository"
+                className="hover:text-slate-900 dark:hover:text-white flex items-center gap-1 transition-colors"
+              >
+                <Github className="w-3.5 h-3.5" />
+                <span>GitHub</span>
+              </a>
+              <span>&bull;</span>
+              <p>
+                &copy; {new Date().getFullYear()} {t.brandName}. {t.footerCopyright}
+              </p>
+            </div>
           </div>
         </div>
       </footer>
