@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Compass,
@@ -16,7 +16,6 @@ import {
   calculatePrayerTimes,
   getNextPrayer,
   formatCountdown,
-  type PrayerSchedule,
   type CityPreset
 } from "../lib/prayerTimes";
 import { soundEffects } from "../lib/sound";
@@ -28,7 +27,9 @@ function getInitialCity(): CityPreset {
     try {
       const parsed = JSON.parse(saved);
       if (parsed?.lat && parsed?.lng) return parsed;
-    } catch {}
+    } catch (e) {
+      console.debug("Failed parsing saved city:", e);
+    }
   }
   // Default to Cairo, Egypt
   return CITY_PRESETS[0];
@@ -37,43 +38,28 @@ function getInitialCity(): CityPreset {
 export default function PrayerTimesWidget() {
   const { isArabic, t } = useLanguage();
   const [selectedCity, setSelectedCity] = useState<CityPreset>(getInitialCity);
-  const [schedule, setSchedule] = useState<PrayerSchedule | null>(null);
-  const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState(() => new Date());
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [locating, setLocating] = useState(false);
 
-  // Update schedule when selected city changes
-  useEffect(() => {
-    const calc = calculatePrayerTimes(
+  // Derive schedule whenever city or date changes
+  const schedule = useMemo(() => {
+    return calculatePrayerTimes(
       now,
       selectedCity.lat,
       selectedCity.lng,
       selectedCity.timezone,
       selectedCity.method
     );
-    setSchedule(calc);
-  }, [selectedCity]);
+  }, [now, selectedCity]);
 
   // Live timer tick every second
   useEffect(() => {
     const timer = setInterval(() => {
-      const current = new Date();
-      setNow(current);
-      // Recalculate schedule if midnight passes
-      if (current.getSeconds() === 0 && current.getMinutes() === 0) {
-        setSchedule(
-          calculatePrayerTimes(
-            current,
-            selectedCity.lat,
-            selectedCity.lng,
-            selectedCity.timezone,
-            selectedCity.method
-          )
-        );
-      }
+      setNow(new Date());
     }, 1000);
     return () => clearInterval(timer);
-  }, [selectedCity]);
+  }, []);
 
   // Request browser geolocation with fallback to Cairo
   const handleDetectLocation = () => {

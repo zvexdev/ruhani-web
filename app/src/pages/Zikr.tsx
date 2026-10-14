@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   RotateCcw,
@@ -40,22 +40,20 @@ export default function Zikr() {
   const [dhikrIndex, setDhikrIndex] = useState(0);
   const [counters, setCounters] = useState<DhikrCounter[]>(defaultDhikrs);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [completedItems, setCompletedItems] = useState<string[]>([]);
+  const [completedItems, setCompletedItems] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("ruhani-completed-adhkar");
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.debug("Failed parsing saved completed adhkar:", e);
+      return [];
+    }
+  });
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const currentDhikr = counters[dhikrIndex];
   const progress = currentDhikr ? (currentDhikr.current / currentDhikr.target) * 100 : 0;
   const isComplete = currentDhikr?.current === currentDhikr?.target;
-
-  // Load completed items from local storage
-  useEffect(() => {
-    const saved = localStorage.getItem("ruhani-completed-adhkar");
-    if (saved) {
-      try {
-        setCompletedItems(JSON.parse(saved));
-      } catch {}
-    }
-  }, []);
 
   const toggleCompleted = (id: string) => {
     const updated = completedItems.includes(id)

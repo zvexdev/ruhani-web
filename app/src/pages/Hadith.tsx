@@ -29,16 +29,18 @@ export default function HadithPage() {
   const [randomHadith, setRandomHadith] = useState<Hadith | null>(null);
   const [page, setPage] = useState(1);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [savedHadiths, setSavedHadiths] = useState<string[]>([]);
+  const [savedHadiths, setSavedHadiths] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("ruhani-saved-hadiths");
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.debug("Failed parsing saved hadiths:", e);
+      return [];
+    }
+  });
 
   useEffect(() => {
     loadData();
-    const saved = localStorage.getItem("ruhani-saved-hadiths");
-    if (saved) {
-      try {
-        setSavedHadiths(JSON.parse(saved));
-      } catch {}
-    }
   }, []);
 
   async function loadData() {

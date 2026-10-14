@@ -61,7 +61,13 @@ export async function getSurah(number: number) {
       if (qdcRes.ok) {
         const qdcData = await qdcRes.json();
         const surahMeta = SURAHS.find((s: SurahMeta) => s.number === number) || SURAHS[0];
-        const verses: Verse[] = (qdcData.verses || []).map((v: any) => ({
+        interface QdcVerse {
+          verse_key: string;
+          verse_number: number;
+          text_uthmani: string;
+          translations?: Array<{ text?: string }>;
+        }
+        const verses: Verse[] = ((qdcData.verses || []) as QdcVerse[]).map((v) => ({
           verse_key: v.verse_key,
           ayah: v.verse_number,
           arabic: v.text_uthmani,
@@ -101,7 +107,7 @@ export async function getAyah(surah: number, ayah: number) {
   return data.data;
 }
 
-export async function getRandomAyah(): Promise<{ verse: Verse; surah?: any }> {
+export async function getRandomAyah(): Promise<{ verse: Verse; surah?: Record<string, unknown> }> {
   try {
     const data = await fetchAPI("/api/quran/random");
     if (data?.data?.verse) {
@@ -122,6 +128,7 @@ export async function getRandomAyah(): Promise<{ verse: Verse; surah?: any }> {
     }
     return data.data;
   } catch (err) {
+    console.debug("getRandomAyah offline fallback:", err);
     // Beautiful offline fallback: Ayat al-Kursi with Sheikh Yasser Al-Dosari
     return {
       verse: {
@@ -141,10 +148,27 @@ export async function getRandomAyah(): Promise<{ verse: Verse; surah?: any }> {
   }
 }
 
+interface RawQuranSearchResult {
+  verse_key?: string;
+  surah_number?: number | string;
+  surah_name?: string;
+  ayah?: number | string;
+  arabic?: string;
+  transliteration?: string;
+  matched_in?: string;
+  translation?: string;
+  translations?: {
+    sahih_international?: string;
+    pickthall?: string;
+    yusuf_ali?: string;
+  };
+  translation_source?: string;
+}
+
 export async function searchQuran(query: string): Promise<{ results: SearchResult[] }> {
   try {
     const data = await fetchAPI("/api/quran/search", { q: query, limit: "50" });
-    const rawResults: any[] = data?.data?.results || [];
+    const rawResults: RawQuranSearchResult[] = data?.data?.results || [];
     const results: SearchResult[] = rawResults.map((r) => ({
       verse_key: r.verse_key || `${r.surah_number}:${r.ayah}`,
       surah_number: Number(r.surah_number) || 1,
@@ -199,6 +223,7 @@ export async function getTafasir() {
     const data = await fetchAPI("/api/tafsir");
     return data.data;
   } catch (err) {
+    console.debug("getTafasir fallback:", err);
     return [
       { id: "ar-tafsir-ibn-kathir", name: "Tafsir Ibn Kathir", language: "ar" },
       { id: "ar-tafsir-al-saadi", name: "Tafsir as-Sa'di", language: "ar" },
@@ -212,6 +237,7 @@ export async function getTafsir(tafsir: string, surah: number, ayah: number) {
     const data = await fetchAPI(`/api/tafsir/${tafsir}/surah/${surah}/ayah/${ayah}`);
     return data.data;
   } catch (err) {
+    console.debug("getTafsir fallback to qdc:", err);
     // Fallback to Quran.com tafsir API
     const fallbackRes = await fetch(`https://api.qurancdn.com/api/qdc/tafsirs/169/by_ayah/${surah}:${ayah}`);
     if (fallbackRes.ok) {
@@ -233,6 +259,7 @@ export async function getHadithCollections(): Promise<{ collections: typeof DEFA
     }
     return { collections: DEFAULT_COLLECTIONS };
   } catch (err) {
+    console.debug("getHadithCollections fallback:", err);
     return { collections: DEFAULT_COLLECTIONS };
   }
 }
@@ -242,15 +269,26 @@ export async function getRandomHadith(): Promise<Hadith> {
     const data = await fetchAPI("/api/hadith/random");
     return data.data;
   } catch (err) {
+    console.debug("getRandomHadith fallback:", err);
     const rand = CURATED_HADITHS[Math.floor(Math.random() * CURATED_HADITHS.length)];
     return rand;
   }
 }
 
+interface RawApiHadith {
+  id?: string;
+  collection?: string;
+  collection_name?: string;
+  hadithnumber?: number | string;
+  arabic?: string;
+  english?: string;
+  grade?: string;
+}
+
 export async function searchHadiths(query: string): Promise<{ results: Hadith[] }> {
   try {
     const data = await fetchAPI("/api/hadith/search", { q: query });
-    const list: any[] = data?.data?.hadiths || data?.data?.results || [];
+    const list: RawApiHadith[] = data?.data?.hadiths || data?.data?.results || [];
     if (list.length > 0) {
       const results: Hadith[] = list.map((h, i) => ({
         id: h.id || `hadith-${h.collection || "col"}-${h.hadithnumber || i}`,
@@ -282,6 +320,7 @@ export async function browseHadithCollection(collection: string, page = 1, limit
     const data = await fetchAPI(`/api/hadith/${collection}`, { page: String(page), limit: String(limit) });
     return data.data;
   } catch (err) {
+    console.debug("browseHadithCollection fallback:", err);
     const filtered = CURATED_HADITHS.filter(h => h.collection === collection);
     return { hadiths: filtered.length ? filtered : CURATED_HADITHS };
   }
@@ -305,6 +344,7 @@ export async function getAllDuas(): Promise<{ duas: Dua[] }> {
       }))
     };
   } catch (err) {
+    console.debug("getAllDuas fallback:", err);
     return {
       duas: AUTHENTIC_ADHKAR.map((item, idx) => ({
         id: idx + 1,
@@ -325,6 +365,7 @@ export async function getDuaCategories(): Promise<{ categories: string[] }> {
     const data = await fetchAPI("/api/duas/categories");
     return data.data;
   } catch (err) {
+    console.debug("getDuaCategories fallback:", err);
     return {
       categories: ["morning", "evening", "prayer", "before_sleep", "general"]
     };
@@ -368,6 +409,7 @@ export async function getAllNames(): Promise<{ names: NameOfAllah[] }> {
     if (data?.data?.names?.length) return data.data;
     return { names: NAMES_OF_ALLAH };
   } catch (err) {
+    console.debug("getAllNames fallback:", err);
     return { names: NAMES_OF_ALLAH };
   }
 }
@@ -412,6 +454,7 @@ export async function getPrayerTimes(latitude: number, longitude: number, method
     });
     return data.data;
   } catch (err) {
+    console.debug("getPrayerTimes fallback:", err);
     // High-precision local calculation engine
     const schedule = calculatePrayerTimes(new Date(), latitude, longitude);
     return {
@@ -435,6 +478,7 @@ export async function getTodayHijri() {
     if (data?.data?.hijri) return data.data;
     throw new Error("No data");
   } catch (err) {
+    console.debug("getTodayHijri primary fallback:", err);
     // Native browser/node Intl Islamic Umalqura calculation
     try {
       const now = new Date();

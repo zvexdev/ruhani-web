@@ -62,7 +62,7 @@ export default function Audio() {
   const handlePlaySurah = async (surahNum: number, reciterId: number) => {
     try {
       const data = await api.getSurahAudio(surahNum);
-      const reciterData = data.reciters?.find((r: any) => r.id === reciterId) || data.reciters?.[0];
+      const reciterData = data.reciters?.find((r) => r.id === reciterId) || data.reciters?.[0];
       const sMeta = surahs.find((s) => s.number === surahNum);
       const rMeta = reciters.find((r) => r.id === reciterId);
 

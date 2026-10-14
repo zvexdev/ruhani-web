@@ -57,8 +57,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname);
     setMobileOpen(false);
+  }
+
+  useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 

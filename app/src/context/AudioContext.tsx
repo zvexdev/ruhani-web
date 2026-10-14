@@ -41,14 +41,12 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const audio = new Audio();
     audio.preload = "metadata";
-    audio.volume = volume;
-    audio.playbackRate = playbackRate;
     audioRef.current = audio;
 
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleDurationChange = () => setDuration(audio.duration || 0);
     const handleEnded = () => setIsPlaying(false);
-    const handleError = (e: any) => {
+    const handleError = (e: Event) => {
       console.warn("Audio stream error/stall:", e);
       setIsPlaying(false);
     };
@@ -66,6 +64,18 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       audio.pause();
     };
   }, []);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
 
   const playTrack = (track: AudioTrack) => {
     if (!audioRef.current) return;

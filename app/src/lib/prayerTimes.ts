@@ -85,7 +85,7 @@ export function calculateQibla(lat: number, lng: number): { bearing: number; dis
   const y = Math.sin(deltaLambda);
   const x = Math.cos(phi1) * Math.tan(phi2) - Math.sin(phi1) * Math.cos(deltaLambda);
 
-  let qiblaDeg = (deg(Math.atan2(y, x)) + 360) % 360;
+  const qiblaDeg = (deg(Math.atan2(y, x)) + 360) % 360;
 
   // Great-circle distance
   const R = 6371;

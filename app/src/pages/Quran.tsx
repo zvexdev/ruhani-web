@@ -41,7 +41,15 @@ export default function Quran() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [translation, setTranslation] = useState<"sahih_international" | "pickthall" | "yusuf_ali">("sahih_international");
-  const [bookmarks, setBookmarks] = useState<string[]>([]);
+  const [bookmarks, setBookmarks] = useState<string[]>(() => {
+    try {
+      const savedBookmarks = localStorage.getItem("ruhani-quran-bookmarks");
+      return savedBookmarks ? JSON.parse(savedBookmarks) : [];
+    } catch (e) {
+      console.debug("Failed parsing saved bookmarks:", e);
+      return [];
+    }
+  });
   const [fontSize, setFontSize] = useState<number>(28);
   const [viewMode, setViewMode] = useState<"verses" | "mushaf">("verses");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -57,19 +65,13 @@ export default function Quran() {
 
   useEffect(() => {
     loadSurahs();
-    const savedBookmarks = localStorage.getItem("ruhani-quran-bookmarks");
-    if (savedBookmarks) {
-      try {
-        setBookmarks(JSON.parse(savedBookmarks));
-      } catch {}
-    }
   }, []);
 
   useEffect(() => {
     loadSurah(currentSurah);
     setSearchParams({ surah: String(currentSurah) });
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentSurah]);
+  }, [currentSurah, setSearchParams]);
 
   async function loadSurahs() {
     try {
@@ -649,7 +651,7 @@ export default function Quran() {
                       <span className="text-slate-400 font-medium hidden sm:inline">{t.quranTranslationLabel}</span>
                       <select
                         value={translation}
-                        onChange={(e) => setTranslation(e.target.value as any)}
+                        onChange={(e) => setTranslation(e.target.value as "sahih_international" | "pickthall" | "yusuf_ali")}
                         className="bg-transparent text-slate-700 dark:text-slate-200 font-medium focus:outline-none cursor-pointer"
                       >
                         <option value="sahih_international" className="dark:bg-slate-900 text-slate-900 dark:text-slate-100">Sahih International</option>

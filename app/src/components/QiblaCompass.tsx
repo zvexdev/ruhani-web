@@ -10,10 +10,16 @@ function getInitialCity(): CityPreset {
     try {
       const parsed = JSON.parse(saved);
       if (parsed?.lat && parsed?.lng) return parsed;
-    } catch {}
+    } catch (e) {
+      console.debug("Error parsing initial city:", e);
+    }
   }
   // Default to Cairo, Egypt
   return CITY_PRESETS[0];
+}
+
+interface ExtendedDeviceOrientationEvent extends DeviceOrientationEvent {
+  webkitCompassHeading?: number;
 }
 
 export default function QiblaCompass() {
@@ -31,7 +37,8 @@ export default function QiblaCompass() {
   useEffect(() => {
     const handleOrientation = (e: DeviceOrientationEvent) => {
       // webkitCompassHeading for iOS, alpha for Android
-      const heading = (e as any).webkitCompassHeading || (e.alpha !== null ? 360 - e.alpha : null);
+      const extended = e as ExtendedDeviceOrientationEvent;
+      const heading = extended.webkitCompassHeading !== undefined ? extended.webkitCompassHeading : (e.alpha !== null ? 360 - e.alpha : null);
       if (heading !== null) {
         setDeviceHeading(heading);
         setHasCompassSupport(true);

@@ -39,7 +39,9 @@ class SoundEffects {
 
       osc.start();
       osc.stop(ctx.currentTime + 0.04);
-    } catch (_) {}
+    } catch (err) {
+      console.debug("SoundEffects.playBeadClick failed:", err);
+    }
   }
 
   // Celebratory gentle resonance chime when reaching round/target completion (e.g. 33 or 100)
@@ -66,7 +68,9 @@ class SoundEffects {
         osc.start(ctx.currentTime + index * 0.06);
         osc.stop(ctx.currentTime + index * 0.06 + 0.9);
       });
-    } catch (_) {}
+    } catch (err) {
+      console.debug("SoundEffects.playCompletionChime failed:", err);
+    }
   }
 
   // Soft prayer chime notification
@@ -92,7 +96,9 @@ class SoundEffects {
         osc.start(ctx.currentTime + idx * 0.15);
         osc.stop(ctx.currentTime + idx * 0.15 + 1.2);
       });
-    } catch (_) {}
+    } catch (err) {
+      console.debug("SoundEffects.playAthanChime failed:", err);
+    }
   }
 }
 

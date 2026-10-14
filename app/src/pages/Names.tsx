@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -20,16 +20,15 @@ export default function Names() {
   const [filteredNames, setFilteredNames] = useState<NameOfAllah[]>(NAMES_OF_ALLAH);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedName, setSelectedName] = useState<NameOfAllah | null>(null);
-  const [memorized, setMemorized] = useState<number[]>([]);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("ruhani-memorized-names");
-    if (saved) {
-      try {
-        setMemorized(JSON.parse(saved));
-      } catch {}
+  const [memorized, setMemorized] = useState<number[]>(() => {
+    try {
+      const saved = localStorage.getItem("ruhani-memorized-names");
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      console.debug("Failed parsing memorized names:", e);
+      return [];
     }
-  }, []);
+  });
 
   const toggleMemorized = (number: number, e?: React.MouseEvent) => {
     e?.stopPropagation();

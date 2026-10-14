@@ -47,7 +47,7 @@ export default function Home() {
         api.getTodayHijri(),
       ]);
       setSurahs(surahsData.slice(0, 10));
-      setDailyVerse(randomAyah.verse || (randomAyah as any));
+      setDailyVerse(randomAyah.verse);
       setDailyHadith(randomHadith);
       if (hijri?.hijri) {
         setHijriDate(`${hijri.hijri.day} ${hijri.hijri.month_name} ${hijri.hijri.year} AH`);
@@ -235,7 +235,7 @@ export default function Home() {
                 <button
                   onClick={() =>
                     copyToClipboard(
-                      `${dailyVerse?.arabic}\n\n"${dailyVerse?.translations?.sahih_international || (dailyVerse as any)?.translation}" — [Quran ${dailyVerse?.verse_key}]`,
+                      `${dailyVerse?.arabic}\n\n"${dailyVerse?.translations?.sahih_international || Object.values(dailyVerse?.translations || {})[0] || ""}" — [Quran ${dailyVerse?.verse_key}]`,
                       "verse"
                     )
                   }
@@ -253,7 +253,7 @@ export default function Home() {
                   {dailyVerse.arabic}
                 </p>
                 <p className="font-serif text-sm md:text-base text-slate-600 dark:text-slate-300 italic leading-relaxed">
-                  &ldquo;{dailyVerse.translations?.sahih_international || (dailyVerse as any).translation}&rdquo;
+                  &ldquo;{dailyVerse.translations?.sahih_international || Object.values(dailyVerse.translations || {})[0] || ""}&rdquo;
                 </p>
               </div>
             )}
