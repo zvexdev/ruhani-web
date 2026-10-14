@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 20% 99%;
+    --foreground: 150 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 150 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 150 30% 12%;
+    --primary: 152 56% 23%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 150 20% 95%;
+    --secondary-foreground: 152 56% 23%;
+    --muted: 150 15% 94%;
+    --muted-foreground: 150 10% 45%;
+    --accent: 43 85% 94%;
+    --accent-foreground: 43 90% 25%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 15% 90%;
+    --input: 150 15% 90%;
+    --ring: 152 56% 23%;
+    --radius: 0.85rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 150 30% 15%;
+    --sidebar-primary: 152 56% 23%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 150 20% 95%;
+    --sidebar-accent-foreground: 152 56% 23%;
+    --sidebar-border: 150 15% 90%;
+    --sidebar-ring: 152 56% 23%;
+  }
+
+  .dark {
+    --background: 153 38% 6%;
+    --foreground: 40 20% 96%;
+    --card: 153 32% 9%;
+    --card-foreground: 40 20% 96%;
+    --popover: 153 32% 9%;
+    --popover-foreground: 40 20% 96%;
+    --primary: 152 50% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 153 25% 15%;
+    --secondary-foreground: 40 20% 96%;
+    --muted: 153 25% 14%;
+    --muted-foreground: 150 15% 65%;
+    --accent: 43 50% 16%;
+    --accent-foreground: 43 90% 65%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 153 25% 18%;
+    --input: 153 25% 18%;
+    --ring: 152 50% 40%;
+    --sidebar-background: 153 35% 8%;
+    --sidebar-foreground: 40 20% 96%;
+    --sidebar-primary: 152 50% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 153 25% 15%;
+    --sidebar-accent-foreground: 40 20% 96%;
+    --sidebar-border: 153 25% 18%;
+    --sidebar-ring: 152 50% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Islamic Geometric background patterns */
+.bg-islamic-pattern {
+  background-image: radial-gradient(rgba(26, 93, 58, 0.08) 1.5px, transparent 1.5px), radial-gradient(rgba(212, 175, 55, 0.05) 1.5px, transparent 1.5px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+
+.dark .bg-islamic-pattern {
+  background-image: radial-gradient(rgba(46, 182, 125, 0.1) 1.5px, transparent 1.5px), radial-gradient(rgba(245, 158, 11, 0.06) 1.5px, transparent 1.5px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+
+/* Quranic typography & Ayah markers */
+.font-quran {
+  font-family: 'Scheherazade New', 'Amiri', serif;
+  line-height: 2.2;
+  word-spacing: 2px;
+}
+
+.font-arabic {
+  font-family: 'Amiri', serif;
+}
+
+/* Ayah end ornament symbol styling */
+.ayah-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: 'Amiri', serif;
+  user-select: none;
+}
+
+/* Glowing gold card border */
+.card-gold-glow {
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 4px 20px -2px rgba(212, 175, 55, 0.12);
+}
+
+.dark .card-gold-glow {
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  box-shadow: 0 4px 24px -2px rgba(245, 158, 11, 0.08);
+}
+
+/* Smooth glassmorphic backdrop */
+.glass-panel {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
