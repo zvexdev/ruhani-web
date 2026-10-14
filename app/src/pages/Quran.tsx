@@ -378,7 +378,7 @@ export default function Quran() {
                   <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2">
                     {isArabic ? `آيات مطابقة (${searchResults.length})` : `Matching Verses (${searchResults.length})`}
                   </p>
-                  <div className="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-slate-800">
+                  <div className="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-slate-800 custom-scrollbar">
                     {searchResults.map((result) => (
                       <button
                         key={result.verse_key}
@@ -464,11 +464,19 @@ export default function Quran() {
                       placeholder={isArabic ? "ابحث في السور الـ ١١٤..." : "Filter 114 Surahs..."}
                       value={surahFilterQuery}
                       onChange={(e) => setSurahFilterQuery(e.target.value)}
-                      className="w-full ltr:pl-9 ltr:pr-3 rtl:pr-9 rtl:pl-3 py-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                      className="w-full ltr:pl-9 ltr:pr-8 rtl:pr-9 rtl:pl-8 py-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
+                    {surahFilterQuery && (
+                      <button
+                        onClick={() => setSurahFilterQuery("")}
+                        className="absolute ltr:right-2.5 rtl:left-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
-                <div className="overflow-y-auto flex-1 divide-y divide-gray-50 dark:divide-slate-800/50 pb-20">
+                <div className="overflow-y-auto flex-1 divide-y divide-gray-100/60 dark:divide-slate-800/50 pb-20 custom-scrollbar">
                   {filteredSurahs.map((surah) => (
                     <button
                       key={surah.number}
@@ -476,26 +484,35 @@ export default function Quran() {
                         setCurrentSurah(surah.number);
                         setShowSidebar(false);
                       }}
-                      className={`w-full flex items-center gap-3 p-3.5 text-start transition-colors ${
+                      className={`w-full flex items-center gap-3 p-3.5 text-start transition-all group ${
                         surah.number === currentSurah
-                          ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold"
-                          : "hover:bg-gray-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300"
+                          ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 font-semibold border-s-4 border-emerald-600 dark:border-emerald-400"
+                          : "hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-transform group-hover:scale-105 ${
                           surah.number === currentSurah
-                            ? "bg-[#1A5D3A] text-white"
+                            ? "bg-gradient-to-br from-[#1A5D3A] to-emerald-700 text-white shadow-md shadow-emerald-900/20"
                             : "bg-gray-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                         }`}
                       >
                         {surah.number}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs truncate font-medium">{isArabic ? surah.name_arabic : surah.name_english}</p>
-                        <p className="text-[10px] text-slate-400">{surah.verses_count} {t.quranVersesCount}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs truncate font-bold text-slate-900 dark:text-white">
+                            {isArabic ? surah.name_arabic : surah.name_english}
+                          </p>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-normal">
+                            {surah.revelation_place === "makkah" ? (isArabic ? "مكية" : "Makkah") : (isArabic ? "مدنية" : "Madinah")}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-400 mt-0.5">
+                          {surah.verses_count} {t.quranVersesCount} &middot; {surah.name_translation || (isArabic ? surah.name_english : surah.name_arabic)}
+                        </p>
                       </div>
-                      <span className="font-['Amiri'] text-sm text-slate-800 dark:text-slate-200 shrink-0">
+                      <span className="font-['Amiri'] text-base text-slate-800 dark:text-slate-200 shrink-0 font-bold">
                         {surah.name_arabic}
                       </span>
                     </button>
@@ -516,7 +533,7 @@ export default function Quran() {
               className="hidden lg:block overflow-hidden flex-shrink-0"
             >
               <div className="w-[340px] bg-white dark:bg-slate-900 rounded-3xl border border-gray-200 dark:border-slate-800 shadow-sm max-h-[calc(100vh-180px)] flex flex-col">
-                <div className="p-4 border-b border-gray-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
+                <div className="p-3.5 border-b border-gray-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
                   <div className="relative">
                     <Search className="w-3.5 h-3.5 absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
@@ -524,37 +541,54 @@ export default function Quran() {
                       placeholder={isArabic ? "ابحث في السور الـ ١١٤..." : "Filter 114 Surahs..."}
                       value={surahFilterQuery}
                       onChange={(e) => setSurahFilterQuery(e.target.value)}
-                      className="w-full ltr:pl-9 ltr:pr-3 rtl:pr-9 rtl:pl-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                      className="w-full ltr:pl-9 ltr:pr-8 rtl:pr-9 rtl:pl-8 py-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
+                    {surahFilterQuery && (
+                      <button
+                        onClick={() => setSurahFilterQuery("")}
+                        className="absolute ltr:right-2.5 rtl:left-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
-                <div className="overflow-y-auto flex-1 divide-y divide-gray-50 dark:divide-slate-800/50">
+                <div className="overflow-y-auto flex-1 divide-y divide-gray-100/60 dark:divide-slate-800/50 custom-scrollbar">
                   {filteredSurahs.map((surah) => (
                     <button
                       key={surah.number}
                       onClick={() => {
                         setCurrentSurah(surah.number);
                       }}
-                      className={`w-full flex items-center gap-3 p-3 text-start transition-colors ${
+                      className={`w-full flex items-center gap-3 p-3.5 text-start transition-all group ${
                         surah.number === currentSurah
-                          ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold"
-                          : "hover:bg-gray-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300"
+                          ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 font-semibold border-s-4 border-emerald-600 dark:border-emerald-400"
+                          : "hover:bg-emerald-50/40 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300"
                       }`}
                     >
                       <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-transform group-hover:scale-105 ${
                           surah.number === currentSurah
-                            ? "bg-[#1A5D3A] text-white"
+                            ? "bg-gradient-to-br from-[#1A5D3A] to-emerald-700 text-white shadow-md shadow-emerald-900/20"
                             : "bg-gray-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                         }`}
                       >
                         {surah.number}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs truncate font-medium">{isArabic ? surah.name_arabic : surah.name_english}</p>
-                        <p className="text-[10px] text-slate-400">{surah.verses_count} {t.quranVersesCount}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs truncate font-bold text-slate-900 dark:text-white">
+                            {isArabic ? surah.name_arabic : surah.name_english}
+                          </p>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-normal">
+                            {surah.revelation_place === "makkah" ? (isArabic ? "مكية" : "Makkah") : (isArabic ? "مدنية" : "Madinah")}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-400 mt-0.5">
+                          {surah.verses_count} {t.quranVersesCount} &middot; {surah.name_translation || (isArabic ? surah.name_english : surah.name_arabic)}
+                        </p>
                       </div>
-                      <span className="font-['Amiri'] text-sm text-slate-800 dark:text-slate-200 shrink-0">
+                      <span className="font-['Amiri'] text-base text-slate-800 dark:text-slate-200 shrink-0 font-bold">
                         {surah.name_arabic}
                       </span>
                     </button>
@@ -833,7 +867,7 @@ export default function Quran() {
               </div>
 
               {/* Tafsir Commentary */}
-              <div className="overflow-y-auto flex-1 pr-2">
+              <div className="overflow-y-auto flex-1 pr-2 custom-scrollbar">
                 {tafsirLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin" />

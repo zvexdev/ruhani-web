@@ -367,7 +367,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </button>
               </div>
 
-              <div className="font-mono text-xs text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-950 p-4 rounded-xl leading-relaxed max-h-72 overflow-y-auto">
+              <div className="font-mono text-xs text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-950 p-4 rounded-xl leading-relaxed max-h-72 overflow-y-auto custom-scrollbar">
                 <p className="font-semibold mb-2">Copyright (c) 2026 zvex</p>
                 <p className="mb-2">
                   Permission is hereby granted, free of charge, to any person obtaining a copy

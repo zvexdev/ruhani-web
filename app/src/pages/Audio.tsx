@@ -317,7 +317,7 @@ export default function Audio() {
                   />
                 </div>
 
-                <div className="max-h-64 overflow-y-auto divide-y divide-gray-50 dark:divide-slate-800/50 pr-1">
+                <div className="max-h-64 overflow-y-auto divide-y divide-gray-50 dark:divide-slate-800/50 pr-1 custom-scrollbar">
                   {filteredReciters.map((reciter) => (
                     <button
                       key={reciter.id}
@@ -391,7 +391,7 @@ export default function Audio() {
                   />
                 </div>
 
-                <div className="max-h-72 overflow-y-auto divide-y divide-gray-50 dark:divide-slate-800/50 pr-1">
+                <div className="max-h-72 overflow-y-auto divide-y divide-gray-50 dark:divide-slate-800/50 pr-1 custom-scrollbar">
                   {filteredSurahs.map((surah) => (
                     <button
                       key={surah.number}
