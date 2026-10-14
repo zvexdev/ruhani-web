@@ -4,9 +4,21 @@ import { Compass, MapPin, Navigation, Info, ChevronDown } from "lucide-react";
 import { CITY_PRESETS, calculateQiblaDirection, calculateDistanceToKaaba, type CityPreset } from "../lib/prayerTimes";
 import { useLanguage } from "../context/LanguageContext";
 
+function getInitialCity(): CityPreset {
+  const saved = localStorage.getItem("ruhani-selected-city");
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed?.lat && parsed?.lng) return parsed;
+    } catch {}
+  }
+  // Default to Cairo, Egypt
+  return CITY_PRESETS[0];
+}
+
 export default function QiblaCompass() {
   const { t, isArabic } = useLanguage();
-  const [selectedCity, setSelectedCity] = useState(CITY_PRESETS[0]); // Default Makkah
+  const [selectedCity, setSelectedCity] = useState<CityPreset>(getInitialCity);
   const [deviceHeading, setDeviceHeading] = useState<number | null>(null);
   const [hasCompassSupport, setHasCompassSupport] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -37,33 +49,48 @@ export default function QiblaCompass() {
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      alert(isArabic ? "خدمة تحديد الموقع الجغرافي غير مدعومة في متصفحك" : "Geolocation is not supported by your browser");
       return;
     }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setSelectedCity({
+        const detected: CityPreset = {
           name: "Current Location",
+          arabicName: "موقعي الحالي",
           country: "GPS Detected",
+          arabicCountry: "تحديد الموقع (GPS)",
           lat: pos.coords.latitude,
-          lng: pos.coords.longitude
-        });
+          lng: pos.coords.longitude,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Africa/Cairo",
+          method: "Egypt",
+        };
+        setSelectedCity(detected);
+        localStorage.setItem("ruhani-selected-city", JSON.stringify(detected));
         setLocating(false);
         setShowCityPicker(false);
       },
       () => {
         setLocating(false);
-        alert("Unable to retrieve location coordinates.");
+        alert(isArabic ? "تعذر تحديد الموقع. تم التبديل إلى القاهرة." : "Unable to retrieve location coordinates. Showing Cairo by default.");
       }
     );
+  };
+
+  const handleSelectCity = (city: CityPreset) => {
+    setSelectedCity(city);
+    localStorage.setItem("ruhani-selected-city", JSON.stringify(city));
+    setShowCityPicker(false);
   };
 
   // Compass needle rotation: if device compass is supported, rotate relative to phone heading
   const needleRotation = deviceHeading !== null ? qiblaAngle - deviceHeading : qiblaAngle;
 
+  const cityName = isArabic && selectedCity.arabicName ? selectedCity.arabicName : selectedCity.name;
+  const countryName = isArabic && selectedCity.arabicCountry ? selectedCity.arabicCountry : selectedCity.country;
+
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-10 border border-emerald-100 dark:border-emerald-950 shadow-xl max-w-xl mx-auto">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-10 border border-emerald-100 dark:border-emerald-950 shadow-xl max-w-xl mx-auto relative">
       {/* Title & Location selector */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#1A5D3A] dark:text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-3">
@@ -81,43 +108,62 @@ export default function QiblaCompass() {
         <div className="mt-4 inline-block relative">
           <button
             onClick={() => setShowCityPicker(!showCityPicker)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-slate-800 rounded-full border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-100 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-slate-800 rounded-full border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
           >
             <MapPin className="w-4 h-4 text-[#1A5D3A] dark:text-emerald-400" />
-            <span>{selectedCity.name}, {selectedCity.country}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+            <span>{cityName}، {countryName}</span>
+            <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform ${showCityPicker ? "rotate-180" : ""}`} />
           </button>
 
           {showCityPicker && (
-            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-2 shadow-2xl z-50 text-left">
-              <button
-                onClick={handleDetectLocation}
-                disabled={locating}
-                className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400 text-xs font-medium transition-colors border-b border-gray-100 dark:border-slate-700 mb-1"
-              >
-                <Navigation className="w-4 h-4" />
-                {locating ? t.qiblaDetecting : t.qiblaDetectGPS}
-              </button>
-              <div className="max-h-56 overflow-y-auto space-y-1">
-                {CITY_PRESETS.map((city: CityPreset) => (
-                  <button
-                    key={city.name}
-                    onClick={() => {
-                      setSelectedCity(city);
-                      setShowCityPicker(false);
-                    }}
-                    className={`w-full flex items-center justify-between p-2 rounded-xl text-xs ${
-                      city.name === selectedCity.name
-                        ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-900 dark:text-emerald-200 font-semibold"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
-                    }`}
-                  >
-                    <span>{city.name}</span>
-                    <span className="text-gray-400">{city.country}</span>
-                  </button>
-                ))}
+            <>
+              {/* Backdrop dismiss overlay */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowCityPicker(false)}
+              />
+
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 max-w-[90vw] bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-2.5 shadow-2xl z-50 text-start">
+                <button
+                  onClick={handleDetectLocation}
+                  disabled={locating}
+                  className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400 text-xs font-semibold transition-colors border-b border-gray-100 dark:border-slate-700 mb-2"
+                >
+                  <Navigation className={`w-4 h-4 ${locating ? "animate-spin" : ""}`} />
+                  <span>{locating ? t.qiblaDetecting : t.qiblaDetectGPS}</span>
+                </button>
+                <div className="max-h-56 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                  {CITY_PRESETS.map((city: CityPreset) => {
+                    const isCurrent = city.name === selectedCity.name;
+                    const cName = isArabic && city.arabicName ? city.arabicName : city.name;
+                    const cSub = isArabic ? city.name : city.arabicName;
+                    const cCountry = isArabic && city.arabicCountry ? city.arabicCountry : city.country;
+
+                    return (
+                      <button
+                        key={city.name}
+                        onClick={() => handleSelectCity(city)}
+                        className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs transition-colors ${
+                          isCurrent
+                            ? "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 font-bold"
+                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="truncate">{cName}</span>
+                          {cSub && (
+                            <span className="text-[10px] text-gray-400 truncate font-normal">
+                              ({cSub})
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-gray-400 shrink-0 font-normal">{cCountry}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>
