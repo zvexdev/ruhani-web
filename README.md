@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="app/public/logo.png" alt="Ruhani Logo" width="140" style="border-radius: 28px; box-shadow: 0 10px 30px rgba(26,93,58,0.3);" />
+<img src="app/public/logo.png" alt="Ruhani Logo" width="130" />
 
 <br/><br/>
 
