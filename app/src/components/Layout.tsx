@@ -73,11 +73,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           {/* Logo / Sanctuary Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
             <img
               src="/logo.png"
               alt="Ruhani Logo"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover shadow-md shadow-emerald-950/20 group-hover:scale-105 transition-transform shrink-0 border border-amber-400/30"
+              className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-105 transition-transform shrink-0"
             />
             <div className="flex flex-col min-w-0">
               <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo']">
@@ -200,7 +200,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <img
                   src="/logo.png"
                   alt="Ruhani"
-                  className="w-8 h-8 rounded-lg object-cover shadow-sm border border-amber-400/30"
+                  className="w-8 h-8 object-contain drop-shadow-sm shrink-0"
                 />
                 <span className="font-bold text-lg text-slate-900 dark:text-white">{t.brandName}</span>
                 <span className="font-['Amiri'] text-emerald-700 dark:text-emerald-400 font-bold text-base">روحاني</span>
@@ -260,10 +260,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          {/* Bottom Bar with "Made by zvex with love" */}
+          {/* Bottom Bar with "Made by zvex with love" & Discord Link */}
           <div className="pt-8 border-t border-gray-200/60 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
             <p className="flex items-center gap-1.5 font-medium">
-              {t.footerMadeBy} <span className="text-[#1A5D3A] dark:text-emerald-400 font-bold">zvex</span> {t.footerForUmmah}{" "}
+              {t.footerMadeBy}{" "}
+              <a
+                href="https://discord.gg/XTPc3QSM4B"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Join zvex Discord Server"
+                className="text-[#1A5D3A] dark:text-emerald-400 font-bold hover:underline inline-flex items-center gap-1 hover:text-emerald-600 dark:hover:text-emerald-300 transition-colors"
+              >
+                zvex
+              </a>{" "}
+              {t.footerForUmmah}{" "}
               <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" />
             </p>
 

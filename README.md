@@ -24,7 +24,7 @@ An elegant, high-performance Islamic web application crafted with spiritual sere
 
 <br/>
 
-**Made with love by [zvex](https://github.com/zvexdev) for the Muslim Ummah.**
+**Made with love by [zvex (Discord)](https://discord.gg/XTPc3QSM4B) for the Muslim Ummah.**
 
 </div>
 
