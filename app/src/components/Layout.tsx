@@ -68,12 +68,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-[#FDFCF7] dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-[#FDFCF7] dark:bg-black text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-300">
       {/* Top Navigation Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           scrolled
-            ? "bg-[#FDFCF7]/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-emerald-900/10 dark:border-emerald-500/10 shadow-sm"
+            ? "bg-[#FDFCF7]/95 dark:bg-black/95 backdrop-blur-md border-b border-emerald-900/10 dark:border-white/10 shadow-sm"
             : "bg-transparent"
         }`}
       >
@@ -96,7 +96,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm p-1 rounded-full border border-gray-200/70 dark:border-slate-800 shadow-sm">
+          <nav className="hidden lg:flex items-center gap-1 bg-white/70 dark:bg-black/80 backdrop-blur-sm p-1 rounded-full border border-gray-200/70 dark:border-white/10 shadow-sm">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -174,7 +174,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden bg-[#FDFCF7]/98 dark:bg-slate-950/98 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800 overflow-hidden"
+              className="lg:hidden bg-[#FDFCF7]/98 dark:bg-black/98 backdrop-blur-xl border-b border-gray-200 dark:border-neutral-800 overflow-hidden"
             >
               <nav className="px-4 py-4 space-y-1 max-w-[1440px] mx-auto">
                 {navItems.map((item) => {
@@ -187,7 +187,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                         isActive
                           ? "bg-[#1A5D3A] text-white"
-                          : "text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-900"
+                          : "text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-neutral-900"
                       }`}
                     >
                       <item.icon className="w-4 h-4" />
@@ -195,7 +195,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </Link>
                   );
                 })}
-                <div className="pt-3 mt-2 border-t border-gray-200/60 dark:border-slate-800/80 flex items-center justify-around text-xs">
+                <div className="pt-3 mt-2 border-t border-gray-200/60 dark:border-neutral-800/80 flex items-center justify-around text-xs">
                   <a
                     href="https://github.com/zvexdev/ruhani-web"
                     target="_blank"
@@ -227,7 +227,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AudioPlayerBar />
 
       {/* Footer with UmmahAPI & Attribution */}
-      <footer className="mt-auto border-t border-emerald-950/10 dark:border-slate-800 bg-white/60 dark:bg-slate-900/50 backdrop-blur-md pt-12 pb-32 sm:pb-24 px-4 md:px-8">
+      <footer className="mt-auto border-t border-emerald-950/10 dark:border-white/10 bg-white/60 dark:bg-black backdrop-blur-md pt-12 pb-32 sm:pb-24 px-4 md:px-8">
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
             {/* Col 1: Brand & Salutation */}
@@ -273,7 +273,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setShowLicenseModal(true)}
-                    className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
                   >
                     <Scale className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                     <span>{t.footerMitLicense}</span>
@@ -283,7 +283,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     href="https://github.com/zvexdev/ruhani-web"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800 text-slate-700 dark:text-slate-200 transition-colors"
                   >
                     <Github className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
                     <span>GitHub</span>
@@ -309,7 +309,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Bottom Bar with "Made by zvex with love" & Discord Link */}
-          <div className="pt-8 border-t border-gray-200/60 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+          <div className="pt-8 border-t border-gray-200/60 dark:border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
             <p className="flex items-center gap-1.5 font-medium">
               {t.footerMadeBy}{" "}
               <a
@@ -349,7 +349,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {showLicenseModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowLicenseModal(false)}
           >
             <motion.div
@@ -357,22 +357,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 max-w-lg w-full shadow-2xl border border-gray-200 dark:border-slate-800"
+              className="bg-white dark:bg-black rounded-2xl p-6 md:p-8 max-w-lg w-full shadow-2xl border border-gray-200 dark:border-neutral-800"
             >
-              <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-slate-800">
+              <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-neutral-800">
                 <div className="flex items-center gap-2">
                   <Scale className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   <h3 className="font-bold text-lg text-slate-900 dark:text-white">MIT License</h3>
                 </div>
                 <button
                   onClick={() => setShowLicenseModal(false)}
-                  className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600"
+                  className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-900 text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="font-mono text-xs text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-950 p-4 rounded-xl leading-relaxed max-h-72 overflow-y-auto custom-scrollbar">
+              <div className="font-mono text-xs text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-neutral-950 p-4 rounded-xl leading-relaxed max-h-72 overflow-y-auto custom-scrollbar">
                 <p className="font-semibold mb-2">Copyright (c) 2026 zvex</p>
                 <p className="mb-2">
                   Permission is hereby granted, free of charge, to any person obtaining a copy

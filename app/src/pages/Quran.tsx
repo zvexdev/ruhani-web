@@ -613,7 +613,7 @@ export default function Quran() {
           ) : surahDetail ? (
             <div>
               {/* Surah Bismillah Card */}
-              <div className="bg-gradient-to-b from-white to-emerald-50/20 dark:from-slate-900 dark:to-slate-900/60 rounded-3xl p-6 md:p-10 border border-emerald-900/10 dark:border-emerald-500/20 shadow-sm text-center mb-8 relative overflow-hidden">
+              <div className="bg-gradient-to-b from-white to-emerald-50/20 dark:from-black dark:to-neutral-950 rounded-3xl p-6 md:p-10 border border-emerald-900/10 dark:border-emerald-500/20 shadow-sm text-center mb-8 relative overflow-hidden">
                 <div className="max-w-xl mx-auto">
                   <h2 className="font-['Amiri'] text-4xl md:text-5xl text-slate-900 dark:text-white mb-2">
                     {surahDetail.surah.name_arabic}

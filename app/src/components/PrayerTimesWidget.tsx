@@ -117,7 +117,7 @@ export default function PrayerTimesWidget() {
   const displayCountry = isArabic && selectedCity.arabicCountry ? selectedCity.arabicCountry : selectedCity.country;
 
   return (
-    <div className="bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-900 text-white rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl relative border border-emerald-800/40">
+    <div className="bg-gradient-to-br from-emerald-950 via-neutral-950 to-black text-white rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl relative border border-emerald-800/40">
       {/* Decorative Arabesque background glow (contained safely) */}
       <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
         <div className="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl" />

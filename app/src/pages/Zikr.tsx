@@ -150,7 +150,7 @@ export default function Zikr() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-950 text-white rounded-3xl p-5 sm:p-8 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
+            className="bg-gradient-to-br from-emerald-950 via-neutral-950 to-black text-white rounded-3xl p-5 sm:p-8 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
           >
             {/* Subtle glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />

@@ -58,7 +58,7 @@ export default function AudioPlayerBar() {
         transition={{ type: "spring", stiffness: 300, damping: 28 }}
         className="fixed bottom-3 left-3 right-3 sm:bottom-5 sm:left-6 sm:right-6 max-w-4xl mx-auto z-50 select-none"
       >
-        <div className="bg-slate-950/95 dark:bg-black/95 backdrop-blur-2xl text-white rounded-3xl p-3 sm:p-4 shadow-2xl border border-emerald-500/30 flex flex-col gap-2.5">
+        <div className="bg-black/95 dark:bg-black/95 backdrop-blur-2xl text-white rounded-3xl p-3 sm:p-4 shadow-2xl border border-emerald-500/30 flex flex-col gap-2.5">
           {/* Main Controls Row */}
           <div className="flex items-center justify-between gap-3">
             {/* Track Info */}

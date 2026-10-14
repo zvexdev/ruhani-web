@@ -161,7 +161,7 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-emerald-900/20 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-950 via-slate-900 to-[#0A2F1D] text-white p-6 md:p-8">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-emerald-900/20 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-950 via-black to-black text-white p-6 md:p-8">
               {/* Arabesque background aura */}
               <div className="absolute top-0 right-0 w-60 h-60 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
 

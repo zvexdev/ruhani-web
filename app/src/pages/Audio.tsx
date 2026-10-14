@@ -149,7 +149,7 @@ export default function Audio() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-emerald-950 via-slate-950 to-emerald-900 text-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
+            className="bg-gradient-to-br from-emerald-950 via-black to-neutral-950 text-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
           >
             {/* Ambient Aura */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />

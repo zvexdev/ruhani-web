@@ -89,7 +89,7 @@ export default function Names() {
       </div>
 
       {/* Memorization Progress Card */}
-      <div className="max-w-xl mx-auto mb-8 bg-gradient-to-r from-emerald-900 via-emerald-950 to-slate-900 text-white rounded-3xl p-6 shadow-xl border border-emerald-800/40">
+      <div className="max-w-xl mx-auto mb-8 bg-gradient-to-r from-emerald-950 via-neutral-950 to-black text-white rounded-3xl p-6 shadow-xl border border-emerald-800/40">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Award className="w-5 h-5 text-amber-400" />

@@ -40,37 +40,46 @@
   }
 
   .dark {
-    --background: 153 38% 6%;
-    --foreground: 40 20% 96%;
-    --card: 153 32% 9%;
-    --card-foreground: 40 20% 96%;
-    --popover: 153 32% 9%;
-    --popover-foreground: 40 20% 96%;
-    --primary: 152 50% 40%;
+    --background: 0 0% 0%; /* True 100% OLED Black */
+    --foreground: 0 0% 98%;
+    --card: 0 0% 4%; /* Pure Deep Black #0a0a0a */
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 152 60% 45%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 153 25% 15%;
-    --secondary-foreground: 40 20% 96%;
-    --muted: 153 25% 14%;
-    --muted-foreground: 150 15% 65%;
-    --accent: 43 50% 16%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 43 50% 14%;
     --accent-foreground: 43 90% 65%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 153 25% 18%;
-    --input: 153 25% 18%;
-    --ring: 152 50% 40%;
-    --sidebar-background: 153 35% 8%;
-    --sidebar-foreground: 40 20% 96%;
-    --sidebar-primary: 152 50% 40%;
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 152 60% 45%;
+    --sidebar-background: 0 0% 2%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 152 60% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 153 25% 15%;
-    --sidebar-accent-foreground: 40 20% 96%;
-    --sidebar-border: 153 25% 18%;
-    --sidebar-ring: 152 50% 40%;
-    --scrollbar-track: transparent;
-    --scrollbar-thumb: rgba(52, 211, 153, 0.28);
-    --scrollbar-thumb-hover: rgba(52, 211, 153, 0.6);
+    --sidebar-accent: 0 0% 8%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 14%;
+    --sidebar-ring: 152 60% 45%;
+    --scrollbar-track: #000000;
+    --scrollbar-thumb: rgba(16, 185, 129, 0.35);
+    --scrollbar-thumb-hover: rgba(16, 185, 129, 0.7);
   }
+}
+
+html.dark {
+  color-scheme: dark;
+  background-color: #000000 !important;
+}
+
+html.dark body {
+  background-color: #000000 !important;
 }
 
 @layer base {
