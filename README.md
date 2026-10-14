@@ -136,21 +136,6 @@ The optimized static assets will be created in `app/dist/`.
 
 ---
 
-## ☁️ Deploy Your Own Instance
-
-Deploying Ruhani to [Vercel](https://vercel.com) takes less than 2 minutes:
-
-1. Fork this repository to your GitHub account.
-2. In Vercel, click **"Add New Project"** and select `ruhani-web`.
-3. Set **Root Directory** to `app`.
-4. Click **Deploy**. Vercel will build and launch your site with automatic HTTPS!
-
-For custom domains (like `ruhani.zvex.site`), add a `CNAME` record pointing your subdomain to `cname.vercel-dns.com`.
-
-<br/>
-
----
-
 ## 💬 Community & Support
 
 Have questions, suggestions, or want to contribute?
