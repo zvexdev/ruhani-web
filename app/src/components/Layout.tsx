@@ -73,10 +73,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           {/* Logo / Sanctuary Brand */}
-          <Link to="/" className="flex items-center gap-2 group shrink-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#1A5D3A] dark:bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-900/20 group-hover:scale-105 transition-transform shrink-0">
-              <BookOpen className="w-4 h-4 text-white" />
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+            <img
+              src="/logo.png"
+              alt="Ruhani Logo"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover shadow-md shadow-emerald-950/20 group-hover:scale-105 transition-transform shrink-0 border border-amber-400/30"
+            />
             <div className="flex flex-col min-w-0">
               <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo']">
                 {t.brandName}
@@ -194,10 +196,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
             {/* Col 1: Brand & Salutation */}
             <div className="md:col-span-2 space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-[#1A5D3A] dark:bg-emerald-600 flex items-center justify-center text-white">
-                  <BookOpen className="w-3.5 h-3.5" />
-                </div>
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/logo.png"
+                  alt="Ruhani"
+                  className="w-8 h-8 rounded-lg object-cover shadow-sm border border-amber-400/30"
+                />
                 <span className="font-bold text-lg text-slate-900 dark:text-white">{t.brandName}</span>
                 <span className="font-['Amiri'] text-emerald-700 dark:text-emerald-400 font-bold text-base">روحاني</span>
               </div>

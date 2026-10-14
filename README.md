@@ -2,6 +2,10 @@
 
 <div align="center">
 
+<img src="app/public/logo.png" alt="Ruhani Logo" width="140" style="border-radius: 28px; box-shadow: 0 10px 30px rgba(26,93,58,0.3);" />
+
+<br/><br/>
+
 ![Ruhani Banner](https://img.shields.io/badge/Language-Arabic%20(Default)%20%2F%20English-10b981?style=for-the-badge)
 ![Default Reciter](https://img.shields.io/badge/Default%20Qari-Sheikh%20Yasser%20Al--Dosari-amber?style=for-the-badge)
 ![Powered by](https://img.shields.io/badge/API-UmmahAPI-059669?style=for-the-badge)
