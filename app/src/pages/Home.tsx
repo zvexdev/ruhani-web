@@ -104,7 +104,7 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-24 space-y-12">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-32 sm:pb-28 space-y-12">
       {/* Hero Section */}
       <section className="pt-6 md:pt-12">
         <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-center">
@@ -120,33 +120,33 @@ export default function Home() {
               <span>{hijriDate || (isArabic ? "١٤ شوال ١٤٤٧ هـ" : "14 Shawwal 1447 AH")}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.2]">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.25]">
               {t.homeHeroTitle1}{" "}
               <span className="text-[#1A5D3A] dark:text-emerald-400">{t.homeHeroTitleHighlight}</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mt-5 max-w-xl leading-relaxed">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mt-4 sm:mt-5 max-w-xl leading-relaxed">
               {t.homeHeroSubtitle}
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 mt-8">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 mt-6 sm:mt-8">
               <Link
                 to="/quran"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#1A5D3A] dark:bg-emerald-600 text-white rounded-full font-semibold text-sm hover:bg-[#13472d] dark:hover:bg-emerald-500 shadow-md shadow-emerald-900/20 transition-all hover:scale-[1.02] active:scale-95"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-[#1A5D3A] dark:bg-emerald-600 text-white rounded-full font-semibold text-xs sm:text-sm hover:bg-[#13472d] dark:hover:bg-emerald-500 shadow-md shadow-emerald-900/20 transition-all hover:scale-[1.02] active:scale-95"
               >
                 <BookOpen className="w-4 h-4" />
                 <span>{t.homeOpenQuran}</span>
               </Link>
               <Link
                 to="/audio"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-gray-200 dark:border-slate-800 rounded-full font-semibold text-sm hover:bg-gray-50 dark:hover:bg-slate-800 shadow-sm transition-all hover:scale-[1.02] active:scale-95"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-gray-200 dark:border-slate-800 rounded-full font-semibold text-xs sm:text-sm hover:bg-gray-50 dark:hover:bg-slate-800 shadow-sm transition-all hover:scale-[1.02] active:scale-95"
               >
                 <Headphones className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>{t.homeListenQaris}</span>
               </Link>
               <Link
                 to="/qibla"
-                className="inline-flex items-center gap-2 px-5 py-3 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800/40 rounded-full font-semibold text-sm hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800/40 rounded-full font-semibold text-xs sm:text-sm hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors"
               >
                 <Compass className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>{t.homeQiblaFinder}</span>
@@ -350,7 +350,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {[
             { to: "/quran", label: t.navQuran, icon: BookOpen, desc: isArabic ? "١١٤ سورة وتفسير" : "114 Surahs & Tafsir", color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50" },
             { to: "/audio", label: t.navAudio, icon: Headphones, desc: isArabic ? "١٥ قارئاً معتمداً" : "15 Global Qaris", color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50" },
@@ -362,16 +362,16 @@ export default function Home() {
             <Link
               key={item.to}
               to={item.to}
-              className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 transition-all group flex flex-col justify-between"
+              className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 transition-all group flex flex-col justify-between"
             >
-              <div className={`w-11 h-11 rounded-xl ${item.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                <item.icon className="w-5 h-5" />
+              <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl ${item.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                <item.icon className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <p className="font-semibold text-sm text-slate-900 dark:text-white">
+                <p className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white">
                   {item.label}
                 </p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
                   {item.desc}
                 </p>
               </div>
@@ -384,7 +384,7 @@ export default function Home() {
       <section>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               {isArabic ? "تصفح سور القرآن الكريم" : "Browse Surahs"}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -393,9 +393,9 @@ export default function Home() {
           </div>
           <Link
             to="/quran"
-            className="text-xs font-semibold text-[#1A5D3A] dark:text-emerald-400 hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-[#1A5D3A] dark:text-emerald-400 hover:underline flex items-center gap-1 shrink-0"
           >
-            {isArabic ? "عرض جميع السور (١١٤)" : "View All 114 Surahs"} <ChevronRight className="w-3.5 h-3.5" />
+            {isArabic ? "عرض جميع السور" : "View All"} <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
@@ -404,27 +404,27 @@ export default function Home() {
             <Link
               key={surah.number}
               to={`/quran?surah=${surah.number}`}
-              className="flex items-center justify-between p-4 hover:bg-emerald-50/50 dark:hover:bg-slate-800/60 transition-colors group"
+              className="flex items-center justify-between p-3.5 sm:p-4 hover:bg-emerald-50/50 dark:hover:bg-slate-800/60 transition-colors group gap-3"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100/60 dark:bg-emerald-950/60 text-[#1A5D3A] dark:text-emerald-400 flex items-center justify-center text-xs font-bold">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-100/60 dark:bg-emerald-950/60 text-[#1A5D3A] dark:text-emerald-400 flex items-center justify-center text-xs font-bold shrink-0">
                   {surah.number}
                 </div>
-                <div>
-                  <p className="font-semibold text-sm text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
+                <div className="min-w-0">
+                  <p className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors truncate">
                     {isArabic ? surah.name_arabic : surah.name_english}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-[11px] sm:text-xs text-slate-400 truncate">
                     {surah.verses_count} {t.quranVersesCount} &middot;{" "}
                     {surah.revelation_place === "makkah" ? t.quranMeccan : t.quranMedinan}
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                <span className="font-['Amiri'] text-xl text-slate-900 dark:text-white">
+              <div className="text-right shrink-0">
+                <span className="font-['Amiri'] text-lg sm:text-xl text-slate-900 dark:text-white block">
                   {surah.name_arabic}
                 </span>
-                <p className="text-[11px] text-slate-400">{surah.name_translation}</p>
+                <p className="text-[10px] sm:text-[11px] text-slate-400 hidden xs:block">{surah.name_translation}</p>
               </div>
             </Link>
           ))}

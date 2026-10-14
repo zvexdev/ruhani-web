@@ -119,7 +119,7 @@ export default function HadithPage() {
   const displayedHadiths = searchQuery.trim() ? searchResults : hadiths;
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-28">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-32 sm:pb-28">
       {/* Header */}
       <div className="py-6 md:py-8">
         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">

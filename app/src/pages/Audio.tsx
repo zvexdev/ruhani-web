@@ -146,15 +146,15 @@ export default function Audio() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-emerald-950 via-slate-950 to-emerald-900 text-white rounded-3xl p-6 sm:p-10 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
+            className="bg-gradient-to-br from-emerald-950 via-slate-950 to-emerald-900 text-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
           >
             {/* Ambient Aura */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
 
             {/* Now Playing Info */}
-            <div className="flex items-center gap-4 sm:gap-5 mb-8 relative z-10">
-              <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center text-amber-300 shadow-inner shrink-0">
-                <Music className="w-7 h-7 sm:w-8 sm:h-8" />
+            <div className="flex items-center gap-3.5 sm:gap-5 mb-8 relative z-10">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center text-amber-300 shadow-inner shrink-0">
+                <Music className="w-6 h-6 sm:w-8 sm:h-8" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
@@ -168,7 +168,7 @@ export default function Audio() {
                     </span>
                   )}
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-white truncate mt-1">
+                <h3 className="text-xl sm:text-3xl font-extrabold text-white truncate mt-1">
                   {isArabic ? `سورة ${currentSurahMeta?.name_arabic || "الفاتحة"}` : `Surah ${currentSurahMeta?.name_english || "Al-Fatihah"}`}
                 </h3>
                 <p className="text-xs sm:text-sm text-emerald-200/80 truncate">
@@ -178,18 +178,18 @@ export default function Audio() {
               </div>
             </div>
 
-            {/* Dynamic Waveform Visualizer */}
-            <div className="flex items-center justify-center gap-1 sm:gap-1.5 h-20 mb-6 bg-black/25 rounded-2xl p-4 border border-white/5 overflow-hidden">
-              {Array.from({ length: 42 }).map((_, i) => (
+            {/* Dynamic Waveform Visualizer (32 responsive bars) */}
+            <div className="flex items-center justify-center gap-1 sm:gap-1.5 h-16 sm:h-20 mb-6 bg-black/25 rounded-2xl px-2 sm:px-4 py-3 border border-white/5 overflow-hidden">
+              {Array.from({ length: 32 }).map((_, i) => (
                 <motion.div
                   key={i}
-                  className="w-1.5 bg-gradient-to-t from-emerald-500 to-amber-300 rounded-full shrink-0"
+                  className="w-1 sm:w-1.5 bg-gradient-to-t from-emerald-500 to-amber-300 rounded-full shrink-0"
                   animate={
                     isPlaying
                       ? {
-                          height: [10, 24 + ((i * 7) % 36), 10],
+                          height: [8, 20 + ((i * 7) % 36), 8],
                         }
-                      : { height: 10 }
+                      : { height: 8 }
                   }
                   transition={
                     isPlaying
@@ -200,7 +200,7 @@ export default function Audio() {
                         }
                       : {}
                   }
-                  style={{ height: 10 }}
+                  style={{ height: 8 }}
                 />
               ))}
             </div>
@@ -215,7 +215,7 @@ export default function Audio() {
                 onChange={(e) => seek(Number(e.target.value))}
                 className="w-full h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-amber-400 [&::-webkit-slider-thumb]:rounded-full"
               />
-              <div className="flex justify-between mt-2 text-xs font-mono text-white/60">
+              <div className="flex justify-between mt-2 text-xs font-mono text-white/60" dir="ltr">
                 <span>{formatTime(currentTime)}</span>
                 <span>{formatTime(duration)}</span>
               </div>
@@ -281,7 +281,7 @@ export default function Audio() {
                 <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                   <Headphones className="w-4 h-4" />
                 </div>
-                <div className="text-left">
+                <div className="text-start">
                   <span className="text-[11px] text-slate-400 block font-semibold uppercase tracking-wider">
                     {t.audioSelectReciter}
                   </span>
@@ -304,13 +304,13 @@ export default function Audio() {
               <div className="border-t border-gray-100 dark:border-slate-800 p-2">
                 {/* Search Bar for Reciters */}
                 <div className="relative mb-2 px-1">
-                  <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Search className="w-3.5 h-3.5 absolute ltr:left-3.5 rtl:right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
                     placeholder={t.audioSearchReciters}
                     value={reciterFilter}
                     onChange={(e) => setReciterFilter(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                    className="w-full ltr:pl-9 ltr:pr-3 rtl:pr-9 rtl:pl-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
                   />
                 </div>
 
@@ -319,7 +319,7 @@ export default function Audio() {
                     <button
                       key={reciter.id}
                       onClick={() => handleReciterChange(reciter.id)}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-colors ${
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl text-start transition-colors ${
                         reciter.id === selectedReciter
                           ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold"
                           : "hover:bg-gray-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300"
@@ -361,7 +361,7 @@ export default function Audio() {
                 <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 flex items-center justify-center">
                   <BookOpen className="w-4 h-4" />
                 </div>
-                <div className="text-left">
+                <div className="text-start">
                   <span className="text-[11px] text-slate-400 block font-semibold uppercase tracking-wider">
                     {t.audioSelectSurah}
                   </span>
@@ -378,13 +378,13 @@ export default function Audio() {
             {showSurahs && (
               <div className="border-t border-gray-100 dark:border-slate-800 p-2">
                 <div className="relative mb-2 px-1">
-                  <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Search className="w-3.5 h-3.5 absolute ltr:left-3.5 rtl:right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
                     placeholder={t.audioSearchSurahs}
                     value={surahFilter}
                     onChange={(e) => setSurahFilter(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                    className="w-full ltr:pl-9 ltr:pr-3 rtl:pr-9 rtl:pl-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
                   />
                 </div>
 
@@ -393,7 +393,7 @@ export default function Audio() {
                     <button
                       key={surah.number}
                       onClick={() => handleSurahChange(surah.number)}
-                      className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-colors ${
+                      className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-start transition-colors ${
                         surah.number === selectedSurah
                           ? "bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 font-semibold"
                           : "hover:bg-gray-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300"
@@ -403,8 +403,8 @@ export default function Audio() {
                         {surah.number}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium truncate">{surah.name_english}</p>
-                        <p className="text-[10px] text-slate-400">{surah.verses_count} verses</p>
+                        <p className="text-xs font-medium truncate">{isArabic ? surah.name_arabic : surah.name_english}</p>
+                        <p className="text-[10px] text-slate-400">{surah.verses_count} {t.quranVersesCount}</p>
                       </div>
                       <span className="font-['Amiri'] text-sm text-slate-700 dark:text-slate-300 shrink-0">
                         {surah.name_arabic}

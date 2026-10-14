@@ -73,14 +73,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           {/* Logo / Sanctuary Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-[#1A5D3A] dark:bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-900/20 group-hover:scale-105 transition-transform">
+          <Link to="/" className="flex items-center gap-2 group shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#1A5D3A] dark:bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-900/20 group-hover:scale-105 transition-transform shrink-0">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo']">
+            <div className="flex flex-col min-w-0">
+              <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo']">
                 {t.brandName}
-                <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold tracking-normal font-['Amiri']">
+                <span className="hidden sm:inline-block text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold tracking-normal font-['Amiri']">
                   {t.brandTagline}
                 </span>
               </span>
@@ -118,12 +118,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* Right Header Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Language Switcher (Arabic default, English toggle) */}
             <button
               onClick={toggleLanguage}
               title={isArabic ? "Switch to English" : "التبديل إلى العربية"}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 bg-white/80 dark:bg-slate-900/80 hover:bg-emerald-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors text-xs font-bold shadow-sm"
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 bg-white/80 dark:bg-slate-900/80 hover:bg-emerald-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors text-xs font-bold shadow-sm"
             >
               <Languages className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>{isArabic ? "EN" : "عربي"}</span>
@@ -164,6 +164,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <Link
                       key={item.path}
                       to={item.path}
+                      onClick={() => setMobileOpen(false)}
                       className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                         isActive
                           ? "bg-[#1A5D3A] text-white"
@@ -188,7 +189,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AudioPlayerBar />
 
       {/* Footer with UmmahAPI & Attribution */}
-      <footer className="mt-auto border-t border-emerald-950/10 dark:border-slate-800 bg-white/60 dark:bg-slate-900/50 backdrop-blur-md pt-12 pb-16 px-4 md:px-8">
+      <footer className="mt-auto border-t border-emerald-950/10 dark:border-slate-800 bg-white/60 dark:bg-slate-900/50 backdrop-blur-md pt-12 pb-32 sm:pb-24 px-4 md:px-8">
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
             {/* Col 1: Brand & Salutation */}

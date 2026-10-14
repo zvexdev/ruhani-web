@@ -90,7 +90,7 @@ export default function QiblaCompass() {
   const countryName = isArabic && selectedCity.arabicCountry ? selectedCity.arabicCountry : selectedCity.country;
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-10 border border-emerald-100 dark:border-emerald-950 shadow-xl max-w-xl mx-auto relative">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 md:p-10 border border-emerald-100 dark:border-emerald-950 shadow-xl max-w-xl mx-auto relative">
       {/* Title & Location selector */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#1A5D3A] dark:text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-3">
@@ -168,8 +168,8 @@ export default function QiblaCompass() {
         </div>
       </div>
 
-      {/* Compass Dial Graphic */}
-      <div className="relative w-64 h-64 md:w-80 md:h-80 mx-auto my-6 flex items-center justify-center">
+      {/* Compass Dial Graphic (Responsive 224px to 320px) */}
+      <div className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 mx-auto my-6 flex items-center justify-center">
         {/* Outer Circular Ring with Degree ticks */}
         <div className="absolute inset-0 rounded-full border-4 border-emerald-900/10 dark:border-emerald-500/20 shadow-inner flex items-center justify-center">
           {/* Cardinal Directions */}
@@ -179,7 +179,7 @@ export default function QiblaCompass() {
           <span className="absolute left-4 font-bold text-sm text-gray-400">W</span>
 
           {/* Compass Rose Dial ticks */}
-          <div className="w-48 h-48 md:w-60 md:h-60 rounded-full border border-dashed border-emerald-600/30 dark:border-emerald-400/20" />
+          <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-60 md:h-60 rounded-full border border-dashed border-emerald-600/30 dark:border-emerald-400/20" />
         </div>
 
         {/* Animated Qibla Needle */}

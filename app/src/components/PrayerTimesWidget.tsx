@@ -131,7 +131,7 @@ export default function PrayerTimesWidget() {
   const displayCountry = isArabic && selectedCity.arabicCountry ? selectedCity.arabicCountry : selectedCity.country;
 
   return (
-    <div className="bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-900 text-white rounded-3xl p-6 md:p-8 shadow-xl relative border border-emerald-800/40">
+    <div className="bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-900 text-white rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl relative border border-emerald-800/40">
       {/* Decorative Arabesque background glow (contained safely) */}
       <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
         <div className="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl" />
@@ -256,7 +256,7 @@ export default function PrayerTimesWidget() {
       </div>
 
       {/* 6 Prayer Times Horizontal/Grid Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 relative z-10">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3 relative z-10">
         {prayers.map((prayer) => {
           const isNext = nextPrayer?.name === prayer.key;
           const Icon = prayer.icon;
@@ -265,7 +265,7 @@ export default function PrayerTimesWidget() {
             <motion.div
               key={prayer.key}
               whileHover={{ y: -3 }}
-              className={`rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 ${
+              className={`rounded-2xl p-3 sm:p-4 flex flex-col justify-between transition-all duration-300 ${
                 isNext
                   ? "bg-gradient-to-b from-amber-500/25 to-amber-600/10 border-2 border-amber-400/80 shadow-lg shadow-amber-500/20"
                   : "bg-white/5 border border-white/10 hover:bg-white/10"

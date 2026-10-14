@@ -157,7 +157,7 @@ export default function AudioPlayerBar() {
           </div>
 
           {/* Scrubber Line */}
-          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-mono text-slate-400 px-1">
+          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-mono text-slate-400 px-1" dir="ltr">
             <span>{formatSeconds(currentTime)}</span>
             <input
               type="range"

@@ -135,7 +135,7 @@ export default function Zikr() {
   const categoryPercent = totalCountInCategory > 0 ? Math.round((completedCountInCategory / totalCountInCategory) * 100) : 0;
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-28">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-32">
       {/* Header */}
       <div className="py-6 md:py-8">
         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -147,12 +147,12 @@ export default function Zikr() {
       </div>
 
       <div className="grid lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Digital Tasbeeh Counter */}
-        <div className="lg:col-span-5 sticky top-20">
+        {/* Left Column: Digital Tasbeeh Counter (sticky only on desktop) */}
+        <div className="lg:col-span-5 lg:sticky lg:top-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-950 text-white rounded-3xl p-6 md:p-8 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
+            className="bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-950 text-white rounded-3xl p-5 sm:p-8 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
           >
             {/* Subtle glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
@@ -174,14 +174,14 @@ export default function Zikr() {
             </div>
 
             {/* Dhikr Selector Tabs */}
-            <div className="flex gap-1 mb-6 overflow-x-auto pb-2 scrollbar-none relative z-10">
+            <div className="flex gap-1.5 mb-6 overflow-x-auto pb-2 scrollbar-none relative z-10">
               {counters.map((d, i) => (
                 <button
                   key={d.phrase}
                   onClick={() => setDhikrIndex(i)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors shrink-0 ${
                     i === dhikrIndex
-                      ? "bg-amber-400 text-slate-950 shadow-md"
+                      ? "bg-amber-400 text-slate-950 shadow-md font-bold"
                       : "bg-white/10 text-white/70 hover:bg-white/20"
                   }`}
                 >
@@ -191,7 +191,7 @@ export default function Zikr() {
             </div>
 
             {/* Arabic Phrase */}
-            <p className="font-['Amiri'] text-3xl text-center leading-[2.2] mb-1 text-amber-100">
+            <p className="font-['Amiri'] text-2xl sm:text-3xl text-center leading-[2.2] mb-1 text-amber-100">
               {currentDhikr.arabic}
             </p>
             <p className="text-center text-xs text-white/60 mb-6 font-medium">
@@ -202,13 +202,13 @@ export default function Zikr() {
             <div className="flex justify-center mb-6">
               <button
                 onClick={increment}
-                className="relative w-44 h-44 rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 select-none shadow-2xl"
+                className="relative w-40 h-40 sm:w-44 sm:h-44 rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 select-none shadow-2xl"
                 style={{
                   background: `conic-gradient(#D4AF37 ${progress * 3.6}deg, rgba(255,255,255,0.12) 0deg)`,
                 }}
               >
-                <div className="w-36 h-36 rounded-full bg-gradient-to-b from-emerald-800 to-emerald-950 flex flex-col items-center justify-center border-2 border-emerald-600/50 shadow-inner group">
-                  <span className="text-4xl font-extrabold font-mono tracking-tight text-white group-hover:scale-105 transition-transform">
+                <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full bg-gradient-to-b from-emerald-800 to-emerald-950 flex flex-col items-center justify-center border-2 border-emerald-600/50 shadow-inner group">
+                  <span className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-white group-hover:scale-105 transition-transform">
                     {currentDhikr.current}
                   </span>
                   <span className="text-xs text-emerald-300 font-mono mt-0.5">
@@ -271,8 +271,8 @@ export default function Zikr() {
 
         {/* Right Column: Authentic Adhkar Checklist & Categories */}
         <div className="lg:col-span-7 space-y-6">
-          {/* Categories Tab Bar */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Categories Tab Bar with smooth horizontal scroll */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {[
               { id: "morning", label: t.zikrMorningAdhkar, icon: Sun },
               { id: "evening", label: t.zikrEveningAdhkar, icon: Moon },
@@ -286,7 +286,7 @@ export default function Zikr() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                     isActive
                       ? "bg-[#1A5D3A] dark:bg-emerald-600 text-white shadow-md shadow-emerald-900/20"
                       : "bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800"
@@ -298,6 +298,7 @@ export default function Zikr() {
               );
             })}
           </div>
+
 
           {/* Category Progress Bar */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-gray-100 dark:border-slate-800 shadow-sm flex items-center justify-between gap-4">
