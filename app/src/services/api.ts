@@ -5,7 +5,8 @@ import { AUTHENTIC_ADHKAR } from "../data/adhkar";
 import { CURATED_HADITHS, DEFAULT_COLLECTIONS } from "../data/hadiths";
 import { RECITERS_LIST, DEFAULT_RECITER, getSurahAudioUrl, getAyahAudioUrl, type ReciterInfo } from "../data/reciters";
 import { calculatePrayerTimes } from "../lib/prayerTimes";
-import type { SurahMeta, Verse, Hadith, NameOfAllah, Dua } from "../types";
+import { searchMatch } from "../lib/arabic";
+import type { SurahMeta, Verse, Hadith, NameOfAllah, Dua, SearchResult } from "../types";
 
 const BASE_URL = "https://ummahapi.com";
 const FETCH_TIMEOUT_MS = 6000;
@@ -140,11 +141,24 @@ export async function getRandomAyah(): Promise<{ verse: Verse; surah?: any }> {
   }
 }
 
-export async function searchQuran(query: string) {
+export async function searchQuran(query: string): Promise<{ results: SearchResult[] }> {
   try {
-    const data = await fetchAPI("/api/quran/search", { q: query });
-    return data.data;
+    const data = await fetchAPI("/api/quran/search", { q: query, limit: "50" });
+    const rawResults: any[] = data?.data?.results || [];
+    const results: SearchResult[] = rawResults.map((r) => ({
+      verse_key: r.verse_key || `${r.surah_number}:${r.ayah}`,
+      surah_number: Number(r.surah_number) || 1,
+      surah_name: r.surah_name || `Surah ${r.surah_number}`,
+      ayah: Number(r.ayah) || 1,
+      arabic: r.arabic || "",
+      transliteration: r.transliteration || "",
+      matched_in: r.matched_in || "translation",
+      translation: r.translation || r.translations?.sahih_international || r.translations?.pickthall || r.translations?.yusuf_ali || "",
+      translation_source: r.translation_source || "sahih_international",
+    }));
+    return { results };
   } catch (err) {
+    console.warn("UmmahAPI searchQuran failed:", err);
     return { results: [] };
   }
 }
@@ -233,17 +247,34 @@ export async function getRandomHadith(): Promise<Hadith> {
   }
 }
 
-export async function searchHadiths(query: string) {
+export async function searchHadiths(query: string): Promise<{ results: Hadith[] }> {
   try {
     const data = await fetchAPI("/api/hadith/search", { q: query });
-    return data.data;
+    const list: any[] = data?.data?.hadiths || data?.data?.results || [];
+    if (list.length > 0) {
+      const results: Hadith[] = list.map((h, i) => ({
+        id: h.id || `hadith-${h.collection || "col"}-${h.hadithnumber || i}`,
+        collection: h.collection || "bukhari",
+        collection_name: h.collection_name || h.collection || "Sahih",
+        hadithnumber: Number(h.hadithnumber) || i + 1,
+        arabic: h.arabic || "",
+        english: h.english || "",
+        grade: h.grade || "Sahih",
+      }));
+      return { results };
+    }
   } catch (err) {
-    const lower = query.toLowerCase();
-    const results = CURATED_HADITHS.filter(
-      h => h.english.toLowerCase().includes(lower) || h.arabic.includes(query)
-    );
-    return { results };
+    console.warn("UmmahAPI searchHadiths failed, falling back to local curation", err);
   }
+
+  // Fallback to local CURATED_HADITHS with normalized Arabic matching
+  const results = CURATED_HADITHS.filter((h) =>
+    h.english.toLowerCase().includes(query.toLowerCase()) ||
+    searchMatch(h.arabic, query) ||
+    h.collection_name.toLowerCase().includes(query.toLowerCase()) ||
+    String(h.hadithnumber) === query.trim()
+  );
+  return { results };
 }
 
 export async function browseHadithCollection(collection: string, page = 1, limit = 20) {
@@ -352,12 +383,14 @@ export async function getRandomName(): Promise<NameOfAllah> {
 }
 
 export async function searchNames(query: string) {
-  const lower = query.toLowerCase();
+  const lower = query.toLowerCase().trim();
   const results = NAMES_OF_ALLAH.filter(
-    n => n.english.toLowerCase().includes(lower) ||
-         n.transliteration.toLowerCase().includes(lower) ||
-         n.meaning.toLowerCase().includes(lower) ||
-         n.arabic.includes(query)
+    (n) =>
+      searchMatch(n.arabic, query) ||
+      n.english.toLowerCase().includes(lower) ||
+      n.transliteration.toLowerCase().includes(lower) ||
+      n.meaning.toLowerCase().includes(lower) ||
+      String(n.number) === lower
   );
   return { names: results };
 }

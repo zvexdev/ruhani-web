@@ -11,6 +11,7 @@ import {
 import { NAMES_OF_ALLAH } from "../data/namesOfAllah";
 import type { NameOfAllah } from "../types";
 import { soundEffects } from "../lib/sound";
+import { searchMatch } from "../lib/arabic";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function Names() {
@@ -48,14 +49,14 @@ export default function Names() {
       setFilteredNames(names);
       return;
     }
-    const lower = query.toLowerCase();
+    const lower = query.toLowerCase().trim();
     const filtered = names.filter(
       (n) =>
+        searchMatch(n.arabic, query) ||
         n.english.toLowerCase().includes(lower) ||
         n.transliteration.toLowerCase().includes(lower) ||
         n.meaning.toLowerCase().includes(lower) ||
-        n.arabic.includes(query) ||
-        String(n.number) === query.trim()
+        String(n.number) === lower
     );
     setFilteredNames(filtered);
   };

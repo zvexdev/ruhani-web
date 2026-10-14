@@ -8,7 +8,8 @@ import {
   Quote,
   Copy,
   Check,
-  Bookmark
+  Bookmark,
+  BookOpen
 } from "lucide-react";
 import * as api from "../services/api";
 import type { HadithCollection, Hadith } from "../types";
@@ -21,6 +22,7 @@ export default function HadithPage() {
   const [hadiths, setHadiths] = useState<Hadith[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Hadith[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [showCollections, setShowCollections] = useState(false);
@@ -71,13 +73,19 @@ export default function HadithPage() {
   }
 
   async function handleSearch() {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      setHasSearched(false);
+      setSearchResults([]);
+      return;
+    }
     setSearching(true);
+    setHasSearched(true);
     try {
       const data = await api.searchHadiths(searchQuery);
       setSearchResults(data.results || []);
     } catch (err) {
       console.error(err);
+      setSearchResults([]);
     } finally {
       setSearching(false);
     }
@@ -116,7 +124,7 @@ export default function HadithPage() {
     );
   }
 
-  const displayedHadiths = searchQuery.trim() ? searchResults : hadiths;
+  const displayedHadiths = hasSearched ? searchResults : hadiths;
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-32 sm:pb-28">
@@ -207,19 +215,20 @@ export default function HadithPage() {
           >
             {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : t.search}
           </button>
-          {(searchQuery || selectedCollection) && (
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSearchResults([]);
-                setSelectedCollection(null);
-                setHadiths([]);
-              }}
-              className="p-3 rounded-2xl border border-gray-200 dark:border-slate-700 text-slate-400 hover:text-slate-600"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
+            {(searchQuery || hasSearched || selectedCollection) && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSearchResults([]);
+                  setHasSearched(false);
+                  setSelectedCollection(null);
+                  setHadiths([]);
+                }}
+                className="p-3 rounded-2xl border border-gray-200 dark:border-slate-700 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
         </div>
       </div>
 
@@ -286,6 +295,39 @@ export default function HadithPage() {
           <span className="text-xs font-mono text-slate-400">
             {language === "ar" ? `الصفحة ${page}` : `Page ${page}`}
           </span>
+        </div>
+      )}
+
+      {/* Searching loading indicator */}
+      {searching && (
+        <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm mb-6">
+          <Loader2 className="w-8 h-8 animate-spin text-[#1A5D3A] dark:text-emerald-400 mx-auto mb-2" />
+          <p className="text-xs text-slate-500 font-medium">
+            {language === "ar" ? "جاري البحث في الأحاديث النبوية الشريفة..." : "Searching authentic Hadith..."}
+          </p>
+        </div>
+      )}
+
+      {/* Empty State when search returns 0 */}
+      {hasSearched && !searching && searchResults.length === 0 && (
+        <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-gray-100 dark:border-slate-800 p-8 shadow-sm mb-6">
+          <BookOpen className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">
+            {language === "ar" ? `لم يتم العثور على أحاديث تطابق "${searchQuery}"` : `No Hadiths found matching "${searchQuery}"`}
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 max-w-sm mx-auto leading-relaxed">
+            {language === "ar" ? "جرّب البحث بكلمة عامة مثل: نية، صلاة، طهارة، صدقة، أو باللغة الإنجليزية." : "Try searching with keywords like 'prayer', 'intention', 'purity', or 'charity'."}
+          </p>
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              setSearchResults([]);
+              setHasSearched(false);
+            }}
+            className="px-4 py-2 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-semibold hover:bg-emerald-200 transition-colors"
+          >
+            {language === "ar" ? "مسح البحث وعرض الأحاديث" : "Clear Search"}
+          </button>
         </div>
       )}
 

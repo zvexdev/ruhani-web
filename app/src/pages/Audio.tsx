@@ -21,6 +21,7 @@ import { RECITERS_LIST, type ReciterInfo } from "../data/reciters";
 import type { SurahMeta } from "../types";
 import { useAudio } from "../context/AudioContext";
 import { useLanguage } from "../context/LanguageContext";
+import { searchMatch } from "../lib/arabic";
 
 export default function Audio() {
   const { t, isArabic } = useLanguage();
@@ -96,13 +97,15 @@ export default function Audio() {
   const filteredReciters = reciters.filter(
     (r) =>
       r.name.toLowerCase().includes(reciterFilter.toLowerCase()) ||
-      r.name_arabic.includes(reciterFilter)
+      searchMatch(r.name_arabic, reciterFilter)
   );
 
   const filteredSurahs = surahs.filter(
     (s) =>
       s.name_english.toLowerCase().includes(surahFilter.toLowerCase()) ||
-      s.name_arabic.includes(surahFilter) ||
+      s.name_complex?.toLowerCase().includes(surahFilter.toLowerCase()) ||
+      s.name_translation?.toLowerCase().includes(surahFilter.toLowerCase()) ||
+      searchMatch(s.name_arabic, surahFilter) ||
       String(s.number).includes(surahFilter)
   );
 

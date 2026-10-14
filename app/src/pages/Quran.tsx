@@ -14,12 +14,14 @@ import {
   Copy,
   Check,
   FileText,
-  Headphones
+  Headphones,
+  Loader2
 } from "lucide-react";
 import * as api from "../services/api";
 import type { SurahMeta, SurahDetail, SearchResult, Verse } from "../types";
 import { useAudio } from "../context/AudioContext";
 import { useLanguage } from "../context/LanguageContext";
+import { searchMatch } from "../lib/arabic";
 import { RECITERS_LIST, getAyahAudioUrl } from "../data/reciters";
 
 export default function Quran() {
@@ -36,6 +38,8 @@ export default function Quran() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [translation, setTranslation] = useState<"sahih_international" | "pickthall" | "yusuf_ali">("sahih_international");
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [fontSize, setFontSize] = useState<number>(28);
@@ -89,12 +93,54 @@ export default function Quran() {
   }
 
   async function handleSearch() {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      setHasSearched(false);
+      setSearchResults([]);
+      return;
+    }
+    setSearchLoading(true);
+    setHasSearched(true);
     try {
+      // 1. Also search local verses in the currently loaded surah
+      const localMatches: SearchResult[] = (surahDetail?.verses || [])
+        .filter(
+          (v) =>
+            searchMatch(v.arabic, searchQuery) ||
+            v.translations.sahih_international?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            v.translations.pickthall?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            v.translations.yusuf_ali?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .map((v) => ({
+          verse_key: v.verse_key,
+          surah_number: currentSurah,
+          surah_name: currentSurahMeta?.name_english || `Surah ${currentSurah}`,
+          ayah: v.ayah,
+          arabic: v.arabic,
+          transliteration: v.transliteration || "",
+          matched_in: "arabic",
+          translation: v.translations[translation] || v.translations.sahih_international,
+          translation_source: translation,
+        }));
+
+      // 2. Query global search API
       const data = await api.searchQuran(searchQuery);
-      setSearchResults(data.results || []);
+      const apiResults = data.results || [];
+
+      // Deduplicate by verse_key
+      const seen = new Set<string>();
+      const combined: SearchResult[] = [];
+      for (const item of [...localMatches, ...apiResults]) {
+        if (!seen.has(item.verse_key)) {
+          seen.add(item.verse_key);
+          combined.push(item);
+        }
+      }
+      setSearchResults(combined);
     } catch (err) {
       console.error(err);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
     }
   }
 
@@ -142,9 +188,24 @@ export default function Quran() {
   const filteredSurahs = surahs.filter(
     (s) =>
       s.name_english.toLowerCase().includes(surahFilterQuery.toLowerCase()) ||
-      s.name_arabic.includes(surahFilterQuery) ||
+      s.name_complex?.toLowerCase().includes(surahFilterQuery.toLowerCase()) ||
+      s.name_translation?.toLowerCase().includes(surahFilterQuery.toLowerCase()) ||
+      searchMatch(s.name_arabic, surahFilterQuery) ||
       String(s.number).includes(surahFilterQuery)
   );
+
+  const matchingSurahs = searchQuery.trim()
+    ? surahs
+        .filter(
+          (s) =>
+            searchMatch(s.name_arabic, searchQuery) ||
+            s.name_english.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            s.name_complex?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            s.name_translation?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            String(s.number) === searchQuery.trim()
+        )
+        .slice(0, 6)
+    : [];
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-32 sm:pb-28">
@@ -240,53 +301,123 @@ export default function Quran() {
                   type="text"
                   placeholder={t.quranSearchPlaceholder}
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (!e.target.value.trim()) {
+                      setSearchResults([]);
+                      setHasSearched(false);
+                    }
+                  }}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white"
                 />
                 <button
                   onClick={handleSearch}
-                  className="px-5 py-2.5 bg-[#1A5D3A] text-white rounded-xl text-sm font-semibold hover:bg-emerald-800 transition-colors"
+                  disabled={searchLoading}
+                  className="px-5 py-2.5 bg-[#1A5D3A] text-white rounded-xl text-sm font-semibold hover:bg-emerald-800 transition-colors flex items-center gap-2"
                 >
-                  {t.search}
+                  {searchLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : t.search}
                 </button>
                 <button
                   onClick={() => {
                     setShowSearch(false);
                     setSearchResults([]);
                     setSearchQuery("");
+                    setHasSearched(false);
                   }}
                   className="p-2.5 rounded-xl border border-gray-200 dark:border-slate-700 text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* Loading Indicator */}
+              {searchLoading && (
+                <div className="py-8 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                  <span>{isArabic ? "جاري البحث في القرآن الكريم..." : "Searching the Holy Quran..."}</span>
+                </div>
+              )}
+
+              {/* Matching Surahs */}
+              {matchingSurahs.length > 0 && (
+                <div className="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2">
+                    {isArabic ? `سور مطابقة (${matchingSurahs.length})` : `Matching Surahs (${matchingSurahs.length})`}
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {matchingSurahs.map((surah) => (
+                      <button
+                        key={surah.number}
+                        onClick={() => {
+                          setCurrentSurah(surah.number);
+                          setShowSearch(false);
+                        }}
+                        className="flex items-center justify-between p-2.5 rounded-xl border border-emerald-100 dark:border-slate-800 hover:bg-emerald-50/60 dark:hover:bg-slate-800 text-start transition-colors"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                            {surah.name_english}
+                          </p>
+                          <span className="text-[10px] text-slate-400">
+                            #{surah.number} &middot; {surah.verses_count}v
+                          </span>
+                        </div>
+                        <span className="font-['Amiri'] text-emerald-700 dark:text-emerald-400 text-sm font-bold shrink-0">
+                          {surah.name_arabic}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Matching Verses */}
               {searchResults.length > 0 && (
-                <div className="mt-4 max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-slate-800">
-                  {searchResults.map((result) => (
-                    <button
-                      key={result.verse_key}
-                      onClick={() => {
-                        setCurrentSurah(result.surah_number);
-                        setShowSearch(false);
-                        setTimeout(() => {
-                          const el = verseRefs.current[result.verse_key];
-                          el?.scrollIntoView({ behavior: "smooth", block: "center" });
-                        }, 500);
-                      }}
-                      className="w-full text-left p-3 hover:bg-emerald-50/50 dark:hover:bg-slate-800/50 transition-colors rounded-xl"
-                    >
-                      <p className="text-xs text-emerald-700 dark:text-emerald-400 font-bold">
-                        {result.surah_name} ({result.verse_key})
-                      </p>
-                      <p className="font-['Amiri'] text-right text-base text-slate-900 dark:text-slate-100 mt-1">
-                        {result.arabic}
-                      </p>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 line-clamp-2">
-                        {result.translation}
-                      </p>
-                    </button>
-                  ))}
+                <div className="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2">
+                    {isArabic ? `آيات مطابقة (${searchResults.length})` : `Matching Verses (${searchResults.length})`}
+                  </p>
+                  <div className="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-slate-800">
+                    {searchResults.map((result) => (
+                      <button
+                        key={result.verse_key}
+                        onClick={() => {
+                          setCurrentSurah(result.surah_number);
+                          setShowSearch(false);
+                          setTimeout(() => {
+                            const el = verseRefs.current[result.verse_key];
+                            el?.scrollIntoView({ behavior: "smooth", block: "center" });
+                          }, 500);
+                        }}
+                        className="w-full text-left p-3 hover:bg-emerald-50/50 dark:hover:bg-slate-800/50 transition-colors rounded-xl"
+                      >
+                        <p className="text-xs text-emerald-700 dark:text-emerald-400 font-bold">
+                          {result.surah_name} ({result.verse_key})
+                        </p>
+                        <p className="font-['Amiri'] text-right text-base text-slate-900 dark:text-slate-100 mt-1">
+                          {result.arabic}
+                        </p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 line-clamp-2">
+                          {result.translation}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Empty state */}
+              {hasSearched && !searchLoading && matchingSurahs.length === 0 && searchResults.length === 0 && (
+                <div className="text-center py-8 text-slate-400 text-xs">
+                  <p className="font-bold text-slate-700 dark:text-slate-300 text-sm mb-1">
+                    {isArabic ? `لم نجد نتائج مطابقة لـ "${searchQuery}"` : `No matching surahs or verses found for "${searchQuery}"`}
+                  </p>
+                  <p className="text-slate-400 max-w-sm mx-auto leading-relaxed">
+                    {isArabic
+                      ? "جرّب البحث باسم السورة (مثل: يس، الكهف، الفاتحة) أو برقمها (مثل: 36)، أو كلمات بالإنجليزية مثل: mercy, patience, peace."
+                      : "Try searching by Surah name (e.g. 'Yasin', 'Kahf'), Surah number (e.g. '36', '18'), or English keywords (e.g. 'peace', 'patience', 'mercy')."}
+                  </p>
                 </div>
               )}
             </div>
