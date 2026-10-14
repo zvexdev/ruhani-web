@@ -19,9 +19,11 @@ import {
 import * as api from "../services/api";
 import type { SurahMeta, SurahDetail, SearchResult, Verse } from "../types";
 import { useAudio } from "../context/AudioContext";
+import { useLanguage } from "../context/LanguageContext";
 import { RECITERS_LIST, getAyahAudioUrl } from "../data/reciters";
 
 export default function Quran() {
+  const { t, isArabic } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSurah = Number(searchParams.get("surah")) || 1;
 
@@ -158,8 +160,8 @@ export default function Quran() {
             </span>
           </div>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Surah #{currentSurah} &middot; {currentSurahMeta?.verses_count || surahDetail?.total_verses || 0} Verses &middot;{" "}
-            {currentSurahMeta?.revelation_place === "makkah" ? "Meccan" : "Medinan"}
+            {isArabic ? "سورة رقم" : "Surah #"} {currentSurah} &middot; {currentSurahMeta?.verses_count || surahDetail?.total_verses || 0} {t.quranVersesCount} &middot;{" "}
+            {currentSurahMeta?.revelation_place === "makkah" ? t.quranMeccan : t.quranMedinan}
           </p>
         </div>
 
@@ -175,7 +177,7 @@ export default function Quran() {
                   : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
-              Verses
+              {t.quranModeVerses}
             </button>
             <button
               onClick={() => setViewMode("mushaf")}
@@ -185,7 +187,7 @@ export default function Quran() {
                   : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
-              Mushaf
+              {t.quranModeMushaf}
             </button>
           </div>
 
@@ -207,7 +209,7 @@ export default function Quran() {
           <button
             onClick={() => setShowSearch(!showSearch)}
             className="p-2.5 rounded-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-slate-700 dark:text-slate-300"
-            title="Search Quran"
+            title={t.search}
           >
             <Search className="w-4 h-4" />
           </button>
@@ -218,7 +220,7 @@ export default function Quran() {
             className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#1A5D3A] dark:bg-emerald-600 text-white hover:bg-[#13472d] transition-colors text-xs font-semibold"
           >
             <BookOpen className="w-4 h-4" />
-            <span>Surahs ({currentSurah}/114)</span>
+            <span>{t.quranSurahsButton} ({currentSurah}/114)</span>
           </button>
         </div>
       </div>
@@ -236,7 +238,7 @@ export default function Quran() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Search the Quran in Arabic or English..."
+                  placeholder={t.quranSearchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -246,7 +248,7 @@ export default function Quran() {
                   onClick={handleSearch}
                   className="px-5 py-2.5 bg-[#1A5D3A] text-white rounded-xl text-sm font-semibold hover:bg-emerald-800 transition-colors"
                 >
-                  Search
+                  {t.search}
                 </button>
                 <button
                   onClick={() => {
@@ -382,7 +384,7 @@ export default function Quran() {
                     {/* Reciter selector */}
                     <div className="inline-flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-3.5 py-2 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 shadow-sm text-xs">
                       <Headphones className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      <span className="text-slate-400 font-medium hidden sm:inline">Reciter:</span>
+                      <span className="text-slate-400 font-medium hidden sm:inline">{t.quranReciterLabel}</span>
                       <select
                         value={selectedReciter}
                         onChange={(e) => setSelectedReciter(Number(e.target.value))}
@@ -399,6 +401,7 @@ export default function Quran() {
                     {/* Translation picker */}
                     <div className="inline-flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-3.5 py-2 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 shadow-sm text-xs">
                       <Languages className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="text-slate-400 font-medium hidden sm:inline">{t.quranTranslationLabel}</span>
                       <select
                         value={translation}
                         onChange={(e) => setTranslation(e.target.value as any)}
@@ -481,7 +484,7 @@ export default function Quran() {
                             {/* Play Ayah Audio */}
                             <button
                               onClick={() => handlePlayAyah(verse)}
-                              title={isThisAyahPlaying ? "Verse is playing" : "Listen to this verse"}
+                              title={isThisAyahPlaying ? t.playerPause : t.quranPlayVerse}
                               className={`p-2 rounded-xl transition-all ${
                                 isThisAyahPlaying
                                   ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30"
@@ -494,7 +497,7 @@ export default function Quran() {
                             {/* View Tafsir */}
                             <button
                               onClick={() => openTafsir(verse)}
-                              title="Read Tafsir explanation"
+                              title={t.quranTafsirBtn}
                               className="p-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
                             >
                               <FileText className="w-4 h-4" />
@@ -503,7 +506,7 @@ export default function Quran() {
                             {/* Copy Verse */}
                             <button
                               onClick={() => copyVerse(verse)}
-                              title="Copy Arabic and translation"
+                              title={t.quranCopyVerse}
                               className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
                             >
                               {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -512,7 +515,7 @@ export default function Quran() {
                             {/* Bookmark Verse */}
                             <button
                               onClick={() => toggleBookmark(verse.verse_key)}
-                              title={isBookmarked ? "Remove bookmark" : "Bookmark this verse"}
+                              title={t.quranBookmarkVerse}
                               className={`p-2 rounded-xl transition-colors ${
                                 isBookmarked
                                   ? "bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400"
@@ -557,11 +560,11 @@ export default function Quran() {
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-full text-xs font-semibold text-slate-800 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-40"
                 >
                   <ChevronLeft className="w-4 h-4" />
-                  <span>Previous Surah</span>
+                  <span>{t.quranPrevSurah}</span>
                 </button>
 
                 <span className="text-xs font-mono text-slate-400">
-                  Surah {currentSurah} of 114
+                  {isArabic ? "سورة" : "Surah"} {currentSurah} / 114
                 </span>
 
                 <button
@@ -569,7 +572,7 @@ export default function Quran() {
                   disabled={currentSurah >= 114}
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-full text-xs font-semibold text-slate-800 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-40"
                 >
-                  <span>Next Surah</span>
+                  <span>{t.quranNextSurah}</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -596,7 +599,7 @@ export default function Quran() {
                 <div>
                   <h3 className="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
                     <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                    <span>Tafsir — Surah {activeTafsirAyah.verse_key}</span>
+                    <span>{t.quranTafsirTitle} — {isArabic ? "سورة" : "Surah"} {activeTafsirAyah.verse_key}</span>
                   </h3>
                   <p className="text-xs text-slate-400">Tafsir as-Sa'di / Ibn Kathir commentary</p>
                 </div>
@@ -604,7 +607,7 @@ export default function Quran() {
                   onClick={() => setActiveTafsirAyah(null)}
                   className="p-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-400"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
@@ -636,7 +639,7 @@ export default function Quran() {
                   onClick={() => setActiveTafsirAyah(null)}
                   className="px-5 py-2 bg-[#1A5D3A] text-white rounded-full text-xs font-semibold hover:bg-emerald-800 transition-colors"
                 >
-                  Close Tafsir
+                  {t.close}
                 </button>
               </div>
             </motion.div>

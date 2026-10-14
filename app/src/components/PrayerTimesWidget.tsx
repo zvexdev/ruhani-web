@@ -20,8 +20,10 @@ import {
   type CityPreset
 } from "../lib/prayerTimes";
 import { soundEffects } from "../lib/sound";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function PrayerTimesWidget() {
+  const { isArabic, t } = useLanguage();
   const [selectedCity, setSelectedCity] = useState(CITY_PRESETS[0]);
   const [schedule, setSchedule] = useState<PrayerSchedule | null>(null);
   const [now, setNow] = useState(new Date());
@@ -98,7 +100,7 @@ export default function PrayerTimesWidget() {
         <div>
           <div className="flex items-center gap-2 text-emerald-300/80 text-xs font-semibold tracking-wider uppercase mb-1">
             <Clock className="w-3.5 h-3.5" />
-            <span>Islamic Prayer Times</span>
+            <span>{isArabic ? "مواقيت الصلاة الإسلامية" : "Islamic Prayer Times"}</span>
           </div>
           <div className="relative">
             <button
@@ -120,7 +122,7 @@ export default function PrayerTimesWidget() {
                   className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-emerald-800/50 text-emerald-300 text-xs font-medium transition-colors border-b border-emerald-800/40 mb-1"
                 >
                   <Compass className="w-4 h-4" />
-                  {locating ? "Locating..." : "Use My Exact Location (GPS)"}
+                  {locating ? (isArabic ? "جارٍ تحديد الموقع..." : "Locating...") : (isArabic ? "استخدام موقعي الحالي (GPS)" : "Use My Exact Location (GPS)")}
                 </button>
                 <div className="max-h-60 overflow-y-auto space-y-1">
                   {CITY_PRESETS.map((city: CityPreset) => (
@@ -151,7 +153,7 @@ export default function PrayerTimesWidget() {
           <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/10">
             <div>
               <p className="text-[11px] uppercase tracking-wider text-emerald-300 font-medium">
-                Next: <span className="font-bold text-white">{nextPrayer.name}</span>
+                {isArabic ? "الصلاة القادمة:" : "Next:"} <span className="font-bold text-white">{isArabic ? (prayers.find(p => p.key === nextPrayer.name)?.arabic || nextPrayer.name) : nextPrayer.name}</span>
               </p>
               <p className="text-xl md:text-2xl font-mono font-bold text-amber-300">
                 {formatCountdown(nextPrayer.remainingMs)}
@@ -159,7 +161,7 @@ export default function PrayerTimesWidget() {
             </div>
             <button
               onClick={playPreviewChime}
-              title="Preview prayer chime"
+              title={isArabic ? "سماع نغمة الأذان" : "Preview prayer chime"}
               className="p-2.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 transition-colors"
             >
               <Bell className="w-4 h-4" />
@@ -190,7 +192,7 @@ export default function PrayerTimesWidget() {
               </div>
               <div>
                 <p className={`text-xs font-semibold ${isNext ? "text-amber-200" : "text-white/70"}`}>
-                  {prayer.label}
+                  {isArabic ? prayer.arabic : prayer.label}
                 </p>
                 <p className="text-xl font-bold tracking-tight text-white mt-0.5">
                   {prayer.time || "--:--"}
@@ -199,7 +201,7 @@ export default function PrayerTimesWidget() {
               {isNext && (
                 <div className="mt-2 text-[10px] uppercase font-bold text-amber-400 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-                  Upcoming
+                  {t.upcoming}
                 </div>
               )}
             </motion.div>

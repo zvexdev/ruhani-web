@@ -8,22 +8,25 @@ import Zikr from "./pages/Zikr";
 import Names from "./pages/Names";
 import Qibla from "./pages/Qibla";
 import { AudioProvider } from "./context/AudioContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 function App() {
   return (
-    <AudioProvider>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/quran" element={<Quran />} />
-          <Route path="/audio" element={<Audio />} />
-          <Route path="/qibla" element={<Qibla />} />
-          <Route path="/hadith" element={<Hadith />} />
-          <Route path="/zikr" element={<Zikr />} />
-          <Route path="/names" element={<Names />} />
-        </Routes>
-      </Layout>
-    </AudioProvider>
+    <LanguageProvider>
+      <AudioProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/quran" element={<Quran />} />
+            <Route path="/audio" element={<Audio />} />
+            <Route path="/qibla" element={<Qibla />} />
+            <Route path="/hadith" element={<Hadith />} />
+            <Route path="/zikr" element={<Zikr />} />
+            <Route path="/names" element={<Names />} />
+          </Routes>
+        </Layout>
+      </AudioProvider>
+    </LanguageProvider>
   );
 }
 

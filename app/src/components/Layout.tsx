@@ -12,23 +12,16 @@ import {
   Home,
   Sun,
   Moon,
-  Scale
+  Scale,
+  Languages
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import AudioPlayerBar from "./AudioPlayerBar";
-
-const navItems = [
-  { path: "/", label: "Home", icon: Home },
-  { path: "/quran", label: "Quran", icon: BookOpen },
-  { path: "/audio", label: "Listen", icon: Headphones },
-  { path: "/qibla", label: "Qibla", icon: Compass },
-  { path: "/hadith", label: "Hadith", icon: ScrollText },
-  { path: "/zikr", label: "Zikr & Duas", icon: Heart },
-  { path: "/names", label: "99 Names", icon: Sparkles },
-];
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const { isArabic, toggleLanguage, t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDark, setIsDark] = useState(() => {
@@ -36,6 +29,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       (!("ruhani-theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
   });
   const [showLicenseModal, setShowLicenseModal] = useState(false);
+
+  const navItems = [
+    { path: "/", label: t.navHome, icon: Home },
+    { path: "/quran", label: t.navQuran, icon: BookOpen },
+    { path: "/audio", label: t.navAudio, icon: Headphones },
+    { path: "/qibla", label: t.navQibla, icon: Compass },
+    { path: "/hadith", label: t.navHadith, icon: ScrollText },
+    { path: "/zikr", label: t.navZikr, icon: Heart },
+    { path: "/names", label: t.navNames, icon: Sparkles },
+  ];
 
   useEffect(() => {
     if (isDark) {
@@ -60,31 +63,31 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[#FDFCF7] dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-300">
-      {/* Top Header */}
+      {/* Top Navigation Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           scrolled
-            ? "bg-[#FDFCF7]/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-emerald-900/10 dark:border-emerald-500/10 shadow-sm"
+            ? "bg-[#FDFCF7]/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-emerald-900/10 dark:border-emerald-500/10 shadow-sm"
             : "bg-transparent"
         }`}
       >
         <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo / Sanctuary Brand */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-xl bg-[#1A5D3A] dark:bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-900/20 group-hover:scale-105 transition-transform">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans']">
-                Ruhani
-                <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold tracking-normal">
-                  روحاني
+              <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo']">
+                {t.brandName}
+                <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold tracking-normal font-['Amiri']">
+                  {t.brandTagline}
                 </span>
               </span>
             </div>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-1 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm p-1 rounded-full border border-gray-200/70 dark:border-slate-800 shadow-sm">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
@@ -116,11 +119,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           {/* Right Header Actions */}
           <div className="flex items-center gap-2">
-            {/* Theme Toggle */}
+            {/* Language Switcher (Arabic default, English toggle) */}
+            <button
+              onClick={toggleLanguage}
+              title={isArabic ? "Switch to English" : "التبديل إلى العربية"}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 bg-white/80 dark:bg-slate-900/80 hover:bg-emerald-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors text-xs font-bold shadow-sm"
+            >
+              <Languages className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>{isArabic ? "EN" : "عربي"}</span>
+            </button>
+
+            {/* Dark / Light Theme Toggle */}
             <button
               onClick={() => setIsDark(!isDark)}
               title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              className="p-2 rounded-full border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+              className="p-2 rounded-full border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm"
             >
               {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
             </button>
@@ -135,7 +148,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        {/* Mobile Nav Drawer */}
+        {/* Mobile Navigation Drawer */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
@@ -174,59 +187,70 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Floating Audio Player */}
       <AudioPlayerBar />
 
-      {/* Enhanced Footer */}
-      <footer className="mt-auto border-t border-emerald-950/10 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40 backdrop-blur-md pt-12 pb-16 px-4 md:px-8">
+      {/* Footer with UmmahAPI & Attribution */}
+      <footer className="mt-auto border-t border-emerald-950/10 dark:border-slate-800 bg-white/60 dark:bg-slate-900/50 backdrop-blur-md pt-12 pb-16 px-4 md:px-8">
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
-            {/* Col 1: Brand & Spiritual Salutation */}
+            {/* Col 1: Brand & Salutation */}
             <div className="md:col-span-2 space-y-3">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-[#1A5D3A] dark:bg-emerald-600 flex items-center justify-center text-white">
                   <BookOpen className="w-3.5 h-3.5" />
                 </div>
-                <span className="font-bold text-lg text-slate-900 dark:text-white">Ruhani</span>
+                <span className="font-bold text-lg text-slate-900 dark:text-white">{t.brandName}</span>
                 <span className="font-['Amiri'] text-emerald-700 dark:text-emerald-400 font-bold text-base">روحاني</span>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md leading-relaxed">
-                An elegant, open-source Islamic sanctuary for reading the Holy Quran, streaming tranquil recitations, checking verified prayer times, finding the Qibla, and remembering Allah through daily Adhkar and Asma ul Husna.
+              <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md leading-relaxed">
+                {t.footerDescription}
               </p>
-              <p className="font-['Amiri'] text-emerald-800 dark:text-emerald-300 text-lg">
-                بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ — وَذَكِّرْ فَإِنَّ الذِّكْرَىٰ تَنفَعُ الْمُؤْمِنِينَ
+              <p className="font-['Amiri'] text-emerald-800 dark:text-emerald-300 text-base md:text-lg">
+                {t.footerBismillah}
               </p>
             </div>
 
             {/* Col 2: Navigation Links */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-                Sanctuary Sections
+                {t.footerSanctuarySections}
               </p>
               <ul className="space-y-2 text-sm">
-                <li><Link to="/quran" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Holy Quran Reader</Link></li>
-                <li><Link to="/audio" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Audio Recitations</Link></li>
-                <li><Link to="/qibla" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Qibla Compass</Link></li>
-                <li><Link to="/hadith" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Hadith Collections</Link></li>
-                <li><Link to="/zikr" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Digital Tasbeeh & Duas</Link></li>
-                <li><Link to="/names" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">99 Names of Allah</Link></li>
+                <li><Link to="/quran" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t.navQuran}</Link></li>
+                <li><Link to="/audio" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t.navAudio}</Link></li>
+                <li><Link to="/qibla" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t.navQibla}</Link></li>
+                <li><Link to="/hadith" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t.navHadith}</Link></li>
+                <li><Link to="/zikr" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t.navZikr}</Link></li>
+                <li><Link to="/names" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t.navNames}</Link></li>
               </ul>
             </div>
 
-            {/* Col 3: Dedication & Open Source */}
+            {/* Col 3: API Attribution & Open Source License */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-                Project & License
+                {t.footerProjectAndLicense}
               </p>
               <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
                 <button
                   onClick={() => setShowLicenseModal(true)}
-                  className="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   <Scale className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>MIT Open Source License</span>
+                  <span>{t.footerMitLicense}</span>
                 </button>
-                <div className="text-xs text-slate-500 space-y-1">
-                  <p>Free to use, inspect, study, and share for all Muslims and seekers worldwide.</p>
-                  <p>Powered by UmmahAPI & astronomical calculations.</p>
+
+                {/* Explicit UmmahAPI Badge */}
+                <div className="p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-500/20 text-xs text-emerald-900 dark:text-emerald-200 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-[#1A5D3A] dark:text-emerald-300">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>UmmahAPI</span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
+                    {t.footerApiAttribution}
+                  </p>
                 </div>
+
+                <p className="text-[11px] text-slate-400">
+                  {t.footerFreeToUse}
+                </p>
               </div>
             </div>
           </div>
@@ -234,12 +258,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Bottom Bar with "Made by zvex with love" */}
           <div className="pt-8 border-t border-gray-200/60 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
             <p className="flex items-center gap-1.5 font-medium">
-              Made by <span className="text-[#1A5D3A] dark:text-emerald-400 font-bold">zvex</span> with{" "}
-              <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" /> for the Ummah
+              {t.footerMadeBy} <span className="text-[#1A5D3A] dark:text-emerald-400 font-bold">zvex</span> {t.footerForUmmah}{" "}
+              <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" />
             </p>
 
             <p>
-              &copy; {new Date().getFullYear()} Ruhani. All spiritual rewards dedicated to seeking the pleasure of Allah.
+              &copy; {new Date().getFullYear()} {t.brandName}. {t.footerCopyright}
             </p>
           </div>
         </div>
@@ -298,7 +322,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   onClick={() => setShowLicenseModal(false)}
                   className="px-5 py-2 bg-[#1A5D3A] text-white rounded-full text-xs font-semibold hover:bg-emerald-700 transition-colors"
                 >
-                  Done
+                  {t.done}
                 </button>
               </div>
             </motion.div>

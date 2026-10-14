@@ -1,17 +1,20 @@
 import { motion } from "framer-motion";
 import { BookOpen, MapPin, Shield } from "lucide-react";
 import QiblaCompass from "../components/QiblaCompass";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Qibla() {
+  const { t } = useLanguage();
+
   return (
     <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-24">
       {/* Page Header */}
       <div className="py-6 md:py-8 text-center max-w-2xl mx-auto">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tight">
-          Qibla Direction
+          {t.qiblaTitle}
         </h1>
         <p className="text-base text-gray-500 dark:text-gray-400 mt-2">
-          Find the exact direction of the Holy Kaaba in Makkah from anywhere in the world.
+          {t.qiblaSubtitle}
         </p>
       </div>
 

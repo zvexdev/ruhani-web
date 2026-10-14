@@ -11,6 +11,7 @@ import {
   Music
 } from "lucide-react";
 import { useAudio } from "../context/AudioContext";
+import { useLanguage } from "../context/LanguageContext";
 
 function formatSeconds(secs: number) {
   if (isNaN(secs) || secs < 0) return "0:00";
@@ -22,6 +23,7 @@ function formatSeconds(secs: number) {
 const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5];
 
 export default function AudioPlayerBar() {
+  const { t, language } = useLanguage();
   const {
     currentTrack,
     isPlaying,
@@ -44,6 +46,8 @@ export default function AudioPlayerBar() {
     const nextIndex = (currentIndex + 1) % SPEED_OPTIONS.length;
     setPlaybackRate(SPEED_OPTIONS[nextIndex]);
   };
+
+  const defaultReciterName = language === "ar" ? "الشيخ ياسر الدوسري" : "Sheikh Yasser Al-Dosari";
 
   return (
     <AnimatePresence>
@@ -74,7 +78,7 @@ export default function AudioPlayerBar() {
                   )}
                 </div>
                 <p className="text-[11px] text-emerald-200/70 truncate">
-                  {currentTrack.subtitle || "Sheikh Yasser Al-Dosari"}
+                  {currentTrack.subtitle || defaultReciterName}
                 </p>
               </div>
             </div>
@@ -83,7 +87,7 @@ export default function AudioPlayerBar() {
             <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={() => skipSeconds(-10)}
-                title="Rewind 10 seconds"
+                title={t.playerSkipBack}
                 className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -91,6 +95,7 @@ export default function AudioPlayerBar() {
 
               <button
                 onClick={togglePlay}
+                title={isPlaying ? t.playerPause : t.playerPlay}
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 text-slate-950 flex items-center justify-center shadow-lg shadow-amber-400/25 active:scale-95 transition-transform"
               >
                 {isPlaying ? (
@@ -102,7 +107,7 @@ export default function AudioPlayerBar() {
 
               <button
                 onClick={() => skipSeconds(10)}
-                title="Forward 10 seconds"
+                title={t.playerSkipForward}
                 className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <RotateCw className="w-4 h-4" />
@@ -114,7 +119,7 @@ export default function AudioPlayerBar() {
               {/* Speed rate toggle */}
               <button
                 onClick={cycleSpeed}
-                title="Playback Speed"
+                title={language === "ar" ? "سرعة التلاوة" : "Playback Speed"}
                 className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-mono font-bold text-amber-300 transition-colors"
               >
                 <Gauge className="w-3 h-3 hidden sm:inline" />
@@ -144,7 +149,7 @@ export default function AudioPlayerBar() {
               <button
                 onClick={stop}
                 className="p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
-                title="Close player"
+                title={t.close}
               >
                 <X className="w-4 h-4" />
               </button>

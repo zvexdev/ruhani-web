@@ -20,8 +20,10 @@ import * as api from "../services/api";
 import { RECITERS_LIST, type ReciterInfo } from "../data/reciters";
 import type { SurahMeta } from "../types";
 import { useAudio } from "../context/AudioContext";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Audio() {
+  const { t, isArabic } = useLanguage();
   const [searchParams] = useSearchParams();
   const initialSurah = Number(searchParams.get("surah")) || 1;
 
@@ -116,7 +118,7 @@ export default function Audio() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-[#1A5D3A] dark:text-emerald-400" />
-          <p className="text-xs text-slate-400">Loading audio library...</p>
+          <p className="text-xs text-slate-400">{t.loading}</p>
         </div>
       </div>
     );
@@ -128,13 +130,13 @@ export default function Audio() {
       <div className="py-6 md:py-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/70 dark:bg-emerald-950/70 text-[#1A5D3A] dark:text-emerald-300 text-xs font-semibold mb-3 border border-emerald-200 dark:border-emerald-800/40">
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span>Default Reciter: Sheikh Yasser Al-Dosari</span>
+          <span>{t.audioDefaultReciterBadge}</span>
         </div>
         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Listen to the Quran
+          {t.audioTitle}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Stream heart-touching, high-definition recitations from 15 world-renowned Qaris
+          {t.audioSubtitle}
         </p>
       </div>
 
@@ -157,20 +159,20 @@ export default function Audio() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] sm:text-[11px] uppercase font-bold tracking-widest text-emerald-300">
-                    Now Streaming
+                    {t.audioNowStreaming}
                   </span>
                   {isPlaying && (
                     <span className="flex items-center gap-1 text-[10px] text-amber-300 font-bold bg-amber-400/20 px-2 py-0.5 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-                      Live
+                      {t.live}
                     </span>
                   )}
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-white truncate mt-1">
-                  Surah {currentSurahMeta?.name_english || "Al-Fatihah"}
+                  {isArabic ? `سورة ${currentSurahMeta?.name_arabic || "الفاتحة"}` : `Surah ${currentSurahMeta?.name_english || "Al-Fatihah"}`}
                 </h3>
                 <p className="text-xs sm:text-sm text-emerald-200/80 truncate">
-                  {currentReciter?.name || "Yasser Al-Dosari"} &middot;{" "}
+                  {isArabic ? currentReciter?.name_arabic : currentReciter?.name} &middot;{" "}
                   <span className="font-['Amiri'] text-amber-300">{currentSurahMeta?.name_arabic}</span>
                 </p>
               </div>
@@ -281,13 +283,13 @@ export default function Audio() {
                 </div>
                 <div className="text-left">
                   <span className="text-[11px] text-slate-400 block font-semibold uppercase tracking-wider">
-                    Sheikh / Reciter
+                    {t.audioSelectReciter}
                   </span>
                   <span className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                    {currentReciter?.name}
+                    {isArabic ? currentReciter?.name_arabic : currentReciter?.name}
                     {currentReciter?.id === 1 && (
                       <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">
-                        Default
+                        {t.defaultBadge}
                       </span>
                     )}
                   </span>
@@ -305,7 +307,7 @@ export default function Audio() {
                   <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="Search 15 Sheikhs..."
+                    placeholder={t.audioSearchReciters}
                     value={reciterFilter}
                     onChange={(e) => setReciterFilter(e.target.value)}
                     className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
@@ -361,10 +363,10 @@ export default function Audio() {
                 </div>
                 <div className="text-left">
                   <span className="text-[11px] text-slate-400 block font-semibold uppercase tracking-wider">
-                    Chapter / Surah
+                    {t.audioSelectSurah}
                   </span>
                   <span className="text-sm font-bold text-slate-900 dark:text-white">
-                    {selectedSurah}. {currentSurahMeta?.name_english}
+                    {selectedSurah}. {isArabic ? currentSurahMeta?.name_arabic : currentSurahMeta?.name_english}
                   </span>
                 </div>
               </div>
@@ -379,7 +381,7 @@ export default function Audio() {
                   <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="Filter 114 Surahs..."
+                    placeholder={t.audioSearchSurahs}
                     value={surahFilter}
                     onChange={(e) => setSurahFilter(e.target.value)}
                     className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"

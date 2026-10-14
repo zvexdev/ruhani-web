@@ -1,163 +1,217 @@
-# Ruhani (روحاني) — Modern Islamic Web Sanctuary
+# Ruhani (روحاني) — Islamic Web Sanctuary
 
-An elegant, fast, and feature-rich Islamic web application crafted with spiritual mindfulness and modern web technologies. Designed to provide a serene sanctuary for Muslims and seekers worldwide to read the Holy Quran, listen to renowned reciters, keep track of daily prayers, find the Qibla, practice daily Adhkar, and reflect on the 99 Names of Allah.
+<div align="center">
 
-Made with love by **zvex** for the Ummah.
+![Ruhani Banner](https://img.shields.io/badge/Language-Arabic%20(Default)%20%2F%20English-10b981?style=for-the-badge)
+![Default Reciter](https://img.shields.io/badge/Default%20Qari-Sheikh%20Yasser%20Al--Dosari-amber?style=for-the-badge)
+![Powered by](https://img.shields.io/badge/API-UmmahAPI-059669?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)
 
----
+<br/>
 
-## ✨ Features
+**بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ**
+<br/>
+*«وَذَكِّرْ فَإِنَّ الذِّكْرَىٰ تَنفَعُ الْمُؤْمِنِينَ»*
 
-### 📖 Holy Quran Reader
-- **114 Surahs Directory**: Browse chapters by revelation place (Makkah / Madinah) and verse count.
-- **Two Reading Modes**:
-  - **Verse by Verse**: Detailed view with Arabic text, transliteration, English translations (Sahih International, Pickthall, Yusuf Ali), one-click audio playback, and instant copy.
-  - **Mushaf Reading Mode**: Continuous, authentic Quranic script with ayah end-ornaments (`۝`) for distraction-free reading.
-- **Font Size Slider**: Seamlessly scale Arabic calligraphy between 20px and 44px for reading comfort.
-- **Integrated Tafsir Drawer**: In-depth explanations and commentary (Tafsir as-Sa'di / Ibn Kathir) for any ayah with a single click.
-- **Instant Quran Search**: Search any keyword across the entire Quran in Arabic or English with direct jump navigation.
-- **Bookmarks**: Save verses to your personal bookmarks stored locally in your browser.
+<br/>
 
-### ⏱️ Live Prayer Times & Athan
-- **High-Precision Astronomical Calculations**: Mathematically accurate prayer timings for Fajr, Sunrise, Dhuhr, Asr, Maghrib, and Isha.
-- **Real-Time Countdown**: Live countdown clock ticking down to the exact second of the next upcoming prayer.
-- **Global City Presets & GPS**: Instant presets for Makkah, Madinah, Cairo, Jerusalem, Istanbul, London, New York, Kuala Lumpur, and one-click GPS geolocation detection.
-- **Synthesized Athan Bell**: Gentle spiritual prayer chime synthesized via the Web Audio API without needing external audio files.
+An elegant, high-performance Islamic web application crafted with spiritual serenity, precision typography, and modern web architecture. Designed to provide a peaceful sanctuary for Muslims and seekers worldwide to read the Holy Quran, stream heart-stirring recitations from 15 esteemed Qaris, calculate exact astronomical prayer times, locate the Qibla, practice daily Adhkar with a tactile digital Tasbeeh, and reflect upon the 99 Beautiful Names of Allah.
 
-### 🧭 Interactive Qibla Finder
-- **Kaaba Direction Needle**: Real-time compass calculation pointing accurately to the Holy Kaaba in Makkah (21.4225° N, 39.8262° E).
-- **Great-Circle Distance**: Displays exact distance to Makkah in kilometers.
-- **Mobile Gyroscope Support**: Automatically aligns with your phone's magnetometer on mobile devices for true interactive pointing.
+<br/>
 
-### 🎧 Global Audio Recitations & Floating Player
-- **Renowned Qaris**: Stream recitations from Sheikh Mishary Rashid Alafasy, Abdul Rahman Al-Sudais, Abdul Basit Abdul Samad, Maher Al-Muaiqly, Saad Al-Ghamdi, and more.
-- **Persistent Floating Player**: A sleek bottom player bar that stays active as you navigate across pages, with play/pause, seek scrubber, volume control, and active waveforms.
-- **Verse Recitations**: Listen to individual ayahs or full chapter recitations on demand.
+**Made with love by [zvex](https://github.com/zvexdev) for the Muslim Ummah.**
 
-### 📿 Digital Tasbeeh & Verified Adhkar
-- **Tactile Wooden Bead Clicks**: Web Audio API generates natural, satisfying tactile click feedback on each tap.
-- **Haptic Vibration**: Physical vibration feedback on supported mobile devices.
-- **Custom Goals & Rounds**: Quick presets for 33, 99, 100, or custom counts, with round tracking and completion chimes.
-- **Verified Adhkar Checklist**: Authentic supplications from the Sunnah for Morning, Evening, After Salah, and Before Sleep with Arabic text, transliteration, translation, repeat counts, and prophetic virtues.
-- **Daily Progress Bar**: Track your completed daily remembrance with saved browser state.
-
-### ✨ 99 Names of Allah (Asma ul Husna)
-- **Complete Verified Dataset**: All 99 divine names with verified Arabic calligraphy, English translations, and spiritual meanings.
-- **Audio Pronunciation**: Built-in speech synthesis pronunciation for each divine name.
-- **Memorization Tracker**: Track which names you have memorized with a golden progress bar and celebratory chime.
-- **Filter & Search**: Search names by English, Arabic, meaning, or number.
-
-### 📜 Hadith Collections
-- **Major Hadith Books**: Sahih al-Bukhari, Sahih Muslim, Jami' at-Tirmidhi, Sunan Abi Dawud, Sunan an-Nasa'i, Sunan Ibn Majah, and the 40 Hadith of Imam an-Nawawi.
-- **Searchable & Filterable**: Search authentic narrations by topic or browse by volume and page.
-- **Bookmark & Copy**: Save your favorite hadiths and copy them with full attribution and grading.
-
-### 🌙 Themes & Design System
-- **Midnight Oasis (Dark Mode)**: Deep spiritual midnight slate and radiant emerald accents.
-- **Ivory Daylight (Light Mode)**: Calming warm paper tones inspired by classic manuscripts.
-- **Arabesque Aesthetics**: Subtle geometry patterns, celestial gold highlights, and typography powered by Google Fonts (*Plus Jakarta Sans*, *Amiri*, and *Scheherazade New*).
-- **100% Offline-First Architecture**: Integrated fallback datasets for all 114 Surahs, 99 Names, authentic Adhkar, and mathematical prayer calculations ensure zero broken screens even without an internet connection.
+</div>
 
 ---
 
-## 🛠️ Tech Stack
+## 🌟 Key Highlights
 
-- **Framework**: [React 19](https://react.dev/) + [Vite](https://vite.dev/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict type checking, zero `any` shortcuts)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + CSS Variables
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Audio**: Web Audio API (synthetic sound design) + EveryAyah / Quranicaudio CDN
-- **Routing**: React Router DOM v7
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js (v18 or higher recommended)
-- npm or yarn or pnpm
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/zvexdev/ruhani-web.git
-cd ruhani-web
-```
-
-2. Install dependencies:
-```bash
-cd app
-npm install
-```
-
-3. Start the local development server:
-```bash
-npm run dev
-```
-
-4. Open your browser at `http://localhost:5173`.
-
-### Production Build
-
-To build the optimized static bundle:
-```bash
-npm run build
-```
-
-To preview the production build locally:
-```bash
-npm run preview
-```
+- 🌐 **Arabic by Default with Instant English Toggle**: Native Right-to-Left (RTL) layout with authentic Arabic typography (`Cairo`, `Amiri`, `Scheherazade New`). Instant toggle to English with Left-to-Right (LTR) typography (`Plus Jakarta Sans`), persisted seamlessly in local storage.
+- 📡 **Powered by UmmahAPI**: Backed by the official [UmmahAPI](https://ummahapi.com) for Islamic data, Quranic verses, prayer computations, and Hadith collections, paired with built-in offline fallbacks.
+- 🎙️ **15 World-Class Qaris (Sheikh Yasser Al-Dosari by Default)**: High-definition streaming audio featuring Sheikh Yasser Al-Dosari as the sanctuary's default voice, along with 14 other world-renowned reciters.
+- 📱 **Fluid Multi-Device Responsive Design**: Handcrafted for seamless usability across all screens — smartphones, tablets, laptops, and ultra-wide desktop monitors.
+- 📴 **100% Offline-Resilient**: Complete offline datasets for all 114 Surahs, 99 Names of Allah, authentic Adhkar, and mathematical solar algorithms so you never see a broken screen.
+- 🎨 **Serene Design System**: Supports both Midnight Oasis (Dark Mode) and Ivory Daylight (Light Mode) with subtle arabesque accents.
 
 ---
 
-## 📁 Project Architecture
+## 📖 Feature Tour
+
+### 1. 📖 The Holy Quran (`/quran`)
+- **Dual Reading Modes**:
+  - **Mushaf Mode**: Continuous, authentic page reading format adorned with classic ayah end ornaments (`۝`).
+  - **Verses Mode**: Detailed ayah-by-ayah breakdown featuring Arabic text, phonetic transliteration, multiple English translations (Sahih International, Pickthall, Yusuf Ali), one-click verse audio playback, and instant clipboard copy.
+- **Dynamic Calligraphy Scaler**: Interactive slider to adjust Arabic font size from 20px to 44px for reading comfort.
+- **Tafsir Drawer**: Instant access to verified interpretations (Tafsir as-Sa'di and Ibn Kathir) directly alongside any verse.
+- **Instant Search**: Search the entire Quran in Arabic or English with instant match highlighting and navigation.
+- **114 Surahs Directory**: Categorized by place of revelation (Makkah / Madinah) and ayah count.
+
+### 2. 🎧 Quran Audio Streamer (`/audio`)
+- **Default Reciter**: **Sheikh Yasser Al-Dosari** (إمام الحرم المكي الشريف) — renowned for soulful, emotive, and melodious recitation.
+- **15 Distinguished Qaris**:
+  1. **Sheikh Yasser Al-Dosari** *(Default)*
+  2. **Sheikh Mishary Rashid Alafasy**
+  3. **Sheikh Abdul Rahman Al-Sudais**
+  4. **Sheikh Saud Al-Shuraim**
+  5. **Sheikh Maher Al-Muaiqly**
+  6. **Sheikh Abdul Basit Abdul Samad** (Murattal)
+  7. **Sheikh Mahmoud Khalil Al-Husary**
+  8. **Sheikh Mohamed Siddiq Al-Minshawi**
+  9. **Sheikh Saad Al-Ghamdi**
+  10. **Sheikh Abu Bakr Al-Shatri**
+  11. **Sheikh Nasser Al-Qatami**
+  12. **Sheikh Ali Al-Huthaify**
+  13. **Sheikh Abdullah Basfar**
+  14. **Sheikh Ahmad Al-Ajmy**
+  15. **Sheikh Salah Al-Budair**
+- **Persistent Bottom Player**: Global playback bar with continuous listening across all pages, 10s skip controls, playback speed selector (0.75x to 1.5x), and volume control.
+
+### 3. ⏱️ Astronomical Prayer Times & Live Countdown
+- **Solar Calculations**: Rigorous astronomical algorithms computing exact prayer times for Fajr, Sunrise, Dhuhr, Asr, Maghrib, and Isha.
+- **Live Countdown**: Real-time ticker counting down to the exact second of the upcoming prayer.
+- **GPS & Worldwide Presets**: Instant one-click geolocation via browser GPS, plus instant presets for major Islamic hubs (Makkah, Madinah, Cairo, Jerusalem, Istanbul, London, New York, Kuala Lumpur).
+- **Synthesized Athan Bell**: Gentle spiritual chime synthesized using the Web Audio API without requiring bulky external audio downloads.
+
+### 4. 🧭 Interactive Qibla Compass (`/qibla`)
+- **Kaaba Pointer**: Great-circle navigation targeting the Holy Kaaba in Makkah (21.4225° N, 39.8262° E).
+- **Distance Calculation**: Exact distance to Makkah in kilometers.
+- **Device Orientation API**: Automatically detects device heading on mobile devices with compass sensors.
+
+### 5. 📿 Digital Tasbeeh & Authentic Adhkar (`/zikr`)
+- **Tactile Bead Sound Design**: Web Audio API generates realistic wooden bead click acoustics on every tap.
+- **Haptic Feedback**: Physical tactile vibration on mobile devices.
+- **Target Counter**: Presets for 33, 99, 100, or custom goals with completed round tracking and celebration chimes.
+- **Prophetic Adhkar**: Authentic supplications from Hisn al-Muslim for Morning, Evening, After Salah, and Before Sleep, complete with repeat counters, translations, and prophetic virtues.
+
+### 6. ✨ 99 Names of Allah (`/names`)
+- **Complete Dataset**: All 99 Asma ul Husna with verified Arabic calligraphy, transliteration, English meaning, and spiritual explanation.
+- **Audio Pronunciation**: Speech synthesis pronunciation for each divine name.
+- **Memorization Tracker**: Golden progress bar tracking memorized names, saved locally.
+
+### 7. 📜 Hadith Collections (`/hadith`)
+- **Major Compilations**: Sahih al-Bukhari, Sahih Muslim, Jami' at-Tirmidhi, Sunan Abi Dawud, Sunan an-Nasa'i, Sunan Ibn Majah, and 40 Hadith Nawawi.
+- **Search & Filter**: Keyword search across thousands of authentic narrations.
+- **Attribution & Grading**: Displays narrator chains, book volume, hadith number, and authenticity grade.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| **Frontend Framework** | React 19 + TypeScript |
+| **Build Tool & Bundler** | Vite 7 |
+| **Styling & Design** | Tailwind CSS + CSS Variables |
+| **Animation Library** | Framer Motion |
+| **Icons** | Lucide React |
+| **Audio Engine** | Web Audio API (Synthetic Sound Engine) + EveryAyah CDN |
+| **Data API** | [UmmahAPI](https://ummahapi.com) |
+| **Routing** | React Router DOM v7 |
+| **Typography** | Google Fonts (*Cairo*, *Amiri*, *Plus Jakarta Sans*, *Inter*) |
+
+---
+
+## 📂 Repository Structure
 
 ```
 ruhani-web/
 ├── app/
 │   ├── src/
-│   │   ├── components/       # Reusable UI & Islamic widgets
-│   │   │   ├── Layout.tsx    # Header, navigation, theme toggle, footer
-│   │   │   ├── AudioPlayerBar.tsx # Persistent audio player
-│   │   │   ├── PrayerTimesWidget.tsx # Live countdown & prayer card
-│   │   │   └── QiblaCompass.tsx # Interactive compass dial & Kaaba pointer
+│   │   ├── components/            # UI components and interactive widgets
+│   │   │   ├── Layout.tsx         # Header, footer, language switcher, mobile drawer
+│   │   │   ├── AudioPlayerBar.tsx # Global audio player bar
+│   │   │   ├── PrayerTimesWidget.tsx # Astronomical prayer calculations widget
+│   │   │   └── QiblaCompass.tsx   # Interactive Qibla compass dial
 │   │   ├── context/
-│   │   │   └── AudioContext.tsx # Global audio state and player controls
-│   │   ├── data/             # Offline datasets
-│   │   │   ├── surahs.ts     # Complete 114 Surahs list
-│   │   │   ├── namesOfAllah.ts # All 99 Names of Allah
-│   │   │   ├── adhkar.ts     # Authentic Morning/Evening/Prayer Adhkar
-│   │   │   └── hadiths.ts    # Curated canonical Hadith collection
-│   │   ├── lib/              # Core utility modules
-│   │   │   ├── sound.ts      # Web Audio API synthesizer for clicks & chimes
-│   │   │   └── prayerTimes.ts # Astronomical solar equations & Qibla math
-│   │   ├── pages/            # Application routes
-│   │   │   ├── Home.tsx      # Landing sanctuary, daily ayah & hadith
-│   │   │   ├── Quran.tsx     # Quran reader (Mushaf + Verse mode, Tafsir)
-│   │   │   ├── Audio.tsx     # Full Surah audio streamer
-│   │   │   ├── Qibla.tsx     # Dedicated Qibla finder page
-│   │   │   ├── Hadith.tsx    # Hadith browser
-│   │   │   ├── Zikr.tsx      # Digital Tasbeeh & Adhkar checklist
-│   │   │   └── Names.tsx     # 99 Names of Allah & memorization journey
+│   │   │   ├── AudioContext.tsx   # Global audio streaming state
+│   │   │   ├── LanguageContext.tsx# Bilingual i18n context (Arabic / English)
+│   │   │   └── ThemeContext.tsx   # Dark / Light theme switcher
+│   │   ├── data/
+│   │   │   ├── translations.ts    # Comprehensive Arabic and English dictionary
+│   │   │   ├── surahs.ts          # 114 Quran Surahs metadata
+│   │   │   ├── reciters.ts        # 15 Qaris audio streams (Sheikh Yasser Al-Dosari default)
+│   │   │   ├── namesOfAllah.ts    # 99 Names of Allah dataset
+│   │   │   ├── adhkar.ts          # Verified morning/evening Adhkar
+│   │   │   └── hadiths.ts         # Canonical Hadith collections
+│   │   ├── lib/
+│   │   │   ├── prayerTimes.ts     # Solar position equations and prayer times math
+│   │   │   └── sound.ts           # Web Audio API procedural sound synthesizer
+│   │   ├── pages/
+│   │   │   ├── Home.tsx           # Home sanctuary landing page
+│   │   │   ├── Quran.tsx          # Holy Quran reader (Mushaf and Verses mode)
+│   │   │   ├── Audio.tsx          # Dedicated audio recitation player
+│   │   │   ├── Qibla.tsx          # Qibla finder page
+│   │   │   ├── Zikr.tsx           # Digital Tasbeeh & Adhkar
+│   │   │   ├── Names.tsx          # 99 Names of Allah page
+│   │   │   └── Hadith.tsx         # Hadith browser
 │   │   ├── services/
-│   │   │   └── api.ts        # Resilient API client with offline fallbacks
+│   │   │   └── api.ts             # UmmahAPI client with fallback handling
 │   │   └── types/
-│   │       └── index.ts      # Strict TypeScript interfaces
+│   │       └── index.ts           # TypeScript type definitions
+│   ├── index.html
 │   ├── package.json
 │   ├── tailwind.config.js
+│   ├── tsconfig.json
 │   └── vite.config.ts
-├── LICENSE                   # MIT License
-├── package.json              # Root project scripts
-└── README.md
+├── LICENSE                        # MIT License
+├── package.json                   # Root workspace scripts
+└── README.md                      # Project documentation
 ```
 
 ---
 
-## 📜 License & Dedication
+## 🚀 Quick Start Guide
 
-This project is open-source under the [MIT License](LICENSE).
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18.0.0 or higher recommended)
+- `npm`, `pnpm`, or `yarn`
 
-Made by **zvex** with love for the worldwide Muslim Ummah. May Allah accept this work and make it a source of benefit and continuous charity (*Sadaqah Jariyah*).
+### Setup Instructions
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/zvexdev/ruhani-web.git
+   cd ruhani-web
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   cd app
+   npm install
+   ```
+
+3. **Start development server:**
+   ```bash
+   npm run dev
+   ```
+   Open your browser at `http://localhost:3000` (or `http://localhost:5173`).
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
+   The production-ready artifacts will be generated in `app/dist`.
+
+---
+
+## 🌐 API Attribution
+
+All Quranic data, prayer timings, and Hadith references are powered by:
+- **[UmmahAPI](https://ummahapi.com)** — The developer-friendly, open API for Islamic applications.
+- **[EveryAyah](https://everyayah.com)** — High-definition Quranic audio recitations.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🤲 Dedication & Continuous Charity
+
+This project was built by **[zvex](https://github.com/zvexdev)** with love for the entire worldwide Muslim Ummah. All spiritual reward is dedicated solely to seeking the pleasure of Allah (*Subhanahu wa Ta'ala*).
+
+*May Allah accept this effort, make it beneficial to all who use it, and count it as ongoing charity (Sadaqah Jariyah).*

@@ -1,4 +1,4 @@
-// Resilient Islamic Data API Service with local fallbacks
+// Islamic Data API service powered by UmmahAPI (https://ummahapi.com) with offline fallback
 import { SURAHS } from "../data/surahs";
 import { NAMES_OF_ALLAH } from "../data/namesOfAllah";
 import { AUTHENTIC_ADHKAR } from "../data/adhkar";

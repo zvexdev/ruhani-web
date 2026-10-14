@@ -20,8 +20,10 @@ import * as api from "../services/api";
 import type { SurahMeta, Verse, Hadith } from "../types";
 import PrayerTimesWidget from "../components/PrayerTimesWidget";
 import { useAudio } from "../context/AudioContext";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Home() {
+  const { t, isArabic } = useLanguage();
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
   const [dailyVerse, setDailyVerse] = useState<Verse | null>(null);
   const [dailyHadith, setDailyHadith] = useState<Hadith | null>(null);
@@ -61,8 +63,8 @@ export default function Home() {
     if (!dailyVerse) return;
     const audioUrl = dailyVerse.audio?.ayah_audio || "https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/002255.mp3";
     playTrack({
-      title: `Verse of the Day (${dailyVerse.verse_key})`,
-      subtitle: "Sheikh Yasser Al-Dosari",
+      title: `${t.homeVerseOfDay} (${dailyVerse.verse_key})`,
+      subtitle: isArabic ? "الشيخ ياسر الدوسري" : "Sheikh Yasser Al-Dosari",
       arabicTitle: "آية اليوم",
       src: audioUrl,
     });
@@ -71,7 +73,7 @@ export default function Home() {
   const handlePlayRahman = () => {
     playTrack({
       title: "Surah Ar-Rahman (55)",
-      subtitle: "Sheikh Yasser Al-Dosari",
+      subtitle: isArabic ? "الشيخ ياسر الدوسري" : "Sheikh Yasser Al-Dosari",
       arabicTitle: "سورة الرحمن",
       src: "https://server11.mp3quran.net/yasser/055.mp3",
     });
@@ -95,7 +97,7 @@ export default function Home() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-3 border-[#1A5D3A] dark:border-emerald-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs text-gray-400 font-medium tracking-wide">Loading sanctuary...</p>
+          <p className="text-xs text-slate-400 font-medium tracking-wide">{t.loading}</p>
         </div>
       </div>
     );
@@ -106,7 +108,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-6 md:pt-12">
         <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-center">
-          {/* Left Text */}
+          {/* Hero Left Content */}
           <motion.div
             className="md:col-span-7"
             initial={{ opacity: 0, y: 25 }}
@@ -115,15 +117,16 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/70 dark:bg-emerald-950/70 text-[#1A5D3A] dark:text-emerald-300 text-xs font-semibold mb-4 border border-emerald-200 dark:border-emerald-800/40">
               <Moon className="w-3.5 h-3.5" />
-              <span>{hijriDate || "14 Shawwal 1447 AH"}</span>
+              <span>{hijriDate || (isArabic ? "١٤ شوال ١٤٤٧ هـ" : "14 Shawwal 1447 AH")}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1]">
-              Read, Listen, & Reflect on the <span className="text-[#1A5D3A] dark:text-emerald-400">Divine Word</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.2]">
+              {t.homeHeroTitle1}{" "}
+              <span className="text-[#1A5D3A] dark:text-emerald-400">{t.homeHeroTitleHighlight}</span>
             </h1>
 
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mt-5 max-w-xl leading-relaxed">
-              Experience the tranquility of the Quran with crystal-clear Arabic calligraphy, verified translations, live prayer times, authentic Hadith, and spiritual remembrance.
+              {t.homeHeroSubtitle}
             </p>
 
             <div className="flex flex-wrap items-center gap-3 mt-8">
@@ -132,21 +135,21 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#1A5D3A] dark:bg-emerald-600 text-white rounded-full font-semibold text-sm hover:bg-[#13472d] dark:hover:bg-emerald-500 shadow-md shadow-emerald-900/20 transition-all hover:scale-[1.02] active:scale-95"
               >
                 <BookOpen className="w-4 h-4" />
-                <span>Open Holy Quran</span>
+                <span>{t.homeOpenQuran}</span>
               </Link>
               <Link
                 to="/audio"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-gray-200 dark:border-slate-800 rounded-full font-semibold text-sm hover:bg-gray-50 dark:hover:bg-slate-800 shadow-sm transition-all hover:scale-[1.02] active:scale-95"
               >
                 <Headphones className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Listen to Qaris</span>
+                <span>{t.homeListenQaris}</span>
               </Link>
               <Link
                 to="/qibla"
                 className="inline-flex items-center gap-2 px-5 py-3 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800/40 rounded-full font-semibold text-sm hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors"
               >
                 <Compass className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                <span>Qibla Finder</span>
+                <span>{t.homeQiblaFinder}</span>
               </Link>
             </div>
           </motion.div>
@@ -166,7 +169,7 @@ export default function Home() {
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs uppercase tracking-widest text-amber-300/90 font-bold">
-                      Sacred Words
+                      {isArabic ? "آية محكمة" : "Sacred Words"}
                     </span>
                     <Sparkles className="w-4 h-4 text-amber-300" />
                   </div>
@@ -177,18 +180,18 @@ export default function Home() {
                     &ldquo;Unquestionably, by the remembrance of Allah hearts are assured.&rdquo;
                   </p>
                   <p className="text-xs text-emerald-400 font-semibold mt-2">
-                    Surah Ar-Ra'd (13:28)
+                    {isArabic ? "سورة الرعد (١٣:٢٨)" : "Surah Ar-Ra'd (13:28)"}
                   </p>
                 </div>
 
                 <div className="pt-6 border-t border-white/10 mt-6 flex items-center justify-between">
-                  <span className="text-xs text-slate-400">Stream Featured Recitation</span>
+                  <span className="text-xs text-slate-400">{t.homeFeaturedRecitation}</span>
                   <button
                     onClick={handlePlayRahman}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-400 text-slate-950 font-bold text-xs hover:bg-amber-300 transition-transform active:scale-95 shadow-md shadow-amber-400/20"
                   >
                     {isRahmanPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
-                    <span>{isRahmanPlaying ? "Playing Ar-Rahman" : "Play Surah Ar-Rahman"}</span>
+                    <span>{isRahmanPlaying ? t.homePlayingRahman : t.homePlayRahman}</span>
                   </button>
                 </div>
               </div>
@@ -218,13 +221,13 @@ export default function Home() {
                   <BookOpen className="w-3.5 h-3.5" />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#1A5D3A] dark:text-emerald-400">
-                  Ayah of the Day
+                  {t.homeVerseOfDay}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handlePlayVerseAudio}
-                  title="Recite this ayah"
+                  title={t.homeListenToVerse}
                   className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-700 dark:text-emerald-300 transition-colors"
                 >
                   <Volume2 className="w-4 h-4" />
@@ -236,7 +239,7 @@ export default function Home() {
                       "verse"
                     )
                   }
-                  title="Copy verse"
+                  title={t.copy}
                   className="p-2 rounded-xl bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 text-slate-600 dark:text-slate-300 transition-colors"
                 >
                   {copiedVerse ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -258,13 +261,13 @@ export default function Home() {
 
           <div className="mt-6 pt-4 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between">
             <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
-              Surah {dailyVerse?.verse_key}
+              {dailyVerse?.verse_key}
             </span>
             <Link
               to={`/quran?surah=${dailyVerse?.verse_key.split(":")[0] || 1}`}
               className="text-xs font-semibold text-[#1A5D3A] dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
-              Read Full Surah <ChevronRight className="w-3.5 h-3.5" />
+              {isArabic ? "قراءة السورة كاملة" : "Read Full Surah"} <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </motion.div>
@@ -284,7 +287,7 @@ export default function Home() {
                   <ScrollText className="w-3.5 h-3.5" />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
-                  Hadith of the Day
+                  {t.homeHadithOfDay}
                 </span>
               </div>
               <button
@@ -294,7 +297,7 @@ export default function Home() {
                     "hadith"
                   )
                 }
-                title="Copy hadith"
+                title={t.copy}
                 className="p-2 rounded-xl bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 text-slate-600 dark:text-slate-300 transition-colors"
               >
                 {copiedHadith ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
@@ -303,14 +306,14 @@ export default function Home() {
 
             {dailyHadith && (
               <div className="space-y-4">
-                <p className="font-serif text-base md:text-lg text-slate-800 dark:text-slate-200 leading-relaxed">
-                  &ldquo;{dailyHadith.english}&rdquo;
-                </p>
                 {dailyHadith.arabic && (
-                  <p className="font-['Amiri'] text-right text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+                  <p className="font-['Amiri'] text-right text-lg md:text-xl text-slate-800 dark:text-slate-100 leading-relaxed">
                     {dailyHadith.arabic}
                   </p>
                 )}
+                <p className="font-serif text-sm md:text-base text-slate-600 dark:text-slate-300 italic leading-relaxed">
+                  &ldquo;{dailyHadith.english}&rdquo;
+                </p>
               </div>
             )}
           </div>
@@ -328,7 +331,7 @@ export default function Home() {
               to="/hadith"
               className="text-xs font-semibold text-[#1A5D3A] dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
-              Browse Hadith <ChevronRight className="w-3.5 h-3.5" />
+              {isArabic ? "تصفح الأحاديث" : "Browse Hadith"} <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </motion.div>
@@ -339,22 +342,22 @@ export default function Home() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Explore Sanctuary
+              {t.homeQuickAccess}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Dedicated tools and resources to enrich your daily worship
+              {isArabic ? "أدوات مخصصة ومصادر موثوقة لتعزيز عبادتك اليومية" : "Dedicated tools and resources to enrich your daily worship"}
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
-            { to: "/quran", label: "Holy Quran", icon: BookOpen, desc: "114 Surahs & Tafsir", color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50" },
-            { to: "/audio", label: "Audio Recitations", icon: Headphones, desc: "13+ Global Qaris", color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50" },
-            { to: "/qibla", label: "Qibla Compass", icon: Compass, desc: "Kaaba Direction", color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50" },
-            { to: "/hadith", label: "Hadith Books", icon: ScrollText, desc: "Bukhari & Muslim", color: "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50" },
-            { to: "/zikr", label: "Digital Tasbeeh", icon: Heart, desc: "Sound & Vibrations", color: "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50" },
-            { to: "/names", label: "99 Names of Allah", icon: Sparkles, desc: "Asma ul Husna", color: "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50" },
+            { to: "/quran", label: t.navQuran, icon: BookOpen, desc: isArabic ? "١١٤ سورة وتفسير" : "114 Surahs & Tafsir", color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50" },
+            { to: "/audio", label: t.navAudio, icon: Headphones, desc: isArabic ? "١٥ قارئاً معتمداً" : "15 Global Qaris", color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50" },
+            { to: "/qibla", label: t.navQibla, icon: Compass, desc: isArabic ? "اتجاه الكعبة المشرفة" : "Kaaba Direction", color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50" },
+            { to: "/hadith", label: t.navHadith, icon: ScrollText, desc: isArabic ? "البخاري ومسلم والسنن" : "Bukhari & Muslim", color: "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50" },
+            { to: "/zikr", label: t.navZikr, icon: Heart, desc: isArabic ? "تسبيح صوتي واهتزاز" : "Sound & Vibrations", color: "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50" },
+            { to: "/names", label: t.navNames, icon: Sparkles, desc: isArabic ? "أسماء الله الحسنى" : "Asma ul Husna", color: "text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50" },
           ].map((item) => (
             <Link
               key={item.to}
@@ -382,17 +385,17 @@ export default function Home() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Browse Surahs
+              {isArabic ? "تصفح سور القرآن الكريم" : "Browse Surahs"}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Quick access to opening and most recited chapters
+              {isArabic ? "وصول سريع لسور القرآن الكريم وقراءتها وتلاوتها" : "Quick access to opening and most recited chapters"}
             </p>
           </div>
           <Link
             to="/quran"
             className="text-xs font-semibold text-[#1A5D3A] dark:text-emerald-400 hover:underline flex items-center gap-1"
           >
-            View All 114 Surahs <ChevronRight className="w-3.5 h-3.5" />
+            {isArabic ? "عرض جميع السور (١١٤)" : "View All 114 Surahs"} <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
@@ -409,11 +412,11 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                    {surah.name_english}
+                    {isArabic ? surah.name_arabic : surah.name_english}
                   </p>
                   <p className="text-xs text-slate-400">
-                    {surah.verses_count} Verses &middot;{" "}
-                    {surah.revelation_place === "makkah" ? "Meccan" : "Medinan"}
+                    {surah.verses_count} {t.quranVersesCount} &middot;{" "}
+                    {surah.revelation_place === "makkah" ? t.quranMeccan : t.quranMedinan}
                   </p>
                 </div>
               </div>

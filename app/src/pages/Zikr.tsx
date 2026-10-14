@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { AUTHENTIC_ADHKAR, type DhikrItem } from "../data/adhkar";
 import { soundEffects } from "../lib/sound";
+import { useLanguage } from "../context/LanguageContext";
 
 interface DhikrCounter {
   phrase: string;
@@ -34,6 +35,7 @@ const defaultDhikrs: DhikrCounter[] = [
 ];
 
 export default function Zikr() {
+  const { t, isArabic } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>("morning");
   const [dhikrIndex, setDhikrIndex] = useState(0);
   const [counters, setCounters] = useState<DhikrCounter[]>(defaultDhikrs);
@@ -137,10 +139,10 @@ export default function Zikr() {
       {/* Header */}
       <div className="py-6 md:py-8">
         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Zikr & Authentic Duas
+          {t.zikrTitle}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Daily remembrance, tactile digital Tasbeeh beads, and verified prophetic supplications
+          {t.zikrSubtitle}
         </p>
       </div>
 
@@ -159,12 +161,12 @@ export default function Zikr() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-amber-300" />
                 <span className="text-xs uppercase tracking-widest text-emerald-300 font-bold">
-                  Digital Tasbeeh
+                  {t.zikrDigitalTasbeeh}
                 </span>
               </div>
               <button
                 onClick={() => setSoundEnabled(!soundEnabled)}
-                title={soundEnabled ? "Mute bead click sound" : "Enable bead click sound"}
+                title={soundEnabled ? t.zikrSoundOn : t.zikrSoundOff}
                 className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 transition-colors"
               >
                 {soundEnabled ? <Volume2 className="w-4 h-4 text-amber-300" /> : <VolumeX className="w-4 h-4" />}
@@ -183,7 +185,7 @@ export default function Zikr() {
                       : "bg-white/10 text-white/70 hover:bg-white/20"
                   }`}
                 >
-                  {d.phrase}
+                  {isArabic ? d.arabic : d.phrase}
                 </button>
               ))}
             </div>
@@ -213,7 +215,7 @@ export default function Zikr() {
                     / {currentDhikr.target}
                   </span>
                   <span className="text-[10px] text-amber-300 uppercase tracking-widest mt-1 font-bold">
-                    Tap to Count
+                    {t.zikrTapToCount}
                   </span>
                 </div>
 
@@ -232,36 +234,36 @@ export default function Zikr() {
             {/* Round info */}
             <div className="text-center mb-5">
               <span className="text-xs font-semibold text-emerald-300 tracking-wider">
-                Round {currentDhikr.round} of {currentDhikr.totalRounds}
+                {t.zikrRound} {currentDhikr.round} / {currentDhikr.totalRounds}
               </span>
             </div>
 
             {/* Target Presets & Reset Control */}
             <div className="flex items-center justify-between pt-4 border-t border-white/10">
               <div className="flex items-center gap-1.5">
-                <span className="text-[11px] text-white/50">Target:</span>
-                {[33, 99, 100].map((t) => (
+                <span className="text-[11px] text-white/50">{t.zikrTarget}</span>
+                {[33, 99, 100].map((tVal) => (
                   <button
-                    key={t}
-                    onClick={() => setPresetTarget(t)}
+                    key={tVal}
+                    onClick={() => setPresetTarget(tVal)}
                     className={`px-2 py-0.5 rounded-md text-[11px] font-mono ${
-                      currentDhikr.target === t
+                      currentDhikr.target === tVal
                         ? "bg-amber-400 text-slate-950 font-bold"
                         : "bg-white/10 text-white/70 hover:bg-white/20"
                     }`}
                   >
-                    {t}
+                    {tVal}
                   </button>
                 ))}
               </div>
 
               <button
                 onClick={resetDhikr}
-                title="Reset counter"
+                title={t.zikrReset}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs text-white/80 transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset</span>
+                <span>{t.zikrReset}</span>
               </button>
             </div>
           </motion.div>
@@ -272,10 +274,10 @@ export default function Zikr() {
           {/* Categories Tab Bar */}
           <div className="flex flex-wrap items-center gap-2">
             {[
-              { id: "morning", label: "Morning Adhkar", icon: Sun },
-              { id: "evening", label: "Evening Adhkar", icon: Moon },
-              { id: "prayer", label: "After Salah", icon: Award },
-              { id: "before_sleep", label: "Before Sleep", icon: Bed },
+              { id: "morning", label: t.zikrMorningAdhkar, icon: Sun },
+              { id: "evening", label: t.zikrEveningAdhkar, icon: Moon },
+              { id: "prayer", label: t.zikrAfterSalah, icon: Award },
+              { id: "before_sleep", label: t.zikrBeforeSleep, icon: Bed },
             ].map((cat) => {
               const Icon = cat.icon;
               const isActive = selectedCategory === cat.id;

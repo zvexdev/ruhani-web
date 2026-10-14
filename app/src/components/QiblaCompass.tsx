@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Compass, MapPin, Navigation, Info, ChevronDown } from "lucide-react";
 import { CITY_PRESETS, calculateQiblaDirection, calculateDistanceToKaaba, type CityPreset } from "../lib/prayerTimes";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function QiblaCompass() {
+  const { t, isArabic } = useLanguage();
   const [selectedCity, setSelectedCity] = useState(CITY_PRESETS[0]); // Default Makkah
   const [deviceHeading, setDeviceHeading] = useState<number | null>(null);
   const [hasCompassSupport, setHasCompassSupport] = useState(false);
@@ -66,13 +68,13 @@ export default function QiblaCompass() {
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#1A5D3A] dark:text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-3">
           <Compass className="w-3.5 h-3.5" />
-          <span>Interactive Qibla Finder</span>
+          <span>{t.qiblaFinderBadge}</span>
         </div>
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-          Find the Direction of the Kaaba
+          {t.qiblaTitle}
         </h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Accurate astronomical calculation to the Sacred Mosque in Makkah
+          {t.qiblaSubtitle}
         </p>
 
         {/* Location Dropdown / GPS Button */}
@@ -94,7 +96,7 @@ export default function QiblaCompass() {
                 className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400 text-xs font-medium transition-colors border-b border-gray-100 dark:border-slate-700 mb-1"
               >
                 <Navigation className="w-4 h-4" />
-                {locating ? "Detecting GPS..." : "Detect My Current Location"}
+                {locating ? t.qiblaDetecting : t.qiblaDetectGPS}
               </button>
               <div className="max-h-56 overflow-y-auto space-y-1">
                 {CITY_PRESETS.map((city: CityPreset) => (
@@ -161,25 +163,25 @@ export default function QiblaCompass() {
       <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-slate-800 text-center">
         <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40">
           <p className="text-xs uppercase tracking-wider text-emerald-800 dark:text-emerald-400 font-semibold">
-            Qibla Bearing
+            {t.qiblaDirectionToKaaba}
           </p>
           <p className="text-2xl font-bold text-[#1A5D3A] dark:text-emerald-300 mt-1 font-mono">
             {qiblaAngle.toFixed(1)}°
           </p>
           <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
-            from True North
+            {isArabic ? "من الشمال الحقيقي" : "from True North"}
           </p>
         </div>
 
         <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40">
           <p className="text-xs uppercase tracking-wider text-amber-800 dark:text-amber-400 font-semibold">
-            Distance to Kaaba
+            {t.qiblaDistanceKm}
           </p>
           <p className="text-2xl font-bold text-amber-600 dark:text-amber-300 mt-1 font-mono">
-            {distanceKm.toLocaleString()} <span className="text-sm">km</span>
+            {distanceKm.toLocaleString()} <span className="text-sm">{isArabic ? "كم" : "km"}</span>
           </p>
           <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
-            Great Circle Distance
+            {isArabic ? "مسافة الدائرة العظمى" : "Great Circle Distance"}
           </p>
         </div>
       </div>
@@ -189,8 +191,8 @@ export default function QiblaCompass() {
         <Info className="w-3.5 h-3.5" />
         <span>
           {hasCompassSupport
-            ? "Live mobile compass active. Rotate your device until needle aligns."
-            : "Showing fixed North bearing. Align top of compass with North."}
+            ? (isArabic ? "بوصلة الهاتف الحية تعمل. حرّك هاتفك حتى تتطابق الإبرة مع الكعبة." : "Live mobile compass active. Rotate your device until needle aligns.")
+            : t.qiblaCompassTip}
         </span>
       </div>
     </div>

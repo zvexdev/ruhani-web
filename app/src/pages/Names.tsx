@@ -11,8 +11,10 @@ import {
 import { NAMES_OF_ALLAH } from "../data/namesOfAllah";
 import type { NameOfAllah } from "../types";
 import { soundEffects } from "../lib/sound";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Names() {
+  const { t, language } = useLanguage();
   const [names] = useState<NameOfAllah[]>(NAMES_OF_ALLAH);
   const [filteredNames, setFilteredNames] = useState<NameOfAllah[]>(NAMES_OF_ALLAH);
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,10 +78,10 @@ export default function Names() {
       {/* Header */}
       <div className="py-6 md:py-8 text-center max-w-2xl mx-auto">
         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Asma ul Husna
+          {t.namesTitle}
         </h1>
         <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-2">
-          The 99 Beautiful Names of Allah — Reflect, memorize, and draw nearer to your Creator
+          {t.namesSubtitle}
         </p>
         <p className="font-['Amiri'] text-xl md:text-2xl text-emerald-800 dark:text-emerald-400 mt-3">
           وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا
@@ -92,11 +94,11 @@ export default function Names() {
           <div className="flex items-center gap-2">
             <Award className="w-5 h-5 text-amber-400" />
             <span className="text-xs uppercase font-bold tracking-wider text-emerald-300">
-              Memorization Journey
+              {language === "ar" ? "مسيرة الحفظ" : "Memorization Journey"}
             </span>
           </div>
           <span className="text-xs font-mono font-bold text-amber-300">
-            {memorized.length} / 99 Memorized ({memorizedPercent}%)
+            {memorized.length} / 99 {t.namesMemorizedProgress} ({memorizedPercent}%)
           </span>
         </div>
         <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden">
@@ -106,25 +108,27 @@ export default function Names() {
           />
         </div>
         <p className="text-[11px] text-white/60 mt-3 text-center">
-          &ldquo;Allah has ninety-nine names; whoever memorizes and acts upon them will enter Paradise.&rdquo; (Sahih al-Bukhari)
+          {language === "ar"
+            ? "«إِنَّ لِلَّهِ تِسْعَةً وَتِسْعِينَ اسْمًا مِائَةً إِلَّا وَاحِدًا مَنْ أَحْصَاهَا دَخَلَ الْجَنَّةَ» (صحيح البخاري)"
+            : "“Allah has ninety-nine names; whoever memorizes and acts upon them will enter Paradise.” (Sahih al-Bukhari)"}
         </p>
       </div>
 
       {/* Search Input */}
       <div className="max-w-xl mx-auto mb-8">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute ltr:left-4 rtl:right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Search by name, meaning, or number (e.g. Ar-Rahman, 55)..."
+            placeholder={t.namesSearchPlaceholder}
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-11 pr-10 py-3 rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+            className="w-full ltr:pl-11 ltr:pr-10 rtl:pr-11 rtl:pl-10 py-3 rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
           />
           {searchQuery && (
             <button
               onClick={() => handleSearch("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
             >
               <X className="w-4 h-4" />
             </button>
@@ -155,7 +159,7 @@ export default function Names() {
                 <span className="font-mono text-[11px] font-semibold">#{name.number}</span>
                 <button
                   onClick={(e) => toggleMemorized(name.number, e)}
-                  title={isLearned ? "Unmark memorized" : "Mark memorized"}
+                  title={isLearned ? (language === "ar" ? "إلغاء الحفظ" : "Unmark memorized") : (language === "ar" ? "تحديد كمحفوظ" : "Mark memorized")}
                   className={`p-1 rounded-md transition-colors ${
                     isLearned ? "text-amber-500" : "text-slate-300 dark:text-slate-600 hover:text-amber-400"
                   }`}
@@ -184,7 +188,9 @@ export default function Names() {
       {filteredNames.length === 0 && (
         <div className="text-center py-20">
           <Sparkles className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
-          <p className="text-sm text-slate-500">No name found matching &ldquo;{searchQuery}&rdquo;</p>
+          <p className="text-sm text-slate-500">
+            {language === "ar" ? `لم يتم العثور على اسم يطابق "${searchQuery}"` : `No name found matching "${searchQuery}"`}
+          </p>
         </div>
       )}
 
@@ -204,13 +210,13 @@ export default function Names() {
             >
               <button
                 onClick={() => setSelectedName(null)}
-                className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-400"
+                className="absolute ltr:right-4 rtl:left-4 top-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-400"
               >
                 <X className="w-4 h-4" />
               </button>
 
               <span className="text-xs uppercase font-bold tracking-widest text-emerald-700 dark:text-emerald-400 font-mono">
-                Name #{selectedName.number} of 99
+                {language === "ar" ? `الاسم #${selectedName.number} من 99` : `Name #${selectedName.number} of 99`}
               </span>
 
               <p className="font-['Amiri'] text-5xl text-slate-900 dark:text-white my-4">
@@ -225,9 +231,9 @@ export default function Names() {
                 {selectedName.english}
               </p>
 
-              <div className="mt-5 p-5 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-100 dark:border-emerald-900/40 text-left">
+              <div className="mt-5 p-5 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-100 dark:border-emerald-900/40 text-start">
                 <p className="text-xs uppercase font-bold tracking-wider text-emerald-800 dark:text-emerald-300 mb-1">
-                  Spiritual Meaning & Context:
+                  {t.namesMeaning}
                 </p>
                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-serif">
                   {selectedName.meaning}
@@ -240,7 +246,7 @@ export default function Names() {
                   className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-300 text-xs font-semibold hover:bg-emerald-200 transition-colors"
                 >
                   <Volume2 className="w-4 h-4" />
-                  <span>Pronounce</span>
+                  <span>{t.namesListenPronounce}</span>
                 </button>
 
                 <button
@@ -252,7 +258,11 @@ export default function Names() {
                   }`}
                 >
                   <Star className="w-4 h-4" fill={memorized.includes(selectedName.number) ? "currentColor" : "none"} />
-                  <span>{memorized.includes(selectedName.number) ? "Memorized" : "Mark Memorized"}</span>
+                  <span>
+                    {memorized.includes(selectedName.number)
+                      ? (language === "ar" ? "محفوظ" : "Memorized")
+                      : (language === "ar" ? "تحديد كمحفوظ" : "Mark Memorized")}
+                  </span>
                 </button>
               </div>
             </motion.div>
@@ -262,3 +272,4 @@ export default function Names() {
     </div>
   );
 }
+

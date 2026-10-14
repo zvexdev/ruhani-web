@@ -12,8 +12,10 @@ import {
 } from "lucide-react";
 import * as api from "../services/api";
 import type { HadithCollection, Hadith } from "../types";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function HadithPage() {
+  const { t, language } = useLanguage();
   const [collections, setCollections] = useState<HadithCollection[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
   const [hadiths, setHadiths] = useState<Hadith[]>([]);
@@ -121,10 +123,10 @@ export default function HadithPage() {
       {/* Header */}
       <div className="py-6 md:py-8">
         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Hadith Collections
+          {t.hadithTitle}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Explore canonical Hadith books including Sahih al-Bukhari, Sahih Muslim, and 40 Hadith Nawawi
+          {t.hadithSubtitle}
         </p>
       </div>
 
@@ -139,14 +141,14 @@ export default function HadithPage() {
             <div className="flex items-center gap-2">
               <Quote className="w-5 h-5 text-amber-500" />
               <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                Featured Hadith of the Day
+                {language === "ar" ? "حديث مختار" : "Featured Hadith"}
               </span>
             </div>
             <button
               onClick={loadNewRandom}
               className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline"
             >
-              Get Another Hadith &rarr;
+              {language === "ar" ? "حديث آخر ↺" : "Get Another Hadith →"}
             </button>
           </div>
 
@@ -175,7 +177,7 @@ export default function HadithPage() {
               className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               {copiedId === randomHadith.id ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-              <span>{copiedId === randomHadith.id ? "Copied" : "Copy"}</span>
+              <span>{copiedId === randomHadith.id ? t.copied : t.copy}</span>
             </button>
           </div>
         </motion.div>
@@ -185,17 +187,17 @@ export default function HadithPage() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 border border-gray-100 dark:border-slate-800 shadow-sm mb-6">
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute ltr:left-4 rtl:right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search hadiths by keyword (e.g. intentions, charity, prayer, fasting)..."
+              placeholder={t.hadithSearchPlaceholder}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
                 if (!e.target.value.trim()) setSearchResults([]);
               }}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-gray-200 dark:border-slate-700 bg-transparent text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full ltr:pl-11 ltr:pr-4 rtl:pr-11 rtl:pl-4 py-3 rounded-2xl border border-gray-200 dark:border-slate-700 bg-transparent text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <button
@@ -203,7 +205,7 @@ export default function HadithPage() {
             disabled={searching}
             className="px-6 py-3 bg-[#1A5D3A] text-white rounded-2xl text-xs font-semibold hover:bg-emerald-800 transition-colors disabled:opacity-50"
           >
-            {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : "Search"}
+            {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : t.search}
           </button>
           {(searchQuery || selectedCollection) && (
             <button
@@ -226,13 +228,13 @@ export default function HadithPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-              Browse Canonical Books
+              {language === "ar" ? "أمهات كتب الحديث الشريف" : "Browse Canonical Books"}
             </h2>
             <button
               onClick={() => setShowCollections(!showCollections)}
               className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1"
             >
-              <span>{showCollections ? "Collapse" : "View All"}</span>
+              <span>{showCollections ? (language === "ar" ? "طي" : "Collapse") : (language === "ar" ? "عرض الكل" : "View All")}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showCollections ? "rotate-180" : ""}`} />
             </button>
           </div>
@@ -245,21 +247,21 @@ export default function HadithPage() {
                 <button
                   key={col.key}
                   onClick={() => browseCollection(col.key)}
-                  className={`p-5 rounded-2xl border text-left transition-all ${
+                  className={`p-5 rounded-2xl border text-start transition-all ${
                     isSelected
                       ? "border-emerald-600 dark:border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/40 shadow-sm"
                       : "border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-md"
                   }`}
                 >
                   <p className="font-bold text-sm text-slate-900 dark:text-white truncate">
-                    {col.name}
+                    {language === "ar" && col.arabic_name ? col.arabic_name : col.name}
                   </p>
                   <p className="font-['Amiri'] text-xs text-slate-400 mt-1">
-                    {col.arabic_name}
+                    {language === "ar" ? col.name : col.arabic_name}
                   </p>
                   <div className="flex items-center justify-between mt-3 text-xs">
                     <span className="text-[11px] text-slate-400">
-                      {col.total_hadiths?.toLocaleString()} hadiths
+                      {col.total_hadiths?.toLocaleString()} {language === "ar" ? "حديث" : "hadiths"}
                     </span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold">
                       {col.reliability}
@@ -277,11 +279,13 @@ export default function HadithPage() {
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-slate-800">
           <div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-              {selectedCollectionMeta.name}
+              {language === "ar" && selectedCollectionMeta.arabic_name ? selectedCollectionMeta.arabic_name : selectedCollectionMeta.name}
             </h3>
             <p className="text-xs text-slate-400">{selectedCollectionMeta.author}</p>
           </div>
-          <span className="text-xs font-mono text-slate-400">Page {page}</span>
+          <span className="text-xs font-mono text-slate-400">
+            {language === "ar" ? `الصفحة ${page}` : `Page ${page}`}
+          </span>
         </div>
       )}
 
@@ -312,14 +316,14 @@ export default function HadithPage() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => copyHadithText(hadith)}
-                    title="Copy Hadith"
+                    title={t.copy}
                     className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600"
                   >
                     {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
                   </button>
                   <button
                     onClick={() => toggleSaveHadith(hadith.id)}
-                    title={isSaved ? "Remove bookmark" : "Bookmark hadith"}
+                    title={isSaved ? (language === "ar" ? "إزالة الحفظ" : "Remove bookmark") : (language === "ar" ? "حفظ الحديث" : "Bookmark hadith")}
                     className={`p-1.5 rounded-lg transition-colors ${
                       isSaved ? "text-amber-500" : "text-slate-400 hover:text-amber-500"
                     }`}
@@ -329,19 +333,20 @@ export default function HadithPage() {
                 </div>
               </div>
 
-              <p className="font-serif text-base text-slate-800 dark:text-slate-200 leading-relaxed">
-                {hadith.english}
-              </p>
-
-              {hadith.arabic && (
-                <details className="mt-3 group">
-                  <summary className="text-xs text-emerald-700 dark:text-emerald-400 cursor-pointer font-semibold select-none">
-                    Show Arabic text
-                  </summary>
-                  <p className="font-['Amiri'] text-right text-lg text-slate-800 dark:text-slate-200 mt-2 bg-emerald-50/30 dark:bg-slate-800/40 p-4 rounded-2xl leading-[2.2]">
+              {/* In Arabic mode, display Arabic text directly if available */}
+              {hadith.arabic ? (
+                <div>
+                  <p className="font-['Amiri'] text-right text-lg md:text-xl text-slate-900 dark:text-white leading-[2.2] bg-emerald-50/30 dark:bg-slate-800/40 p-4 rounded-2xl mb-3">
                     {hadith.arabic}
                   </p>
-                </details>
+                  <p className="font-serif text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    {hadith.english}
+                  </p>
+                </div>
+              ) : (
+                <p className="font-serif text-base text-slate-800 dark:text-slate-200 leading-relaxed">
+                  {hadith.english}
+                </p>
               )}
             </motion.div>
           );
@@ -356,17 +361,20 @@ export default function HadithPage() {
             disabled={page <= 1}
             className="px-5 py-2.5 rounded-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 disabled:opacity-40"
           >
-            Previous Page
+            {t.hadithPrevPage}
           </button>
-          <span className="text-xs font-mono text-slate-400">Page {page}</span>
+          <span className="text-xs font-mono text-slate-400">
+            {language === "ar" ? `الصفحة ${page}` : `Page ${page}`}
+          </span>
           <button
             onClick={() => browseCollection(selectedCollection, page + 1)}
             className="px-5 py-2.5 rounded-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-gray-50"
           >
-            Next Page
+            {t.hadithNextPage}
           </button>
         </div>
       )}
     </div>
   );
 }
+
