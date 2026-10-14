@@ -3,6 +3,7 @@ import { SURAHS } from "../data/surahs";
 import { NAMES_OF_ALLAH } from "../data/namesOfAllah";
 import { AUTHENTIC_ADHKAR } from "../data/adhkar";
 import { CURATED_HADITHS, DEFAULT_COLLECTIONS } from "../data/hadiths";
+import { RECITERS_LIST, DEFAULT_RECITER, getSurahAudioUrl, getAyahAudioUrl, type ReciterInfo } from "../data/reciters";
 import { calculatePrayerTimes } from "../lib/prayerTimes";
 import type { SurahMeta, Verse, Hadith, NameOfAllah, Dua } from "../types";
 
@@ -68,7 +69,7 @@ export async function getSurah(number: number) {
             sahih_international: v.translations?.[0]?.text?.replace(/<[^>]*>?/gm, '') || ""
           },
           audio: {
-            ayah_audio: `https://everyayah.com/data/Alafasy_128kbps/${String(number).padStart(3, '0')}${String(v.verse_number).padStart(3, '0')}.mp3`,
+            ayah_audio: getAyahAudioUrl(DEFAULT_RECITER.id, number, v.verse_number),
             all_reciters: ""
           }
         }));
@@ -80,8 +81,8 @@ export async function getSurah(number: number) {
             verses_count: surahMeta.verses_count
           },
           audio: {
-            reciters_available: 13,
-            example_audio: `https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/${String(number).padStart(3, '0')}.mp3`
+            reciters_available: RECITERS_LIST.length,
+            example_audio: getSurahAudioUrl(DEFAULT_RECITER.id, number)
           },
           total_verses: surahMeta.verses_count,
           verses
@@ -102,9 +103,25 @@ export async function getAyah(surah: number, ayah: number) {
 export async function getRandomAyah(): Promise<{ verse: Verse; surah?: any }> {
   try {
     const data = await fetchAPI("/api/quran/random");
+    if (data?.data?.verse) {
+      return {
+        ...data.data,
+        verse: {
+          ...data.data.verse,
+          audio: {
+            ...data.data.verse.audio,
+            ayah_audio: getAyahAudioUrl(
+              DEFAULT_RECITER.id,
+              Number(data.data.verse.verse_key.split(":")[0]) || 2,
+              data.data.verse.ayah || 255
+            )
+          }
+        }
+      };
+    }
     return data.data;
   } catch (err) {
-    // Beautiful offline fallback: Ayat al-Kursi
+    // Beautiful offline fallback: Ayat al-Kursi with Sheikh Yasser Al-Dosari
     return {
       verse: {
         verse_key: "2:255",
@@ -115,7 +132,7 @@ export async function getRandomAyah(): Promise<{ verse: Verse; surah?: any }> {
           sahih_international: "Allah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth..."
         },
         audio: {
-          ayah_audio: "https://everyayah.com/data/Alafasy_128kbps/002255.mp3",
+          ayah_audio: getAyahAudioUrl(DEFAULT_RECITER.id, 2, 255),
           all_reciters: ""
         }
       }
@@ -132,69 +149,28 @@ export async function searchQuran(query: string) {
   }
 }
 
-export async function getReciters() {
-  try {
-    const data = await fetchAPI("/api/quran/reciters");
-    return data.data.reciters;
-  } catch (err) {
-    // Reliable static list of famous reciters
-    return [
-      { id: 1, name: "Mishary Rashid Alafasy", name_arabic: "مشاري راشد العفاسي", style: "Murattal" },
-      { id: 2, name: "Abdul Rahman Al-Sudais", name_arabic: "عبد الرحمن السديس", style: "Murattal" },
-      { id: 3, name: "Abdul Basit Abdul Samad", name_arabic: "عبد الباسط عبد الصمد", style: "Murattal" },
-      { id: 5, name: "Maher Al-Muaiqly", name_arabic: "ماهر المعيقلي", style: "Murattal" },
-      { id: 6, name: "Saad Al-Ghamdi", name_arabic: "سعد الغامدي", style: "Murattal" },
-      { id: 7, name: "Abu Bakr Al-Shatri", name_arabic: "أبو بكر الشاطري", style: "Murattal" },
-      { id: 8, name: "Mahmoud Khalil Al-Husary", name_arabic: "محمود خليل الحصري", style: "Murattal" },
-      { id: 9, name: "Yasser Al-Dosari", name_arabic: "ياسر الدوسري", style: "Murattal" },
-    ];
-  }
+export async function getReciters(): Promise<ReciterInfo[]> {
+  // Return the comprehensive verified list of Sheikhs with Yasser Al-Dosari as default
+  return RECITERS_LIST;
 }
 
 export async function getSurahAudio(surah: number) {
-  try {
-    const data = await fetchAPI(`/api/quran/audio/${surah}`);
-    return data.data;
-  } catch (err) {
-    const padded = String(surah).padStart(3, "0");
-    return {
-      surah,
-      reciters: [
-        {
-          id: 1,
-          name: "Mishary Rashid Alafasy",
-          full_surah_audio: `https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/${padded}.mp3`
-        },
-        {
-          id: 2,
-          name: "Abdul Rahman Al-Sudais",
-          full_surah_audio: `https://download.quranicaudio.com/quran/abdurrahmaan_as-sudays/${padded}.mp3`
-        },
-        {
-          id: 3,
-          name: "Abdul Basit Abdul Samad",
-          full_surah_audio: `https://download.quranicaudio.com/quran/abdulbaset_mujawwad/${padded}.mp3`
-        },
-        {
-          id: 5,
-          name: "Maher Al-Muaiqly",
-          full_surah_audio: `https://download.quranicaudio.com/quran/mahir_al-mu3ayqalee/${padded}.mp3`
-        },
-        {
-          id: 6,
-          name: "Saad Al-Ghamdi",
-          full_surah_audio: `https://download.quranicaudio.com/quran/sa3d_al-ghaamidi/complete/${padded}.mp3`
-        }
-      ]
-    };
-  }
+  return {
+    surah,
+    reciters: RECITERS_LIST.map((r) => ({
+      id: r.id,
+      name: r.name,
+      name_arabic: r.name_arabic,
+      style: r.style,
+      riwayah: r.riwayah,
+      full_surah_audio: getSurahAudioUrl(r.id, surah)
+    }))
+  };
 }
 
-export async function getAyahAudio(surah: number, ayah: number) {
-  const paddedSurah = String(surah).padStart(3, "0");
-  const paddedAyah = String(ayah).padStart(3, "0");
+export async function getAyahAudio(surah: number, ayah: number, reciterId: number = DEFAULT_RECITER.id) {
   return {
-    audio_url: `https://everyayah.com/data/Alafasy_128kbps/${paddedSurah}${paddedAyah}.mp3`
+    audio_url: getAyahAudioUrl(reciterId, surah, ayah)
   };
 }
 

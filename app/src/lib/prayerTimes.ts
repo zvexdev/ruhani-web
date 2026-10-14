@@ -15,7 +15,7 @@ export interface CalculatedPrayerTimes {
     asrDate: Date;
     maghribDate: Date;
     ishaDate: Date;
-  };
+  }; 
 }
 
 export interface CityPreset {

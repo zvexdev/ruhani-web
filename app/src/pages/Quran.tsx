@@ -8,15 +8,18 @@ import {
   Search,
   X,
   Play,
+  Pause,
   Languages,
   Bookmark,
   Copy,
   Check,
-  FileText
+  FileText,
+  Headphones
 } from "lucide-react";
 import * as api from "../services/api";
 import type { SurahMeta, SurahDetail, SearchResult, Verse } from "../types";
 import { useAudio } from "../context/AudioContext";
+import { RECITERS_LIST, getAyahAudioUrl } from "../data/reciters";
 
 export default function Quran() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,13 +39,14 @@ export default function Quran() {
   const [fontSize, setFontSize] = useState<number>(28);
   const [viewMode, setViewMode] = useState<"verses" | "mushaf">("verses");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [selectedReciter, setSelectedReciter] = useState<number>(1);
 
   // Tafsir state
   const [activeTafsirAyah, setActiveTafsirAyah] = useState<Verse | null>(null);
   const [tafsirText, setTafsirText] = useState<string>("");
   const [tafsirLoading, setTafsirLoading] = useState(false);
 
-  const { playTrack } = useAudio();
+  const { playTrack, currentTrack, isPlaying } = useAudio();
   const verseRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
@@ -101,13 +105,12 @@ export default function Quran() {
   }
 
   const handlePlayAyah = (verse: Verse) => {
-    const paddedSurah = String(currentSurah).padStart(3, "0");
-    const paddedAyah = String(verse.ayah).padStart(3, "0");
-    const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${paddedSurah}${paddedAyah}.mp3`;
+    const reciter = RECITERS_LIST.find((r) => r.id === selectedReciter) || RECITERS_LIST[0];
+    const audioUrl = getAyahAudioUrl(selectedReciter, currentSurah, verse.ayah);
 
     playTrack({
       title: `${currentSurahMeta?.name_english || "Surah"} — Ayah ${verse.ayah}`,
-      subtitle: "Mishary Rashid Alafasy",
+      subtitle: `${reciter.name} (${reciter.name_arabic})`,
       arabicTitle: `${currentSurahMeta?.name_arabic} : ${verse.ayah}`,
       src: audioUrl,
     });
@@ -374,18 +377,38 @@ export default function Quran() {
                     {currentSurahMeta?.revelation_place === "makkah" ? "Meccan" : "Medinan"}
                   </p>
 
-                  {/* Translation picker */}
-                  <div className="inline-flex items-center gap-2 mt-5 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-slate-700 shadow-sm text-xs">
-                    <Languages className="w-3.5 h-3.5 text-slate-400" />
-                    <select
-                      value={translation}
-                      onChange={(e) => setTranslation(e.target.value as any)}
-                      className="bg-transparent text-slate-700 dark:text-slate-200 font-medium focus:outline-none cursor-pointer"
-                    >
-                      <option value="sahih_international" className="dark:bg-slate-900">Sahih International</option>
-                      <option value="pickthall" className="dark:bg-slate-900">Pickthall Translation</option>
-                      <option value="yusuf_ali" className="dark:bg-slate-900">Yusuf Ali Translation</option>
-                    </select>
+                  {/* Sheikh Reciter & Translation Pickers */}
+                  <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+                    {/* Reciter selector */}
+                    <div className="inline-flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-3.5 py-2 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 shadow-sm text-xs">
+                      <Headphones className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-slate-400 font-medium hidden sm:inline">Reciter:</span>
+                      <select
+                        value={selectedReciter}
+                        onChange={(e) => setSelectedReciter(Number(e.target.value))}
+                        className="bg-transparent text-slate-800 dark:text-slate-100 font-semibold focus:outline-none cursor-pointer max-w-[210px] truncate"
+                      >
+                        {RECITERS_LIST.map((r) => (
+                          <option key={r.id} value={r.id} className="dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+                            {r.name} ({r.name_arabic})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Translation picker */}
+                    <div className="inline-flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-3.5 py-2 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 shadow-sm text-xs">
+                      <Languages className="w-3.5 h-3.5 text-slate-400" />
+                      <select
+                        value={translation}
+                        onChange={(e) => setTranslation(e.target.value as any)}
+                        className="bg-transparent text-slate-700 dark:text-slate-200 font-medium focus:outline-none cursor-pointer"
+                      >
+                        <option value="sahih_international" className="dark:bg-slate-900 text-slate-900 dark:text-slate-100">Sahih International</option>
+                        <option value="pickthall" className="dark:bg-slate-900 text-slate-900 dark:text-slate-100">Pickthall Translation</option>
+                        <option value="yusuf_ali" className="dark:bg-slate-900 text-slate-900 dark:text-slate-100">Yusuf Ali Translation</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
@@ -422,6 +445,10 @@ export default function Quran() {
                   {surahDetail.verses.map((verse) => {
                     const isBookmarked = bookmarks.includes(verse.verse_key);
                     const isCopied = copiedKey === verse.verse_key;
+                    const paddedSurah = String(currentSurah).padStart(3, "0");
+                    const paddedAyah = String(verse.ayah).padStart(3, "0");
+                    const isThisAyahActive = Boolean(currentTrack?.src && currentTrack.src.endsWith(`${paddedSurah}${paddedAyah}.mp3`));
+                    const isThisAyahPlaying = isThisAyahActive && isPlaying;
 
                     return (
                       <div
@@ -429,12 +456,20 @@ export default function Quran() {
                         ref={(el) => {
                           verseRefs.current[verse.verse_key] = el;
                         }}
-                        className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow group"
+                        className={`bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border transition-all duration-300 group ${
+                          isThisAyahPlaying
+                            ? "border-emerald-500/80 dark:border-emerald-500/80 shadow-lg shadow-emerald-500/10 ring-2 ring-emerald-500/30 bg-emerald-50/20 dark:bg-emerald-950/20"
+                            : "border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md"
+                        }`}
                       >
                         {/* Top Actions Row */}
                         <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-50 dark:border-slate-800/80">
                           <div className="flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400 flex items-center justify-center text-xs font-bold font-mono">
+                            <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold font-mono transition-colors ${
+                              isThisAyahPlaying
+                                ? "bg-emerald-600 text-white"
+                                : "bg-emerald-100 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400"
+                            }`}>
                               {verse.ayah}
                             </span>
                             <span className="text-xs text-slate-400">
@@ -446,10 +481,14 @@ export default function Quran() {
                             {/* Play Ayah Audio */}
                             <button
                               onClick={() => handlePlayAyah(verse)}
-                              title="Listen to this verse"
-                              className="p-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                              title={isThisAyahPlaying ? "Verse is playing" : "Listen to this verse"}
+                              className={`p-2 rounded-xl transition-all ${
+                                isThisAyahPlaying
+                                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30"
+                                  : "hover:bg-emerald-50 dark:hover:bg-emerald-950/50 text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-400"
+                              }`}
                             >
-                              <Play className="w-4 h-4" />
+                              {isThisAyahPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                             </button>
 
                             {/* View Tafsir */}

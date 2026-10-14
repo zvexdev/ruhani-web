@@ -12,10 +12,13 @@ import {
   Music,
   Loader2,
   BookOpen,
-  Sparkles
+  Sparkles,
+  Search,
+  Check
 } from "lucide-react";
 import * as api from "../services/api";
-import type { SurahMeta, Reciter } from "../types";
+import { RECITERS_LIST, type ReciterInfo } from "../data/reciters";
+import type { SurahMeta } from "../types";
 import { useAudio } from "../context/AudioContext";
 
 export default function Audio() {
@@ -23,11 +26,13 @@ export default function Audio() {
   const initialSurah = Number(searchParams.get("surah")) || 1;
 
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
-  const [reciters, setReciters] = useState<Reciter[]>([]);
+  const [reciters, setReciters] = useState<ReciterInfo[]>(RECITERS_LIST);
   const [selectedSurah, setSelectedSurah] = useState(initialSurah);
-  const [selectedReciter, setSelectedReciter] = useState(1);
+  const [selectedReciter, setSelectedReciter] = useState(1); // Default: Sheikh Yasser Al-Dosari
   const [showReciters, setShowReciters] = useState(false);
   const [showSurahs, setShowSurahs] = useState(false);
+  const [reciterFilter, setReciterFilter] = useState("");
+  const [surahFilter, setSurahFilter] = useState("");
   const [loading, setLoading] = useState(true);
 
   const { playTrack, currentTrack, isPlaying, togglePlay, currentTime, duration, seek, volume, setVolume } = useAudio();
@@ -55,15 +60,15 @@ export default function Audio() {
     try {
       const data = await api.getSurahAudio(surahNum);
       const reciterData = data.reciters?.find((r: any) => r.id === reciterId) || data.reciters?.[0];
-      const sMeta = surahs.find(s => s.number === surahNum);
-      const rMeta = reciters.find(r => r.id === reciterId);
+      const sMeta = surahs.find((s) => s.number === surahNum);
+      const rMeta = reciters.find((r) => r.id === reciterId);
 
       if (reciterData?.full_surah_audio) {
         playTrack({
           title: `Surah ${sMeta?.name_english || surahNum}`,
-          subtitle: rMeta?.name || "Qari Recitation",
+          subtitle: `Sheikh ${rMeta?.name || "Yasser Al-Dosari"}`,
           arabicTitle: sMeta?.name_arabic,
-          src: reciterData.full_surah_audio
+          src: reciterData.full_surah_audio,
         });
       }
     } catch (err) {
@@ -86,6 +91,19 @@ export default function Audio() {
   const currentSurahMeta = surahs.find((s) => s.number === selectedSurah);
   const currentReciter = reciters.find((r) => r.id === selectedReciter);
 
+  const filteredReciters = reciters.filter(
+    (r) =>
+      r.name.toLowerCase().includes(reciterFilter.toLowerCase()) ||
+      r.name_arabic.includes(reciterFilter)
+  );
+
+  const filteredSurahs = surahs.filter(
+    (s) =>
+      s.name_english.toLowerCase().includes(surahFilter.toLowerCase()) ||
+      s.name_arabic.includes(surahFilter) ||
+      String(s.number).includes(surahFilter)
+  );
+
   const formatTime = (t: number) => {
     if (!t || isNaN(t)) return "0:00";
     const mins = Math.floor(t / 60);
@@ -105,36 +123,40 @@ export default function Audio() {
   }
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-28">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-8 pb-32">
       {/* Header */}
       <div className="py-6 md:py-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/70 dark:bg-emerald-950/70 text-[#1A5D3A] dark:text-emerald-300 text-xs font-semibold mb-3 border border-emerald-200 dark:border-emerald-800/40">
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <span>Default Reciter: Sheikh Yasser Al-Dosari</span>
+        </div>
         <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Listen to the Quran
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Stream heart-touching, high-definition recitations from world-renowned Qaris
+          Stream heart-touching, high-definition recitations from 15 world-renowned Qaris
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-8">
-        {/* Player Card */}
+      <div className="grid lg:grid-cols-12 gap-8 items-start">
+        {/* Left Player Card */}
         <div className="lg:col-span-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-emerald-950 via-slate-950 to-emerald-900 text-white rounded-3xl p-6 md:p-10 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
+            className="bg-gradient-to-br from-emerald-950 via-slate-950 to-emerald-900 text-white rounded-3xl p-6 sm:p-10 shadow-2xl border border-emerald-700/40 relative overflow-hidden"
           >
             {/* Ambient Aura */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
 
             {/* Now Playing Info */}
-            <div className="flex items-center gap-5 mb-8 relative z-10">
-              <div className="w-18 h-18 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center text-amber-300 shadow-inner">
-                <Music className="w-8 h-8" />
+            <div className="flex items-center gap-4 sm:gap-5 mb-8 relative z-10">
+              <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center text-amber-300 shadow-inner shrink-0">
+                <Music className="w-7 h-7 sm:w-8 sm:h-8" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] uppercase font-bold tracking-widest text-emerald-300">
+                  <span className="text-[10px] sm:text-[11px] uppercase font-bold tracking-widest text-emerald-300">
                     Now Streaming
                   </span>
                   {isPlaying && (
@@ -144,22 +166,22 @@ export default function Audio() {
                     </span>
                   )}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-extrabold text-white truncate mt-1">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-white truncate mt-1">
                   Surah {currentSurahMeta?.name_english || "Al-Fatihah"}
                 </h3>
-                <p className="text-sm text-emerald-200/80 truncate">
-                  {currentReciter?.name || "Mishary Rashid Alafasy"} &middot;{" "}
+                <p className="text-xs sm:text-sm text-emerald-200/80 truncate">
+                  {currentReciter?.name || "Yasser Al-Dosari"} &middot;{" "}
                   <span className="font-['Amiri'] text-amber-300">{currentSurahMeta?.name_arabic}</span>
                 </p>
               </div>
             </div>
 
             {/* Dynamic Waveform Visualizer */}
-            <div className="flex items-center justify-center gap-1.5 h-20 mb-6 bg-black/20 rounded-2xl p-4 border border-white/5">
-              {Array.from({ length: 45 }).map((_, i) => (
+            <div className="flex items-center justify-center gap-1 sm:gap-1.5 h-20 mb-6 bg-black/25 rounded-2xl p-4 border border-white/5 overflow-hidden">
+              {Array.from({ length: 42 }).map((_, i) => (
                 <motion.div
                   key={i}
-                  className="w-1.5 bg-gradient-to-t from-emerald-500 to-amber-300 rounded-full"
+                  className="w-1.5 bg-gradient-to-t from-emerald-500 to-amber-300 rounded-full shrink-0"
                   animate={
                     isPlaying
                       ? {
@@ -189,7 +211,7 @@ export default function Audio() {
                 max={duration || 100}
                 value={currentTime}
                 onChange={(e) => seek(Number(e.target.value))}
-                className="w-full h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-amber-400 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer"
+                className="w-full h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-amber-400 [&::-webkit-slider-thumb]:rounded-full"
               />
               <div className="flex justify-between mt-2 text-xs font-mono text-white/60">
                 <span>{formatTime(currentTime)}</span>
@@ -245,7 +267,7 @@ export default function Audio() {
           </motion.div>
         </div>
 
-        {/* Selection Column */}
+        {/* Right Selection Column */}
         <div className="lg:col-span-4 space-y-4">
           {/* Reciter Selector */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
@@ -253,42 +275,76 @@ export default function Audio() {
               onClick={() => setShowReciters(!showReciters)}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-colors text-slate-900 dark:text-white"
             >
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400 flex items-center justify-center">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400 flex items-center justify-center font-bold text-xs">
                   <Headphones className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                  <span className="text-xs text-slate-400 block">Reciter</span>
-                  <span className="text-sm font-semibold">{currentReciter?.name}</span>
+                  <span className="text-[11px] text-slate-400 block font-semibold uppercase tracking-wider">
+                    Sheikh / Reciter
+                  </span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                    {currentReciter?.name}
+                    {currentReciter?.id === 1 && (
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">
+                        Default
+                      </span>
+                    )}
+                  </span>
                 </div>
               </div>
               <ChevronDown
                 className={`w-4 h-4 text-slate-400 transition-transform ${showReciters ? "rotate-180" : ""}`}
               />
             </button>
+
             {showReciters && (
-              <div className="border-t border-gray-100 dark:border-slate-800 max-h-64 overflow-y-auto divide-y divide-gray-50 dark:divide-slate-800/50">
-                {reciters.map((reciter) => (
-                  <button
-                    key={reciter.id}
-                    onClick={() => handleReciterChange(reciter.id)}
-                    className={`w-full flex items-center gap-3 p-3 text-left hover:bg-emerald-50/50 dark:hover:bg-slate-800/50 transition-colors ${
-                      reciter.id === selectedReciter
-                        ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold"
-                        : "text-slate-700 dark:text-slate-300"
-                    }`}
-                  >
-                    <div
-                      className={`w-2 h-2 rounded-full ${
-                        reciter.id === selectedReciter ? "bg-emerald-600 dark:bg-emerald-400" : "bg-slate-300"
+              <div className="border-t border-gray-100 dark:border-slate-800 p-2">
+                {/* Search Bar for Reciters */}
+                <div className="relative mb-2 px-1">
+                  <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search 15 Sheikhs..."
+                    value={reciterFilter}
+                    onChange={(e) => setReciterFilter(e.target.value)}
+                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                  />
+                </div>
+
+                <div className="max-h-64 overflow-y-auto divide-y divide-gray-50 dark:divide-slate-800/50 pr-1">
+                  {filteredReciters.map((reciter) => (
+                    <button
+                      key={reciter.id}
+                      onClick={() => handleReciterChange(reciter.id)}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl text-left transition-colors ${
+                        reciter.id === selectedReciter
+                          ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold"
+                          : "hover:bg-gray-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300"
                       }`}
-                    />
-                    <div className="flex-1">
-                      <p className="text-xs font-semibold">{reciter.name}</p>
-                      <p className="text-[11px] text-slate-400 font-['Amiri']">{reciter.name_arabic}</p>
-                    </div>
-                  </button>
-                ))}
+                    >
+                      <div className="flex-1 min-w-0 pr-2">
+                        <p className="text-xs font-bold truncate flex items-center gap-1.5">
+                          {reciter.name}
+                          {reciter.id === 1 && (
+                            <span className="text-[9px] px-1 rounded bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                              Default
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-[10px] text-slate-400">{reciter.riwayah}</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="font-['Amiri'] text-xs text-slate-500">
+                          {reciter.name_arabic}
+                        </span>
+                        {reciter.id === selectedReciter && (
+                          <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -299,13 +355,15 @@ export default function Audio() {
               onClick={() => setShowSurahs(!showSurahs)}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-slate-800/60 transition-colors text-slate-900 dark:text-white"
             >
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 flex items-center justify-center">
                   <BookOpen className="w-4 h-4" />
                 </div>
                 <div className="text-left">
-                  <span className="text-xs text-slate-400 block">Surah</span>
-                  <span className="text-sm font-semibold">
+                  <span className="text-[11px] text-slate-400 block font-semibold uppercase tracking-wider">
+                    Chapter / Surah
+                  </span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">
                     {selectedSurah}. {currentSurahMeta?.name_english}
                   </span>
                 </div>
@@ -314,30 +372,44 @@ export default function Audio() {
                 className={`w-4 h-4 text-slate-400 transition-transform ${showSurahs ? "rotate-180" : ""}`}
               />
             </button>
+
             {showSurahs && (
-              <div className="border-t border-gray-100 dark:border-slate-800 max-h-72 overflow-y-auto divide-y divide-gray-50 dark:divide-slate-800/50">
-                {surahs.map((surah) => (
-                  <button
-                    key={surah.number}
-                    onClick={() => handleSurahChange(surah.number)}
-                    className={`w-full flex items-center gap-3 p-3 text-left hover:bg-amber-50/50 dark:hover:bg-slate-800/50 transition-colors ${
-                      surah.number === selectedSurah
-                        ? "bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 font-semibold"
-                        : "text-slate-700 dark:text-slate-300"
-                    }`}
-                  >
-                    <span className="text-xs font-mono font-bold w-6 text-slate-400">
-                      {surah.number}
-                    </span>
-                    <div className="flex-1">
-                      <p className="text-xs font-medium">{surah.name_english}</p>
-                      <p className="text-[10px] text-slate-400">{surah.verses_count} verses</p>
-                    </div>
-                    <span className="font-['Amiri'] text-sm text-slate-800 dark:text-slate-200">
-                      {surah.name_arabic}
-                    </span>
-                  </button>
-                ))}
+              <div className="border-t border-gray-100 dark:border-slate-800 p-2">
+                <div className="relative mb-2 px-1">
+                  <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Filter 114 Surahs..."
+                    value={surahFilter}
+                    onChange={(e) => setSurahFilter(e.target.value)}
+                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white focus:outline-none"
+                  />
+                </div>
+
+                <div className="max-h-72 overflow-y-auto divide-y divide-gray-50 dark:divide-slate-800/50 pr-1">
+                  {filteredSurahs.map((surah) => (
+                    <button
+                      key={surah.number}
+                      onClick={() => handleSurahChange(surah.number)}
+                      className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-colors ${
+                        surah.number === selectedSurah
+                          ? "bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 font-semibold"
+                          : "hover:bg-gray-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      <span className="text-xs font-mono font-bold w-6 text-slate-400">
+                        {surah.number}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium truncate">{surah.name_english}</p>
+                        <p className="text-[10px] text-slate-400">{surah.verses_count} verses</p>
+                      </div>
+                      <span className="font-['Amiri'] text-sm text-slate-700 dark:text-slate-300 shrink-0">
+                        {surah.name_arabic}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>

@@ -13,10 +13,13 @@ interface AudioContextType {
   currentTime: number;
   duration: number;
   volume: number;
+  playbackRate: number;
   playTrack: (track: AudioTrack) => void;
   togglePlay: () => void;
   seek: (time: number) => void;
+  skipSeconds: (delta: number) => void;
   setVolume: (vol: number) => void;
+  setPlaybackRate: (rate: number) => void;
   stop: () => void;
 }
 
@@ -27,19 +30,26 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolumeState] = useState(0.85);
+  const [playbackRate, setPlaybackRateState] = useState(1);
+  const [volume, setVolumeState] = useState(() => {
+    const saved = localStorage.getItem("ruhani-volume");
+    return saved ? parseFloat(saved) : 0.85;
+  });
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const audio = new Audio();
     audio.preload = "metadata";
+    audio.volume = volume;
+    audio.playbackRate = playbackRate;
     audioRef.current = audio;
 
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleDurationChange = () => setDuration(audio.duration || 0);
     const handleEnded = () => setIsPlaying(false);
     const handleError = (e: any) => {
-      console.warn("Audio playback error:", e);
+      console.warn("Audio stream error/stall:", e);
       setIsPlaying(false);
     };
 
@@ -61,13 +71,17 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     if (!audioRef.current) return;
     setCurrentTrack(track);
     audioRef.current.src = track.src;
+    audioRef.current.playbackRate = playbackRate;
     audioRef.current.load();
-    audioRef.current.play().then(() => {
-      setIsPlaying(true);
-    }).catch(err => {
-      console.warn("Playback error:", err);
-      setIsPlaying(false);
-    });
+    audioRef.current
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+      })
+      .catch((err) => {
+        console.warn("Playback error:", err);
+        setIsPlaying(false);
+      });
   };
 
   const togglePlay = () => {
@@ -76,11 +90,14 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(err => {
-        console.warn("Playback error:", err);
-      });
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((err) => {
+          console.warn("Playback toggle error:", err);
+        });
     }
   };
 
@@ -90,10 +107,26 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     setCurrentTime(time);
   };
 
+  const skipSeconds = (delta: number) => {
+    if (!audioRef.current) return;
+    const newTime = Math.max(0, Math.min(duration || 0, audioRef.current.currentTime + delta));
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
   const setVolume = (vol: number) => {
-    setVolumeState(vol);
+    const clamped = Math.max(0, Math.min(1, vol));
+    setVolumeState(clamped);
+    localStorage.setItem("ruhani-volume", String(clamped));
     if (audioRef.current) {
-      audioRef.current.volume = vol;
+      audioRef.current.volume = clamped;
+    }
+  };
+
+  const setPlaybackRate = (rate: number) => {
+    setPlaybackRateState(rate);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = rate;
     }
   };
 
@@ -114,10 +147,13 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
         currentTime,
         duration,
         volume,
+        playbackRate,
         playTrack,
         togglePlay,
         seek,
+        skipSeconds,
         setVolume,
+        setPlaybackRate,
         stop,
       }}
     >

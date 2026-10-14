@@ -59,10 +59,10 @@ export default function Home() {
 
   const handlePlayVerseAudio = () => {
     if (!dailyVerse) return;
-    const audioUrl = dailyVerse.audio?.ayah_audio || "https://everyayah.com/data/Alafasy_128kbps/002255.mp3";
+    const audioUrl = dailyVerse.audio?.ayah_audio || "https://everyayah.com/data/Yasser_Ad-Dussary_128kbps/002255.mp3";
     playTrack({
       title: `Verse of the Day (${dailyVerse.verse_key})`,
-      subtitle: "Mishary Rashid Alafasy",
+      subtitle: "Sheikh Yasser Al-Dosari",
       arabicTitle: "آية اليوم",
       src: audioUrl,
     });
@@ -71,9 +71,9 @@ export default function Home() {
   const handlePlayRahman = () => {
     playTrack({
       title: "Surah Ar-Rahman (55)",
-      subtitle: "Sheikh Mishary Rashid Alafasy",
+      subtitle: "Sheikh Yasser Al-Dosari",
       arabicTitle: "سورة الرحمن",
-      src: "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/055.mp3",
+      src: "https://server11.mp3quran.net/yasser/055.mp3",
     });
   };
 
