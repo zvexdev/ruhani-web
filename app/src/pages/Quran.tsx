@@ -1246,7 +1246,7 @@ export default function Quran() {
                 <div className="bg-white dark:bg-neutral-900 rounded-3xl p-8 md:p-14 border border-emerald-900/10 dark:border-emerald-500/10 shadow-md">
                   <div
                     dir="rtl"
-                    className="font-quran text-right leading-[2.8] text-neutral-900 dark:text-neutral-100 text-justify tracking-normal select-text"
+                    className="font-quran text-right leading-[2.8] text-neutral-900 dark:text-neutral-100 text-justify tracking-normal select-text break-words break-anywhere"
                     style={{ fontSize: `${fontSize}px`, textJustify: "inter-word" }}
                   >
                     {surahDetail.verses.map((verse) => {
@@ -1368,7 +1368,7 @@ export default function Quran() {
                         <div dir="rtl" className="w-full">
                           <p
                             dir="rtl"
-                            className="font-quran text-right leading-[2.8] text-neutral-900 dark:text-white select-text tracking-normal"
+                            className="font-quran text-right leading-[2.8] text-neutral-900 dark:text-white select-text tracking-normal break-words break-anywhere"
                             style={{ fontSize: `${fontSize}px` }}
                           >
                             {renderInteractiveArabicText(verse.arabic, verse.verse_key)}
@@ -1377,13 +1377,13 @@ export default function Quran() {
 
                         {/* Transliteration */}
                         {verse.transliteration && (
-                          <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-3 italic leading-relaxed">
+                          <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-3 italic leading-relaxed break-words break-anywhere">
                             {verse.transliteration}
                           </p>
                         )}
 
                         {/* Translation */}
-                        <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 mt-3 font-serif leading-relaxed">
+                        <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 mt-3 font-serif leading-relaxed break-words break-anywhere">
                           {verse.translations?.[translation] || verse.translations?.sahih_international || ""}
                         </p>
                       </div>
@@ -1468,7 +1468,7 @@ export default function Quran() {
                     <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : (
-                  <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-serif whitespace-pre-line">
+                  <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed font-serif whitespace-pre-line break-words break-anywhere">
                     {tafsirText}
                   </p>
                 )}

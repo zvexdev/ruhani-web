@@ -177,12 +177,12 @@ export default function HadithPage() {
             </button>
           </div>
 
-          <p className="font-serif text-lg md:text-xl text-neutral-800 dark:text-neutral-200 leading-relaxed relative z-10">
+          <p className="font-serif text-lg md:text-xl text-neutral-800 dark:text-neutral-200 leading-relaxed relative z-10 break-words break-anywhere">
             &ldquo;{randomHadith.english}&rdquo;
           </p>
 
           {randomHadith.arabic && (
-            <div className="font-['Amiri'] text-xl sm:text-2xl text-right text-neutral-900 dark:text-neutral-100 mt-5 leading-[2.3] bg-emerald-50/40 dark:bg-neutral-950/80 border border-emerald-900/10 dark:border-neutral-800/80 p-5 rounded-2xl relative z-10 select-text">
+            <div className="font-['Amiri'] text-xl sm:text-2xl text-right text-neutral-900 dark:text-neutral-100 mt-5 leading-[2.3] bg-emerald-50/40 dark:bg-neutral-950/80 border border-emerald-900/10 dark:border-neutral-800/80 p-5 rounded-2xl relative z-10 select-text break-words break-anywhere">
               {randomHadith.arabic}
             </div>
           )}
@@ -398,15 +398,15 @@ export default function HadithPage() {
               {/* Hadith Content */}
               {hadith.arabic ? (
                 <div>
-                  <div className="font-['Amiri'] text-right text-lg sm:text-xl text-neutral-900 dark:text-neutral-100 leading-[2.3] bg-emerald-50/30 dark:bg-neutral-950/80 border border-emerald-900/10 dark:border-neutral-800/80 p-4 sm:p-5 rounded-2xl mb-3 select-text">
+                  <div className="font-['Amiri'] text-right text-lg sm:text-xl text-neutral-900 dark:text-neutral-100 leading-[2.3] bg-emerald-50/30 dark:bg-neutral-950/80 border border-emerald-900/10 dark:border-neutral-800/80 p-4 sm:p-5 rounded-2xl mb-3 select-text break-words break-anywhere">
                     {hadith.arabic}
                   </div>
-                  <p className="font-serif text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                  <p className="font-serif text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed break-words break-anywhere">
                     &ldquo;{hadith.english}&rdquo;
                   </p>
                 </div>
               ) : (
-                <p className="font-serif text-base text-neutral-800 dark:text-neutral-200 leading-relaxed">
+                <p className="font-serif text-base text-neutral-800 dark:text-neutral-200 leading-relaxed break-words break-anywhere">
                   &ldquo;{hadith.english}&rdquo;
                 </p>
               )}

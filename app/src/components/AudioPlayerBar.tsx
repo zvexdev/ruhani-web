@@ -112,37 +112,37 @@ export default function AudioPlayerBar() {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 120, opacity: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 28 }}
-        className="fixed bottom-3 left-3 right-3 sm:bottom-6 sm:left-8 sm:right-8 max-w-4xl mx-auto z-50 select-none"
+        className="fixed bottom-0 sm:bottom-6 inset-x-0 sm:inset-x-auto sm:left-8 sm:right-8 sm:max-w-4xl sm:mx-auto z-50 select-none p-2 sm:p-0 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] sm:pb-0"
       >
-        <div className="bg-black/95 dark:bg-black/95 backdrop-blur-2xl text-white rounded-3xl p-3.5 sm:p-4 shadow-[0_20px_50px_rgba(0,0,0,0.85)] border border-emerald-500/30 flex flex-col gap-2.5 relative overflow-visible">
+        <div className="bg-black/95 dark:bg-black/95 backdrop-blur-2xl text-white rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_20px_50px_rgba(0,0,0,0.85)] border border-emerald-500/30 flex flex-col gap-2 sm:gap-2.5 relative overflow-visible">
           {/* Subtle top amber glowing hairline */}
-          <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400/50 to-transparent pointer-events-none rounded-t-3xl" />
+          <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400/50 to-transparent pointer-events-none rounded-t-2xl sm:rounded-t-3xl" />
 
           {/* Main Controls Row */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
             {/* Track Info with Animated Soundwave Thumbnail */}
-            <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 shadow-inner relative overflow-hidden">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-emerald-950/80 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0 shadow-inner relative overflow-hidden">
                 {isLoadingTrack ? (
-                  <Loader2 className="w-5 h-5 text-amber-400 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 animate-spin" />
                 ) : isPlaying ? (
-                  <div className="flex items-end gap-0.5 h-4 px-1 text-emerald-400">
+                  <div className="flex items-end gap-0.5 h-3.5 sm:h-4 px-1 text-emerald-400">
                     <span className="w-0.5 bg-emerald-400 rounded-full eq-bar-1" />
                     <span className="w-0.5 bg-amber-400 rounded-full eq-bar-2" />
                     <span className="w-0.5 bg-emerald-300 rounded-full eq-bar-3" />
                     <span className="w-0.5 bg-amber-300 rounded-full eq-bar-4" />
                   </div>
                 ) : (
-                  <Music className="w-5 h-5 text-emerald-400" />
+                  <Music className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="font-bold text-xs sm:text-sm truncate text-white">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <p className="font-bold text-xs sm:text-sm truncate text-white max-w-[100px] xs:max-w-[150px] sm:max-w-none">
                     {currentTrack.title}
                   </p>
                   {activeVerseKey && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold shrink-0 border border-emerald-500/30">
+                    <span className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold shrink-0 border border-emerald-500/30">
                       {language === "ar" ? `الآية ${activeVerseKey.split(":")[1]}` : `Ayah ${activeVerseKey.split(":")[1]}`}
                     </span>
                   )}
@@ -152,20 +152,20 @@ export default function AudioPlayerBar() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-[11px] text-emerald-300/80 truncate">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <p className="text-[10px] sm:text-[11px] text-emerald-300/80 truncate max-w-[110px] xs:max-w-[170px] sm:max-w-none">
                     {currentTrack.subtitle || defaultReciterName}
                   </p>
                   {isFadingOut && (
-                    <span className="inline-flex items-center gap-1 text-[10px] text-amber-300 font-bold animate-pulse">
-                      <Moon className="w-3 h-3 text-amber-400" />
+                    <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] text-amber-300 font-bold animate-pulse">
+                      <Moon className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-400" />
                       <span>{t.sleepTimerFading}</span>
                     </span>
                   )}
                   {hasPlaybackError && (
-                    <span className="inline-flex items-center gap-1 text-[10px] text-amber-400 font-medium">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{language === "ar" ? "تعذر البث، جارٍ التجهيز" : "Stream notice"}</span>
+                    <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] text-amber-400 font-medium">
+                      <AlertCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                      <span>{language === "ar" ? "تعذر البث" : "Notice"}</span>
                     </span>
                   )}
                 </div>
@@ -173,23 +173,23 @@ export default function AudioPlayerBar() {
             </div>
 
             {/* Middle Playback Controls */}
-            <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-0.5 sm:gap-2 shrink-0">
               {/* Surah Prev Button */}
               {isSurahTrack && (
                 <button
                   onClick={playPrevSurah}
                   title={t.playerPrevSurah}
-                  className="min-w-[44px] min-h-[44px] p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 flex items-center justify-center"
+                  className="p-1.5 sm:p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 flex items-center justify-center min-w-[34px] min-h-[34px] sm:min-w-[44px] sm:min-h-[44px]"
                 >
                   <SkipBack className="w-4 h-4" />
                 </button>
               )}
 
-              {/* Skip -10s */}
+              {/* Skip -10s: Hidden on mobile (< sm) */}
               <button
                 onClick={() => skipSeconds(-10)}
                 title={t.playerSkipBack}
-                className="min-w-[44px] min-h-[44px] p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 flex items-center justify-center"
+                className="hidden sm:flex min-w-[44px] min-h-[44px] p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 items-center justify-center"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -198,22 +198,22 @@ export default function AudioPlayerBar() {
               <button
                 onClick={togglePlay}
                 title={isPlaying ? t.playerPause : t.playerPlay}
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-200 text-neutral-950 flex items-center justify-center shadow-lg shadow-amber-400/30 active:scale-95 hover:scale-105 transition-all"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-200 text-neutral-950 flex items-center justify-center shadow-lg shadow-amber-400/30 active:scale-95 hover:scale-105 transition-all shrink-0"
               >
                 {isLoadingTrack ? (
-                  <Loader2 className="w-5 h-5 animate-spin text-neutral-950" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin text-neutral-950" />
                 ) : isPlaying ? (
-                  <Pause className="w-5 h-5 fill-current" />
+                  <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
                 ) : (
-                  <Play className="w-5 h-5 fill-current ml-0.5" />
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5" />
                 )}
               </button>
 
-              {/* Skip +10s */}
+              {/* Skip +10s: Hidden on mobile (< sm) */}
               <button
                 onClick={() => skipSeconds(10)}
                 title={t.playerSkipForward}
-                className="min-w-[44px] min-h-[44px] p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 flex items-center justify-center"
+                className="hidden sm:flex min-w-[44px] min-h-[44px] p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 items-center justify-center"
               >
                 <RotateCw className="w-4 h-4" />
               </button>
@@ -223,7 +223,7 @@ export default function AudioPlayerBar() {
                 <button
                   onClick={playNextSurah}
                   title={t.playerNextSurah}
-                  className="min-w-[44px] min-h-[44px] p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 flex items-center justify-center"
+                  className="p-1.5 sm:p-2 rounded-xl text-neutral-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 flex items-center justify-center min-w-[34px] min-h-[34px] sm:min-w-[44px] sm:min-h-[44px]"
                 >
                   <SkipForward className="w-4 h-4" />
                 </button>
@@ -231,9 +231,9 @@ export default function AudioPlayerBar() {
             </div>
 
             {/* Right Sleep Timer, Continuous Toggle, Speed, Volume & Close */}
-            <div className="flex items-center gap-1 sm:gap-2 relative">
-              {/* Quiet Sleep Timer Button & Menu */}
-              <div className="relative" ref={sleepMenuRef}>
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              {/* Quiet Sleep Timer Button & Menu: Hidden on mobile (< sm) */}
+              <div className="hidden sm:block relative" ref={sleepMenuRef}>
                 <button
                   onClick={() => setShowSleepMenu(!showSleepMenu)}
                   title={`${t.playerSleepTimer}${sleepTimer ? `: ${formatSleepRemaining(sleepTimerSecondsRemaining, sleepTimer)}` : ""}`}
@@ -308,12 +308,12 @@ export default function AudioPlayerBar() {
                 </AnimatePresence>
               </div>
 
-              {/* Continuous Surah Auto-Play Toggle */}
+              {/* Continuous Surah Auto-Play Toggle: Hidden on < md */}
               {isSurahTrack && (
                 <button
                   onClick={() => setAutoPlayNextSurah(!autoPlayNextSurah)}
                   title={`${t.playerContinuousPlay}: ${autoPlayNextSurah ? (language === "ar" ? "مفعل" : "Active") : (language === "ar" ? "معطل" : "Off")}`}
-                  className={`min-w-[40px] min-h-[40px] p-2 rounded-xl text-xs font-semibold transition-all active:scale-95 flex items-center justify-center relative ${
+                  className={`hidden md:flex min-w-[40px] min-h-[40px] p-2 rounded-xl text-xs font-semibold transition-all active:scale-95 items-center justify-center relative ${
                     autoPlayNextSurah
                       ? "bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.25)]"
                       : "bg-white/5 text-neutral-500 hover:text-white hover:bg-white/10 border border-white/5"
@@ -326,12 +326,12 @@ export default function AudioPlayerBar() {
                 </button>
               )}
 
-              {/* Loop mode toggle for non-surah */}
+              {/* Loop mode toggle for non-surah: Hidden on < md */}
               {!isSurahTrack && (
                 <button
                   onClick={cycleLoopMode}
                   title={`Loop: ${loopMode}`}
-                  className={`min-w-[40px] min-h-[40px] p-2 rounded-xl text-xs font-semibold transition-all active:scale-95 flex items-center justify-center ${
+                  className={`hidden md:flex min-w-[40px] min-h-[40px] p-2 rounded-xl text-xs font-semibold transition-all active:scale-95 items-center justify-center ${
                     loopMode !== "off"
                       ? "bg-amber-400/20 text-amber-300 border border-amber-400/40"
                       : "bg-white/5 text-neutral-500 hover:text-white hover:bg-white/10"
@@ -342,11 +342,11 @@ export default function AudioPlayerBar() {
                 </button>
               )}
 
-              {/* Speed rate toggle */}
+              {/* Speed rate toggle - compact on mobile */}
               <button
                 onClick={cycleSpeed}
                 title={language === "ar" ? "سرعة التلاوة" : "Playback Speed"}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] font-mono font-bold text-amber-300 transition-all active:scale-95 min-h-[40px]"
+                className="flex items-center gap-1 px-1.5 sm:px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-[10px] sm:text-[11px] font-mono font-bold text-amber-300 transition-all active:scale-95 min-h-[32px] sm:min-h-[40px]"
               >
                 <Gauge className="w-3 h-3 hidden sm:inline" />
                 <span>{playbackRate}x</span>
@@ -374,7 +374,7 @@ export default function AudioPlayerBar() {
               {/* Close Button */}
               <button
                 onClick={stop}
-                className="min-w-[40px] min-h-[40px] p-2 rounded-xl hover:bg-white/10 text-neutral-400 hover:text-white transition-colors flex items-center justify-center"
+                className="min-w-[32px] min-h-[32px] sm:min-w-[40px] sm:min-h-[40px] p-1.5 sm:p-2 rounded-xl hover:bg-white/10 text-neutral-400 hover:text-white transition-colors flex items-center justify-center shrink-0"
                 title={t.close}
               >
                 <X className="w-4 h-4" />
@@ -383,8 +383,8 @@ export default function AudioPlayerBar() {
           </div>
 
           {/* Scrubber Line with live gradient progress track */}
-          <div className="flex items-center gap-2.5 text-[10px] sm:text-[11px] font-mono text-neutral-400 px-1" dir="ltr">
-            <span className="w-9 text-right">{formatSeconds(currentTime)}</span>
+          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-mono text-neutral-400 px-0.5 sm:px-1" dir="ltr">
+            <span className="w-8 sm:w-9 text-right shrink-0">{formatSeconds(currentTime)}</span>
             <div className="flex-1 relative flex items-center">
               <input
                 type="range"
@@ -398,7 +398,7 @@ export default function AudioPlayerBar() {
                 className="w-full h-1.5 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-amber-400 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(245,158,11,0.8)]"
               />
             </div>
-            <span className="w-9">{formatSeconds(duration)}</span>
+            <span className="w-8 sm:w-9 shrink-0">{formatSeconds(duration)}</span>
           </div>
         </div>
       </motion.div>

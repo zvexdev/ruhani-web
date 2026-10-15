@@ -12,6 +12,11 @@
     text-rendering: optimizeLegibility;
     letter-spacing: 0 !important;
   }
+
+  .break-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 }
 
 @layer base {

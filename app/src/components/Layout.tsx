@@ -19,10 +19,12 @@ import {
 import { useState, useEffect } from "react";
 import AudioPlayerBar from "./AudioPlayerBar";
 import { useLanguage } from "../context/LanguageContext";
+import { useAudio } from "../context/AudioContext";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { isArabic, toggleLanguage, t } = useLanguage();
+  const { currentTrack } = useAudio();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDark, setIsDark] = useState(() => {
@@ -77,18 +79,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-[1440px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-[1440px] mx-auto px-3 sm:px-4 md:px-8 h-16 flex items-center justify-between gap-1.5 sm:gap-2">
           {/* Logo / Sanctuary Brand */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0">
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0">
             <img
               src="/logo.png"
               alt="Ruhani Logo"
-              className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-105 transition-transform shrink-0"
+              className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-md group-hover:scale-105 transition-transform shrink-0"
             />
             <div className="flex flex-col min-w-0">
-              <span className="text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo']">
+              <span className="text-base sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo'] truncate">
                 {t.brandName}
-                <span className="hidden sm:inline-block text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold tracking-normal font-['Amiri']">
+                <span className="hidden md:inline-block text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold tracking-normal font-['Amiri'] shrink-0">
                   {t.brandTagline}
                 </span>
               </span>
@@ -126,12 +128,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* Right Header Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Language Switcher (Arabic default, English toggle) */}
             <button
               onClick={toggleLanguage}
               title={isArabic ? "Switch to English" : "التبديل إلى العربية"}
-              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 bg-white/80 dark:bg-neutral-900/80 hover:bg-emerald-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 transition-colors text-xs font-bold shadow-sm"
+              className="flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 bg-white/80 dark:bg-neutral-900/80 hover:bg-emerald-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 transition-colors text-xs font-bold shadow-sm shrink-0"
             >
               <Languages className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>{isArabic ? "EN" : "عربي"}</span>
@@ -141,7 +143,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <button
               onClick={() => setIsDark(!isDark)}
               title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              className="p-2 rounded-full border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors shadow-sm"
+              className="p-1.5 sm:p-2 rounded-full border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors shadow-sm shrink-0"
             >
               {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-neutral-700" />}
             </button>
@@ -152,14 +154,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               target="_blank"
               rel="noopener noreferrer"
               title="GitHub Repository"
-              className="p-2 rounded-full border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors shadow-sm flex items-center justify-center"
+              className="hidden xs:flex p-1.5 sm:p-2 rounded-full border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors shadow-sm items-center justify-center shrink-0"
             >
               <Github className="w-4 h-4" />
             </a>
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2 rounded-xl border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors"
+              className="lg:hidden p-1.5 sm:p-2 rounded-xl border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors shrink-0"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -220,14 +222,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </AnimatePresence>
       </header>
 
-      {/* Main Content Area */}
-      <main className="pt-20 pb-40 sm:pb-36 flex-1 overflow-x-hidden">{children}</main>
+      {/* Main Content Area with safe bottom padding to prevent player overlap */}
+      <main className={`pt-20 flex-1 overflow-x-hidden ${currentTrack ? "pb-36 sm:pb-32" : "pb-16 sm:pb-12"}`}>{children}</main>
 
       {/* Floating Audio Player */}
       <AudioPlayerBar />
 
       {/* Footer with UmmahAPI & Attribution */}
-      <footer className="mt-auto border-t border-emerald-950/10 dark:border-white/10 bg-white/60 dark:bg-black backdrop-blur-md pt-12 pb-32 sm:pb-24 px-4 md:px-8">
+      <footer className={`mt-auto border-t border-emerald-950/10 dark:border-white/10 bg-white/60 dark:bg-black backdrop-blur-md pt-12 px-4 md:px-8 ${currentTrack ? "pb-36 sm:pb-28" : "pb-16 sm:pb-12"}`}>
         <div className="max-w-[1440px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
             {/* Col 1: Brand & Salutation */}

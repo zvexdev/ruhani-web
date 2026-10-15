@@ -434,18 +434,18 @@ export default function Zikr() {
 
                     {/* Arabic Text in Manuscript frame */}
                     <div className="bg-emerald-50/30 dark:bg-neutral-950/60 border border-emerald-900/10 dark:border-neutral-800/80 rounded-2xl p-5 my-4">
-                      <p className="font-['Amiri'] text-2xl sm:text-3xl text-right leading-[2.3] text-neutral-900 dark:text-neutral-100 select-text">
+                      <p className="font-['Amiri'] text-2xl sm:text-3xl text-right leading-[2.3] text-neutral-900 dark:text-neutral-100 select-text break-words break-anywhere">
                         {item.arabic}
                       </p>
                     </div>
 
                     {/* Transliteration */}
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 italic mb-2 leading-relaxed">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 italic mb-2 leading-relaxed break-words break-anywhere">
                       {item.transliteration}
                     </p>
 
                     {/* Translation */}
-                    <p className="text-sm text-neutral-700 dark:text-neutral-300 font-serif leading-relaxed">
+                    <p className="text-sm text-neutral-700 dark:text-neutral-300 font-serif leading-relaxed break-words break-anywhere">
                       &ldquo;{item.translation}&rdquo;
                     </p>
 
