@@ -9,6 +9,7 @@ export interface ReciterInfo {
   riwayah: string;
   surahBaseUrl: string;
   ayahFolder: string;
+  quranComId?: number;
 }
 
 export const RECITERS_LIST: ReciterInfo[] = [
@@ -28,7 +29,8 @@ export const RECITERS_LIST: ReciterInfo[] = [
     style: "Murattal",
     riwayah: "Hafs 'an 'Asim",
     surahBaseUrl: "https://server8.mp3quran.net/afs",
-    ayahFolder: "Alafasy_128kbps"
+    ayahFolder: "Alafasy_128kbps",
+    quranComId: 7
   },
   {
     id: 3,
@@ -37,7 +39,8 @@ export const RECITERS_LIST: ReciterInfo[] = [
     style: "Murattal",
     riwayah: "Hafs 'an 'Asim",
     surahBaseUrl: "https://server11.mp3quran.net/sds",
-    ayahFolder: "Abdurrahmaan_As-Sudais_192kbps"
+    ayahFolder: "Abdurrahmaan_As-Sudais_192kbps",
+    quranComId: 3
   },
   {
     id: 4,
@@ -55,7 +58,8 @@ export const RECITERS_LIST: ReciterInfo[] = [
     style: "Murattal",
     riwayah: "Hafs 'an 'Asim",
     surahBaseUrl: "https://server7.mp3quran.net/shur",
-    ayahFolder: "Saood_ash-Shuraym_128kbps"
+    ayahFolder: "Saood_ash-Shuraym_128kbps",
+    quranComId: 10
   },
   {
     id: 6,
@@ -64,7 +68,8 @@ export const RECITERS_LIST: ReciterInfo[] = [
     style: "Murattal",
     riwayah: "Hafs 'an 'Asim",
     surahBaseUrl: "https://server13.mp3quran.net/husr",
-    ayahFolder: "Husary_128kbps"
+    ayahFolder: "Husary_128kbps",
+    quranComId: 6
   },
   {
     id: 7,
@@ -73,7 +78,8 @@ export const RECITERS_LIST: ReciterInfo[] = [
     style: "Murattal",
     riwayah: "Hafs 'an 'Asim",
     surahBaseUrl: "https://server10.mp3quran.net/minsh",
-    ayahFolder: "Minshawy_Murattal_128kbps"
+    ayahFolder: "Minshawy_Murattal_128kbps",
+    quranComId: 9
   },
   {
     id: 8,
@@ -82,7 +88,8 @@ export const RECITERS_LIST: ReciterInfo[] = [
     style: "Murattal",
     riwayah: "Hafs 'an 'Asim",
     surahBaseUrl: "https://server7.mp3quran.net/basit",
-    ayahFolder: "Abdul_Basit_Murattal_192kbps"
+    ayahFolder: "Abdul_Basit_Murattal_192kbps",
+    quranComId: 2
   },
   {
     id: 9,
@@ -100,7 +107,8 @@ export const RECITERS_LIST: ReciterInfo[] = [
     style: "Murattal",
     riwayah: "Hafs 'an 'Asim",
     surahBaseUrl: "https://server11.mp3quran.net/shatri",
-    ayahFolder: "Abu_Bakr_Ash-Shaatree_128kbps"
+    ayahFolder: "Abu_Bakr_Ash-Shaatree_128kbps",
+    quranComId: 4
   },
   {
     id: 11,

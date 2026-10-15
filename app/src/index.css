@@ -1,8 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .font-quran {
+    font-family: 'Amiri Quran', 'KFGQPC Uthmanic Script HAFS', 'Traditional Arabic', 'Scheherazade New', serif;
+    font-feature-settings: "cv01", "cv02", "liga" on, "calt" on;
+    font-variant-ligatures: contextual;
+    text-rendering: optimizeLegibility;
+    letter-spacing: 0 !important;
+  }
+}
 
 @layer base {
   :root {
@@ -118,16 +128,35 @@ html.dark body {
 }
 
 .dark .bg-islamic-pattern {
-  background-image: radial-gradient(rgba(46, 182, 125, 0.1) 1.5px, transparent 1.5px), radial-gradient(rgba(245, 158, 11, 0.06) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(rgba(46, 182, 125, 0.12) 1.5px, transparent 1.5px), radial-gradient(rgba(245, 158, 11, 0.08) 1.5px, transparent 1.5px);
   background-size: 32px 32px;
   background-position: 0 0, 16px 16px;
 }
 
+/* Arabesque subtle geometric stars background */
+.bg-arabesque-stars {
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.04) 0%, transparent 50%),
+    radial-gradient(rgba(16, 185, 129, 0.07) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 24px 24px;
+}
+
+.dark .bg-arabesque-stars {
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
+    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 28px 28px;
+}
+
 /* Quranic typography & Ayah markers */
 .font-quran {
-  font-family: 'Scheherazade New', 'Amiri', serif;
-  line-height: 2.2;
-  word-spacing: 2px;
+  font-family: 'Amiri Quran', 'KFGQPC Uthmanic Script HAFS', 'Traditional Arabic', 'Scheherazade New', serif;
+  font-feature-settings: "cv01", "cv02", "liga" on, "calt" on;
+  font-variant-ligatures: contextual;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0 !important;
 }
 
 .font-arabic {
@@ -151,14 +180,114 @@ html.dark body {
 }
 
 .dark .card-gold-glow {
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  box-shadow: 0 4px 24px -2px rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  box-shadow: 0 4px 24px -2px rgba(245, 158, 11, 0.12);
+}
+
+/* Luxury Spiritual Card */
+.spiritual-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .spiritual-card {
+  background-color: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.spiritual-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 12px 30px -10px rgba(16, 185, 129, 0.12);
+}
+
+.dark .spiritual-card-hover:hover {
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 12px 30px -10px rgba(16, 185, 129, 0.18);
+}
+
+/* Gold manuscript corner flourishes */
+.manuscript-border {
+  position: relative;
+}
+.manuscript-border::before,
+.manuscript-border::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  border-color: rgba(212, 175, 55, 0.45);
+}
+.dark .manuscript-border::before,
+.dark .manuscript-border::after {
+  border-color: rgba(245, 158, 11, 0.45);
+}
+.manuscript-border::before {
+  top: 6px;
+  left: 6px;
+  border-top: 1.5px solid;
+  border-left: 1.5px solid;
+}
+.manuscript-border::after {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 1.5px solid;
+  border-right: 1.5px solid;
+}
+
+/* Gold Shimmer Effect */
+@keyframes goldShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-gold {
+  background: linear-gradient(
+    90deg,
+    rgba(245, 158, 11, 0.9) 0%,
+    rgba(253, 230, 138, 1) 50%,
+    rgba(245, 158, 11, 0.9) 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: goldShimmer 4s linear infinite;
+}
+
+/* Soundwave Equalizer Bars */
+@keyframes soundwaveAnim {
+  0%, 100% {
+    height: 4px;
+  }
+  50% {
+    height: 18px;
+  }
+}
+
+.eq-bar-1 {
+  animation: soundwaveAnim 1.1s ease-in-out infinite;
+}
+.eq-bar-2 {
+  animation: soundwaveAnim 0.8s ease-in-out infinite 0.2s;
+}
+.eq-bar-3 {
+  animation: soundwaveAnim 1.3s ease-in-out infinite 0.4s;
+}
+.eq-bar-4 {
+  animation: soundwaveAnim 0.9s ease-in-out infinite 0.1s;
 }
 
 /* Smooth glassmorphic backdrop */
 .glass-panel {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 /* Universal modern smooth scrollbars (Webkit, Blink, Gecko/Firefox) */

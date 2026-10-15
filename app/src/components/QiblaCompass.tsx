@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Compass, MapPin, Navigation, Info, ChevronDown } from "lucide-react";
 import { CITY_PRESETS, calculateQiblaDirection, calculateDistanceToKaaba, type CityPreset } from "../lib/prayerTimes";
 import { useLanguage } from "../context/LanguageContext";
+import { triggerCompassLockPulse } from "../lib/animations";
 
 function getInitialCity(): CityPreset {
   const saved = localStorage.getItem("ruhani-selected-city");
@@ -24,6 +25,7 @@ interface ExtendedDeviceOrientationEvent extends DeviceOrientationEvent {
 
 export default function QiblaCompass() {
   const { t, isArabic } = useLanguage();
+  const dialRef = useRef<HTMLDivElement>(null);
   const [selectedCity, setSelectedCity] = useState<CityPreset>(getInitialCity);
   const [deviceHeading, setDeviceHeading] = useState<number | null>(null);
   const [hasCompassSupport, setHasCompassSupport] = useState(false);
@@ -50,7 +52,7 @@ export default function QiblaCompass() {
     }
 
     return () => {
-      window.removeEventListener("deviceorientation", handleOrientation);
+      window.removeEventListener("deviceorientation", handleOrientation, true);
     };
   }, []);
 
@@ -76,6 +78,7 @@ export default function QiblaCompass() {
         localStorage.setItem("ruhani-selected-city", JSON.stringify(detected));
         setLocating(false);
         setShowCityPicker(false);
+        triggerCompassLockPulse(dialRef.current);
       },
       () => {
         setLocating(false);
@@ -88,6 +91,7 @@ export default function QiblaCompass() {
     setSelectedCity(city);
     localStorage.setItem("ruhani-selected-city", JSON.stringify(city));
     setShowCityPicker(false);
+    triggerCompassLockPulse(dialRef.current);
   };
 
   // Compass needle rotation: if device compass is supported, rotate relative to phone heading
@@ -97,93 +101,97 @@ export default function QiblaCompass() {
   const countryName = isArabic && selectedCity.arabicCountry ? selectedCity.arabicCountry : selectedCity.country;
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 md:p-10 border border-emerald-100 dark:border-emerald-950 shadow-xl max-w-xl mx-auto relative">
+    <div className="spiritual-card rounded-3xl p-5 sm:p-7 md:p-10 border border-emerald-900/30 shadow-2xl max-w-xl mx-auto relative overflow-visible">
+      <div className="absolute inset-0 bg-arabesque-stars opacity-10 pointer-events-none rounded-3xl overflow-hidden" />
+
       {/* Title & Location selector */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#1A5D3A] dark:text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-3">
-          <Compass className="w-3.5 h-3.5" />
+      <div className="text-center mb-4 relative z-10">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/40 text-emerald-800 dark:text-emerald-300 text-xs font-semibold uppercase tracking-wider mb-2">
+          <Compass className="w-3.5 h-3.5 text-amber-500 animate-spin" style={{ animationDuration: "12s" }} />
           <span>{t.qiblaFinderBadge}</span>
         </div>
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-          {t.qiblaTitle}
-        </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          {t.qiblaSubtitle}
-        </p>
 
         {/* Location Dropdown / GPS Button */}
-        <div className="mt-4 inline-block relative">
+        <div className="mt-2 inline-block relative">
           <button
             onClick={() => setShowCityPicker(!showCityPicker)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-slate-800 rounded-full border border-gray-200 dark:border-slate-700 text-sm font-medium text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-100 dark:bg-neutral-900 rounded-full border border-neutral-200 dark:border-neutral-800 text-sm font-medium text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors min-h-[44px]"
           >
             <MapPin className="w-4 h-4 text-[#1A5D3A] dark:text-emerald-400" />
             <span>{cityName}، {countryName}</span>
-            <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform ${showCityPicker ? "rotate-180" : ""}`} />
+            <ChevronDown className={`w-3.5 h-3.5 text-neutral-400 transition-transform ${showCityPicker ? "rotate-180" : ""}`} />
           </button>
 
-          {showCityPicker && (
-            <>
-              {/* Backdrop dismiss overlay */}
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setShowCityPicker(false)}
-              />
+          <AnimatePresence>
+            {showCityPicker && (
+              <>
+                {/* Backdrop dismiss overlay */}
+                <div
+                  className="fixed inset-0 z-[55]"
+                  onClick={() => setShowCityPicker(false)}
+                />
 
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 max-w-[90vw] bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-2.5 shadow-2xl z-50 text-start">
-                <button
-                  onClick={handleDetectLocation}
-                  disabled={locating}
-                  className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-400 text-xs font-semibold transition-colors border-b border-gray-100 dark:border-slate-700 mb-2"
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-80 max-w-[90vw] spiritual-card rounded-2xl border border-neutral-200 dark:border-neutral-800 p-2.5 shadow-2xl z-[60] text-start bg-white dark:bg-black"
                 >
-                  <Navigation className={`w-4 h-4 ${locating ? "animate-spin" : ""}`} />
-                  <span>{locating ? t.qiblaDetecting : t.qiblaDetectGPS}</span>
-                </button>
-                <div className="max-h-56 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-                  {CITY_PRESETS.map((city: CityPreset) => {
-                    const isCurrent = city.name === selectedCity.name;
-                    const cName = isArabic && city.arabicName ? city.arabicName : city.name;
-                    const cSub = isArabic ? city.name : city.arabicName;
-                    const cCountry = isArabic && city.arabicCountry ? city.arabicCountry : city.country;
+                  <button
+                    onClick={handleDetectLocation}
+                    disabled={locating}
+                    className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-[#1A5D3A] dark:text-emerald-300 text-xs font-semibold transition-colors border-b border-neutral-100 dark:border-neutral-800 mb-2 min-h-[44px]"
+                  >
+                    <Navigation className={`w-4 h-4 ${locating ? "animate-spin" : ""}`} />
+                    <span>{locating ? t.qiblaDetecting : t.qiblaDetectGPS}</span>
+                  </button>
+                  <div className="max-h-56 overflow-y-auto space-y-1 pr-1 pb-3 custom-scrollbar">
+                    {CITY_PRESETS.map((city: CityPreset) => {
+                      const isCurrent = city.name === selectedCity.name;
+                      const cName = isArabic && city.arabicName ? city.arabicName : city.name;
+                      const cSub = isArabic ? city.name : city.arabicName;
+                      const cCountry = isArabic && city.arabicCountry ? city.arabicCountry : city.country;
 
-                    return (
-                      <button
-                        key={city.name}
-                        onClick={() => handleSelectCity(city)}
-                        className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs transition-colors ${
-                          isCurrent
-                            ? "bg-emerald-100 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-100 font-bold"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
-                        }`}
-                      >
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <span className="truncate">{cName}</span>
-                          {cSub && (
-                            <span className="text-[10px] text-gray-400 truncate font-normal">
-                              ({cSub})
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-[11px] text-gray-400 shrink-0 font-normal">{cCountry}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </>
-          )}
+                      return (
+                        <button
+                          key={city.name}
+                          onClick={() => handleSelectCity(city)}
+                          className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs transition-colors min-h-[40px] ${
+                            isCurrent
+                              ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-200 font-bold border border-emerald-300/40 dark:border-emerald-800/40"
+                              : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-900"
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="truncate">{cName}</span>
+                            {cSub && (
+                              <span className="text-[10px] text-neutral-400 truncate font-normal">
+                                ({cSub})
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[11px] text-neutral-400 shrink-0 font-normal">{cCountry}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* Compass Dial Graphic (Responsive 224px to 320px) */}
-      <div className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 mx-auto my-6 flex items-center justify-center">
+      <div ref={dialRef} className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 mx-auto my-6 flex items-center justify-center">
         {/* Outer Circular Ring with Degree ticks */}
-        <div className="absolute inset-0 rounded-full border-4 border-emerald-900/10 dark:border-emerald-500/20 shadow-inner flex items-center justify-center">
+        <div className="absolute inset-0 rounded-full border-4 border-emerald-900/20 dark:border-emerald-500/30 shadow-inner flex items-center justify-center bg-radial from-transparent to-emerald-950/10 dark:to-emerald-950/30">
           {/* Cardinal Directions */}
-          <span className="absolute top-3 font-bold text-sm text-red-500">N</span>
-          <span className="absolute bottom-3 font-bold text-sm text-gray-400">S</span>
-          <span className="absolute right-4 font-bold text-sm text-gray-400">E</span>
-          <span className="absolute left-4 font-bold text-sm text-gray-400">W</span>
+          <span className="absolute top-3 font-bold text-sm text-red-500 drop-shadow-sm">N</span>
+          <span className="absolute bottom-3 font-bold text-sm text-neutral-400">S</span>
+          <span className="absolute right-4 font-bold text-sm text-neutral-400">E</span>
+          <span className="absolute left-4 font-bold text-sm text-neutral-400">W</span>
 
           {/* Compass Rose Dial ticks */}
           <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-60 md:h-60 rounded-full border border-dashed border-emerald-600/30 dark:border-emerald-400/20" />
@@ -197,50 +205,54 @@ export default function QiblaCompass() {
         >
           {/* Needle Top (pointing to Kaaba) */}
           <div className="flex flex-col items-center">
-            {/* Kaaba Icon / Marker */}
-            <div className="w-9 h-9 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center shadow-lg border-2 border-amber-400 font-bold text-xs mb-1">
-              🕋
+            {/* Kaaba Vector Emblem (Clean SVG instead of emoji) */}
+            <div className="w-10 h-10 rounded-xl bg-neutral-950 text-amber-400 flex items-center justify-center shadow-xl border-2 border-amber-400/90 mb-1 relative overflow-hidden">
+              <svg viewBox="0 0 32 32" className="w-6 h-6 text-amber-400" fill="currentColor">
+                <rect x="4" y="6" width="24" height="22" rx="2" fill="#080808" stroke="#f59e0b" strokeWidth="1.5" />
+                <rect x="4" y="11" width="24" height="3" fill="#f59e0b" />
+                <rect x="19" y="16" width="5" height="10" rx="1" fill="#fbbf24" />
+              </svg>
             </div>
-            <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[40px] border-b-emerald-600 dark:border-b-emerald-400" />
+            <div className="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[40px] border-b-emerald-600 dark:border-b-emerald-400 filter drop-shadow" />
           </div>
 
           {/* Needle Center Pin */}
-          <div className="w-6 h-6 rounded-full bg-amber-400 border-4 border-white dark:border-slate-900 shadow-md my-0" />
+          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 border-4 border-white dark:border-black shadow-md my-0" />
 
           {/* Needle Bottom (Tail) */}
-          <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[30px] border-t-gray-300 dark:border-t-slate-700" />
+          <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[30px] border-t-neutral-400 dark:border-t-neutral-700" />
         </motion.div>
       </div>
 
       {/* Degrees & Distance Info Card */}
-      <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-gray-100 dark:border-slate-800 text-center">
-        <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40">
+      <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-neutral-100 dark:border-neutral-800/80 text-center relative z-10">
+        <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-900/40">
           <p className="text-xs uppercase tracking-wider text-emerald-800 dark:text-emerald-400 font-semibold">
             {t.qiblaDirectionToKaaba}
           </p>
           <p className="text-2xl font-bold text-[#1A5D3A] dark:text-emerald-300 mt-1 font-mono">
             {qiblaAngle.toFixed(1)}°
           </p>
-          <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+          <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">
             {isArabic ? "من الشمال الحقيقي" : "from True North"}
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40">
+        <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-900/40">
           <p className="text-xs uppercase tracking-wider text-amber-800 dark:text-amber-400 font-semibold">
             {t.qiblaDistanceKm}
           </p>
           <p className="text-2xl font-bold text-amber-600 dark:text-amber-300 mt-1 font-mono">
             {distanceKm.toLocaleString()} <span className="text-sm">{isArabic ? "كم" : "km"}</span>
           </p>
-          <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+          <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5">
             {isArabic ? "مسافة الدائرة العظمى" : "Great Circle Distance"}
           </p>
         </div>
       </div>
 
       {/* Device Sensor Tip */}
-      <div className="mt-4 flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 justify-center">
+      <div className="mt-4 flex items-center gap-2 text-xs text-neutral-400 dark:text-neutral-500 justify-center relative z-10">
         <Info className="w-3.5 h-3.5" />
         <span>
           {hasCompassSupport

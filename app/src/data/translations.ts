@@ -67,6 +67,30 @@ export interface Translations {
   quranTafsirLoading: string;
   quranPrevSurah: string;
   quranNextSurah: string;
+  quranAutoFollow: string;
+  quranAutoFollowActive: string;
+  quranPlayAllAyahs: string;
+  playerContinuousPlay: string;
+  playerNextSurah: string;
+  playerPrevSurah: string;
+  quranTajweedMode: string;
+  quranTajweedLegend: string;
+  quranWordMeaning: string;
+  quranWordRoot: string;
+  quranWordTransliteration: string;
+  quranKhatmaTracker: string;
+  playerSleepTimer: string;
+  sleepTimerOff: string;
+  sleepTimer15m: string;
+  sleepTimer30m: string;
+  sleepTimer45m: string;
+  sleepTimer60m: string;
+  sleepTimerEndSurah: string;
+  sleepTimerFading: string;
+  offlineDownload: string;
+  offlineDownloaded: string;
+  offlineDownloading: string;
+  offlineAvailable: string;
 
   // Audio Page
   audioTitle: string;
@@ -213,6 +237,30 @@ export const translations: Record<Language, Translations> = {
     quranTafsirLoading: "جارٍ تحميل التفسير...",
     quranPrevSurah: "السورة السابقة",
     quranNextSurah: "السورة التالية",
+    quranAutoFollow: "متابعة التلاوة",
+    quranAutoFollowActive: "المتابعة التلقائية مفعلة",
+    quranPlayAllAyahs: "تشغيل آيات السورة بالتتابع",
+    playerContinuousPlay: "التشغيل المتتالي للسور",
+    playerNextSurah: "السورة التالية",
+    playerPrevSurah: "السورة السابقة",
+    quranTajweedMode: "أحكام التجويد",
+    quranTajweedLegend: "دليل أحكام التجويد الملون",
+    quranWordMeaning: "المعنى اللفظي",
+    quranWordRoot: "الجذر اللغوي",
+    quranWordTransliteration: "النطق الصوتي",
+    quranKhatmaTracker: "متابعة الختمة",
+    playerSleepTimer: "مؤقت النوم الهادئ",
+    sleepTimerOff: "إيقاف المؤقت",
+    sleepTimer15m: "١٥ دقيقة",
+    sleepTimer30m: "٣٠ دقيقة",
+    sleepTimer45m: "٤٥ دقيقة",
+    sleepTimer60m: "٦٠ دقيقة",
+    sleepTimerEndSurah: "نهاية السورة الحالية",
+    sleepTimerFading: "تلاشٍ تدريجي...",
+    offlineDownload: "تحميل للاستماع أوفلاين",
+    offlineDownloaded: "تم الحفظ أوفلاين",
+    offlineDownloading: "جارٍ التحميل...",
+    offlineAvailable: "متاح بدون إنترنت",
 
     // Audio Page
     audioTitle: "استمع للقرآن الكريم",
@@ -358,6 +406,30 @@ export const translations: Record<Language, Translations> = {
     quranTafsirLoading: "Loading tafsir...",
     quranPrevSurah: "Previous Surah",
     quranNextSurah: "Next Surah",
+    quranAutoFollow: "Auto-Follow Reciter",
+    quranAutoFollowActive: "Auto-Follow is active",
+    quranPlayAllAyahs: "Play all verses continuously",
+    playerContinuousPlay: "Continuous Surah Play",
+    playerNextSurah: "Next Surah",
+    playerPrevSurah: "Previous Surah",
+    quranTajweedMode: "Tajweed Rules",
+    quranTajweedLegend: "Tajweed Color Legend",
+    quranWordMeaning: "Word Meaning",
+    quranWordRoot: "Linguistic Root",
+    quranWordTransliteration: "Transliteration",
+    quranKhatmaTracker: "Khatma Tracker",
+    playerSleepTimer: "Quiet Sleep Timer",
+    sleepTimerOff: "Timer Off",
+    sleepTimer15m: "15 minutes",
+    sleepTimer30m: "30 minutes",
+    sleepTimer45m: "45 minutes",
+    sleepTimer60m: "60 minutes",
+    sleepTimerEndSurah: "End of Current Surah",
+    sleepTimerFading: "Gradual Fade-out...",
+    offlineDownload: "Download for offline listening",
+    offlineDownloaded: "Saved for offline",
+    offlineDownloading: "Downloading...",
+    offlineAvailable: "Available Offline",
 
     // Audio Page
     audioTitle: "Listen to the Quran",

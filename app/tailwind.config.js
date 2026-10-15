@@ -6,8 +6,8 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
-        quran: ['"Scheherazade New"', 'Amiri', 'serif'],
-        arabic: ['Amiri', '"Noto Naskh Arabic"', 'serif'],
+        quran: ['"Amiri Quran"', '"KFGQPC Uthmanic Script HAFS"', '"Traditional Arabic"', '"Scheherazade New"', 'Amiri', 'serif'],
+        arabic: ['"Amiri Quran"', 'Amiri', '"Noto Naskh Arabic"', 'serif'],
       },
       colors: {
         // Pure neutral OLED black palette replacing default blue-slate (zero navy tint)

@@ -146,7 +146,7 @@ export default function PrayerTimesWidget() {
             {/* Backdrop Dismiss Overlay */}
             {showCityPicker && (
               <div
-                className="fixed inset-0 z-40"
+                className="fixed inset-0 z-[55]"
                 onClick={() => setShowCityPicker(false)}
               />
             )}
@@ -159,7 +159,7 @@ export default function PrayerTimesWidget() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.98 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute top-full mt-2 ltr:left-0 rtl:right-0 w-80 max-w-[90vw] bg-slate-900 border border-emerald-500/40 rounded-2xl p-2.5 shadow-2xl z-50 text-start"
+                  className="absolute top-full mt-2 ltr:left-0 rtl:right-0 w-80 max-w-[90vw] bg-neutral-900 border border-emerald-500/40 rounded-2xl p-2.5 shadow-2xl z-[60] text-start"
                 >
                   <button
                     onClick={handleDetectLocation}
@@ -178,7 +178,7 @@ export default function PrayerTimesWidget() {
                     {isArabic ? "المدن والمحافظات الشائعة" : "Popular Cities & Governorates"}
                   </p>
 
-                  <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
+                  <div className="max-h-64 overflow-y-auto space-y-1 pr-1 pb-3 custom-scrollbar">
                     {CITY_PRESETS.map((city: CityPreset) => {
                       const isCurrent = city.name === selectedCity.name;
                       const cityName = isArabic && city.arabicName ? city.arabicName : city.name;

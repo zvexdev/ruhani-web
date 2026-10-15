@@ -68,7 +68,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-[#FDFCF7] dark:bg-black text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-[#FDFCF7] dark:bg-black text-neutral-800 dark:text-neutral-100 flex flex-col transition-colors duration-300 overflow-x-hidden w-full">
       {/* Top Navigation Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
@@ -86,7 +86,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-105 transition-transform shrink-0"
             />
             <div className="flex flex-col min-w-0">
-              <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo']">
+              <span className="text-lg sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-white flex items-center gap-1.5 font-['Plus_Jakarta_Sans','Cairo']">
                 {t.brandName}
                 <span className="hidden sm:inline-block text-xs px-1.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-semibold tracking-normal font-['Amiri']">
                   {t.brandTagline}
@@ -106,7 +106,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   className={`relative px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                     isActive
                       ? "text-white"
-                      : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"
+                      : "text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"
                   }`}
                 >
                   {isActive && (
@@ -131,7 +131,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <button
               onClick={toggleLanguage}
               title={isArabic ? "Switch to English" : "التبديل إلى العربية"}
-              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 bg-white/80 dark:bg-slate-900/80 hover:bg-emerald-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors text-xs font-bold shadow-sm"
+              className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-emerald-900/10 dark:border-emerald-500/20 bg-white/80 dark:bg-neutral-900/80 hover:bg-emerald-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 transition-colors text-xs font-bold shadow-sm"
             >
               <Languages className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>{isArabic ? "EN" : "عربي"}</span>
@@ -141,9 +141,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <button
               onClick={() => setIsDark(!isDark)}
               title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              className="p-2 rounded-full border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm"
+              className="p-2 rounded-full border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors shadow-sm"
             >
-              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-neutral-700" />}
             </button>
 
             {/* GitHub Repository Link */}
@@ -152,14 +152,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               target="_blank"
               rel="noopener noreferrer"
               title="GitHub Repository"
-              className="p-2 rounded-full border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors shadow-sm flex items-center justify-center"
+              className="p-2 rounded-full border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors shadow-sm flex items-center justify-center"
             >
               <Github className="w-4 h-4" />
             </a>
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors"
+              className="lg:hidden p-2 rounded-xl border border-gray-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 hover:bg-gray-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -187,7 +187,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
                         isActive
                           ? "bg-[#1A5D3A] text-white"
-                          : "text-slate-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-neutral-900"
+                          : "text-neutral-600 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-900"
                       }`}
                     >
                       <item.icon className="w-4 h-4" />
@@ -200,7 +200,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     href="https://github.com/zvexdev/ruhani-web"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 py-2 px-3 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-900 font-semibold transition-colors"
+                    className="flex items-center gap-1.5 py-2 px-3 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-gray-100 dark:hover:bg-neutral-900 font-semibold transition-colors"
                   >
                     <Github className="w-4 h-4" />
                     <span>GitHub</span>
@@ -209,7 +209,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     href="https://discord.gg/XTPc3QSM4B"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 py-2 px-3 rounded-lg text-[#5865F2] hover:bg-gray-100 dark:hover:bg-slate-900 font-semibold transition-colors"
+                    className="flex items-center gap-1.5 py-2 px-3 rounded-lg text-[#5865F2] hover:bg-gray-100 dark:hover:bg-neutral-900 font-semibold transition-colors"
                   >
                     <span>Discord</span>
                   </a>
@@ -221,7 +221,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Main Content Area */}
-      <main className="pt-20 flex-1">{children}</main>
+      <main className="pt-20 pb-40 sm:pb-36 flex-1 overflow-x-hidden">{children}</main>
 
       {/* Floating Audio Player */}
       <AudioPlayerBar />
@@ -238,10 +238,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   alt="Ruhani"
                   className="w-8 h-8 object-contain drop-shadow-sm shrink-0"
                 />
-                <span className="font-bold text-lg text-slate-900 dark:text-white">{t.brandName}</span>
+                <span className="font-bold text-lg text-neutral-900 dark:text-white">{t.brandName}</span>
                 <span className="font-['Amiri'] text-emerald-700 dark:text-emerald-400 font-bold text-base">روحاني</span>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md leading-relaxed">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 max-w-md leading-relaxed">
                 {t.footerDescription}
               </p>
               <p className="font-['Amiri'] text-emerald-800 dark:text-emerald-300 text-base md:text-lg">
@@ -251,7 +251,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Col 2: Navigation Links */}
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-3">
                 {t.footerSanctuarySections}
               </p>
               <ul className="space-y-2 text-sm">
@@ -266,10 +266,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Col 3: API Attribution & Open Source License */}
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-3">
                 {t.footerProjectAndLicense}
               </p>
-              <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+              <div className="space-y-3 text-sm text-neutral-600 dark:text-neutral-300">
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setShowLicenseModal(true)}
@@ -283,9 +283,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     href="https://github.com/zvexdev/ruhani-web"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800 text-slate-700 dark:text-slate-200 transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:bg-gray-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-200 transition-colors"
                   >
-                    <Github className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
+                    <Github className="w-3.5 h-3.5 text-neutral-900 dark:text-white" />
                     <span>GitHub</span>
                   </a>
                 </div>
@@ -296,12 +296,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                     <span>UmmahAPI</span>
                   </div>
-                  <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
+                  <p className="text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-300">
                     {t.footerApiAttribution}
                   </p>
                 </div>
 
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-neutral-400">
                   {t.footerFreeToUse}
                 </p>
               </div>
@@ -309,7 +309,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Bottom Bar with "Made by zvex with love" & Discord Link */}
-          <div className="pt-8 border-t border-gray-200/60 dark:border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+          <div className="pt-8 border-t border-gray-200/60 dark:border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500 dark:text-neutral-400">
             <p className="flex items-center gap-1.5 font-medium">
               {t.footerMadeBy}{" "}
               <a
@@ -331,7 +331,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="GitHub Repository"
-                className="hover:text-slate-900 dark:hover:text-white flex items-center gap-1 transition-colors"
+                className="hover:text-neutral-900 dark:hover:text-white flex items-center gap-1 transition-colors"
               >
                 <Github className="w-3.5 h-3.5" />
                 <span>GitHub</span>
@@ -349,7 +349,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AnimatePresence>
         {showLicenseModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={() => setShowLicenseModal(false)}
           >
             <motion.div
@@ -362,17 +362,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100 dark:border-neutral-800">
                 <div className="flex items-center gap-2">
                   <Scale className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                  <h3 className="font-bold text-lg text-slate-900 dark:text-white">MIT License</h3>
+                  <h3 className="font-bold text-lg text-neutral-900 dark:text-white">MIT License</h3>
                 </div>
                 <button
                   onClick={() => setShowLicenseModal(false)}
-                  className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-900 text-slate-400 hover:text-slate-600"
+                  className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-900 text-neutral-400 hover:text-neutral-600"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="font-mono text-xs text-slate-600 dark:text-slate-300 bg-gray-50 dark:bg-neutral-950 p-4 rounded-xl leading-relaxed max-h-72 overflow-y-auto custom-scrollbar">
+              <div className="font-mono text-xs text-neutral-600 dark:text-neutral-300 bg-gray-50 dark:bg-neutral-950 p-4 rounded-xl leading-relaxed max-h-72 overflow-y-auto custom-scrollbar">
                 <p className="font-semibold mb-2">Copyright (c) 2026 zvex</p>
                 <p className="mb-2">
                   Permission is hereby granted, free of charge, to any person obtaining a copy
