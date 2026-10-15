@@ -15,7 +15,16 @@ export default function KhatmaTracker({ onClose }: { onClose?: () => void }) {
   const [data, setData] = useState<KhatmaData>(() => {
     try {
       const saved = localStorage.getItem("ruhani-khatma-progress");
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object" && Array.isArray(parsed.completedJuz)) {
+          return {
+            completedJuz: parsed.completedJuz.filter((n: unknown) => typeof n === "number" && n >= 1 && n <= 30),
+            completedSurahs: Array.isArray(parsed.completedSurahs) ? parsed.completedSurahs : [],
+            lastUpdated: typeof parsed.lastUpdated === "string" ? parsed.lastUpdated : new Date().toISOString(),
+          };
+        }
+      }
     } catch (e) {
       console.debug("Failed loading khatma data:", e);
     }

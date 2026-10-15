@@ -75,7 +75,11 @@ export default function QiblaCompass() {
           method: "Egypt",
         };
         setSelectedCity(detected);
-        localStorage.setItem("ruhani-selected-city", JSON.stringify(detected));
+        try {
+          localStorage.setItem("ruhani-selected-city", JSON.stringify(detected));
+        } catch (e) {
+          console.debug("Failed saving city in QiblaCompass:", e);
+        }
         setLocating(false);
         setShowCityPicker(false);
         triggerCompassLockPulse(dialRef.current);
@@ -89,7 +93,11 @@ export default function QiblaCompass() {
 
   const handleSelectCity = (city: CityPreset) => {
     setSelectedCity(city);
-    localStorage.setItem("ruhani-selected-city", JSON.stringify(city));
+    try {
+      localStorage.setItem("ruhani-selected-city", JSON.stringify(city));
+    } catch (e) {
+      console.debug("Failed saving city in QiblaCompass:", e);
+    }
     setShowCityPicker(false);
     triggerCompassLockPulse(dialRef.current);
   };

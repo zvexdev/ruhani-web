@@ -55,9 +55,9 @@ export default function Zikr() {
   const ringRef = useRef<HTMLButtonElement>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const currentDhikr = counters[dhikrIndex];
-  const progress = currentDhikr ? (currentDhikr.current / currentDhikr.target) * 100 : 0;
-  const isComplete = currentDhikr?.current === currentDhikr?.target;
+  const currentDhikr = counters[dhikrIndex] || defaultDhikrs[0];
+  const progress = currentDhikr && currentDhikr.target > 0 ? Math.min(100, Math.round((currentDhikr.current / currentDhikr.target) * 100)) : 0;
+  const isComplete = currentDhikr ? currentDhikr.current >= currentDhikr.target : false;
 
   const toggleCompleted = (id: string) => {
     const isAdding = !completedItems.includes(id);
@@ -65,7 +65,11 @@ export default function Zikr() {
       ? [...completedItems, id]
       : completedItems.filter(i => i !== id);
     setCompletedItems(updated);
-    localStorage.setItem("ruhani-completed-adhkar", JSON.stringify(updated));
+    try {
+      localStorage.setItem("ruhani-completed-adhkar", JSON.stringify(updated));
+    } catch (e) {
+      console.debug("Failed saving completed adhkar:", e);
+    }
     if (isAdding) {
       if (soundEnabled) soundEffects.playCompletionChime();
       triggerSpiritualMilestone();
@@ -83,6 +87,7 @@ export default function Zikr() {
     }
 
     setCounters((prev) => {
+      if (!prev[dhikrIndex]) return prev;
       const updated = [...prev];
       const curr = { ...updated[dhikrIndex] };
       if (curr.current < curr.target) {
@@ -105,6 +110,7 @@ export default function Zikr() {
 
   const resetDhikr = () => {
     setCounters((prev) => {
+      if (!prev[dhikrIndex]) return prev;
       const updated = [...prev];
       updated[dhikrIndex] = {
         ...defaultDhikrs[dhikrIndex],
@@ -116,11 +122,13 @@ export default function Zikr() {
   };
 
   const setPresetTarget = (targetNum: number) => {
+    const validTarget = Math.max(1, isNaN(targetNum) ? 33 : targetNum);
     setCounters((prev) => {
+      if (!prev[dhikrIndex]) return prev;
       const updated = [...prev];
       updated[dhikrIndex] = {
         ...updated[dhikrIndex],
-        target: targetNum,
+        target: validTarget,
         current: 0,
         round: 1
       };

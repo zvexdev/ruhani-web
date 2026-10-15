@@ -23,7 +23,8 @@ import {
   CheckCircle2,
   Award,
   HelpCircle,
-  Volume2
+  Volume2,
+  AlertCircle
 } from "lucide-react";
 import * as api from "../services/api";
 import type { SurahMeta, SurahDetail, SearchResult, Verse } from "../types";
@@ -49,17 +50,31 @@ import {
   type SurahTimestampsResult
 } from "../lib/quranTimestamps";
 
+// Canonical list of 15 Quranic Sajdah verses
+const SAJDAH_VERSES = new Set([
+  "7:206", "13:15", "16:50", "17:109", "19:58",
+  "22:18", "22:77", "25:60", "27:26", "32:15",
+  "38:24", "41:38", "53:62", "84:21", "96:19"
+]);
+
 export default function Quran() {
   const { t, isArabic } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialSurah = Number(searchParams.get("surah")) || (() => {
+  const initialSurah = (() => {
+    const param = Number(searchParams.get("surah"));
+    if (!isNaN(param) && param >= 1 && param <= 114) {
+      return param;
+    }
     try {
       const saved = localStorage.getItem("ruhani-last-surah");
       const num = Number(saved);
-      return num >= 1 && num <= 114 ? num : 1;
+      if (!isNaN(num) && num >= 1 && num <= 114) {
+        return num;
+      }
     } catch {
-      return 1;
+      // fallback
     }
+    return 1;
   })();
 
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
@@ -296,7 +311,17 @@ export default function Quran() {
     setActiveWord({ word, verseKey });
   };
 
-  const renderInteractiveArabicText = (arabicText: string, verseKey: string) => {
+  const cleanVerseArabic = (arabic: string, surahNum?: number, ayahNum?: number) => {
+    if (!arabic) return "";
+    if (surahNum && surahNum > 1 && ayahNum === 1) {
+      return arabic.replace(/^بِسْمِ\s+(?:ٱللَّهِ|اللَّهِ)\s+(?:ٱلرَّحْمَٰنِ|الرَّحْمَٰنِ|الرَّحْمَنِ)\s+(?:ٱلرَّحِيمِ|الرَّحِيمِ)\s*/u, "").trim();
+    }
+    return arabic;
+  };
+
+  const renderInteractiveArabicText = (arabicText: string, verseKey: string, surahNum?: number, ayahNum?: number) => {
+    if (!arabicText) return null;
+    const cleanedText = cleanVerseArabic(arabicText, surahNum, ayahNum);
     const apiWords = surahWordsMap.get(verseKey);
 
     // STRICT BINDING: When API-verified word tokens are available, bind UI click directly to immutable API word object
@@ -318,9 +343,9 @@ export default function Quran() {
 
     // Fallback if surahWordsMap is still resolving
     if (tajweedMode) {
-      return renderTajweedContent(arabicText);
+      return renderTajweedContent(cleanedText);
     }
-    const words = arabicText.split(" ");
+    const words = cleanedText.split(/\s+/).filter(Boolean);
     return words.map((w, wIdx) => (
       <span
         key={`${verseKey}-w-${wIdx}`}
@@ -352,13 +377,16 @@ export default function Quran() {
   // Sync URL query params -> local state (single source of truth for URL updates)
   useEffect(() => {
     const paramSurah = searchParams.get("surah");
-    if (paramSurah) {
+    if (paramSurah !== null) {
       const parsed = parseInt(paramSurah, 10);
-      if (!isNaN(parsed) && parsed >= 1 && parsed <= 114 && parsed !== currentSurah) {
+      if (isNaN(parsed) || parsed < 1 || parsed > 114) {
+        // Clean up invalid parameter by sanitizing URL
+        setSearchParams({ surah: String(currentSurah || 1) }, { replace: true });
+      } else if (parsed !== currentSurah) {
         setCurrentSurah(parsed);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, currentSurah, setSearchParams]);
 
   // Outbound state sync: only updates URL & localStorage when values actually differ
   useEffect(() => {
@@ -387,6 +415,10 @@ export default function Quran() {
   }
 
   async function loadSurah(num: number) {
+    if (num < 1 || num > 114 || isNaN(num)) {
+      handleSelectSurah(1);
+      return;
+    }
     setLoading(true);
     try {
       const [data, wordsMap] = await Promise.all([
@@ -395,8 +427,22 @@ export default function Quran() {
       ]);
       setSurahDetail(data);
       setSurahWordsMap(wordsMap);
+
+      // Handle ?ayah= parameter if specified
+      const paramAyah = searchParams.get("ayah");
+      if (paramAyah && data?.verses) {
+        const parsedAyah = parseInt(paramAyah, 10);
+        if (!isNaN(parsedAyah) && parsedAyah >= 1 && parsedAyah <= data.verses.length) {
+          const verseKey = `${num}:${parsedAyah}`;
+          setTimeout(() => {
+            const el = verseRefs.current[verseKey] || mushafVerseRefs.current[verseKey];
+            el?.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 400);
+        }
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Failed loading surah:", err);
+      setSurahDetail(null);
     } finally {
       setLoading(false);
     }
@@ -1231,8 +1277,8 @@ export default function Quran() {
                   </div>
                 </div>
 
-                {/* Bismillah Header (except Surah At-Tawbah) */}
-                {currentSurah !== 9 && (
+                {/* Bismillah Header (only for Surahs 2-8 and 10-114; NOT Surah 1 and NOT Surah 9) */}
+                {currentSurah !== 1 && currentSurah !== 9 && (
                   <div className="mt-8 pt-6 border-t border-emerald-950/10 dark:border-emerald-500/10" dir="rtl">
                     <p className="font-quran text-2xl md:text-3xl text-emerald-950 dark:text-emerald-200 leading-[2.6] tracking-normal">
                       بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
@@ -1252,6 +1298,7 @@ export default function Quran() {
                     {surahDetail.verses.map((verse) => {
                       const isThisAyahActive = activeVerseKey === verse.verse_key;
                       const isThisAyahPlaying = isThisAyahActive && isPlaying;
+                      const isSajdah = SAJDAH_VERSES.has(verse.verse_key);
                       return (
                         <span
                           key={verse.verse_key}
@@ -1266,7 +1313,7 @@ export default function Quran() {
                           }`}
                           title={`${t.quranPlayVerse} #${verse.ayah}`}
                         >
-                          {renderInteractiveArabicText(verse.arabic, verse.verse_key)}{" "}
+                          {renderInteractiveArabicText(verse.arabic, verse.verse_key, currentSurah, verse.ayah)}{" "}
                           <span
                             className={`inline-flex items-center justify-center font-sans text-xs px-2 py-0.5 mx-1 rounded-full font-bold align-middle select-none border transition-colors ${
                               isThisAyahPlaying
@@ -1276,6 +1323,11 @@ export default function Quran() {
                           >
                             {verse.ayah}
                           </span>{" "}
+                          {isSajdah && (
+                            <span className="inline-flex items-center gap-0.5 text-[10px] font-sans px-1.5 py-0.5 mx-1 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold border border-amber-500/40 align-middle select-none">
+                              ۩ {isArabic ? "سجدة" : "Sajdah"}
+                            </span>
+                          )}{" "}
                         </span>
                       );
                     })}
@@ -1315,6 +1367,12 @@ export default function Quran() {
                             <span className="text-xs text-neutral-400">
                               {verse.verse_key}
                             </span>
+                            {SAJDAH_VERSES.has(verse.verse_key) && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                                <span>۩</span>
+                                <span>{isArabic ? "سجدة تلاوة" : "Sajdah"}</span>
+                              </span>
+                            )}
                           </div>
 
                           <div className="flex items-center gap-1">
@@ -1371,7 +1429,7 @@ export default function Quran() {
                             className="font-quran text-right leading-[2.8] text-neutral-900 dark:text-white select-text tracking-normal break-words break-anywhere"
                             style={{ fontSize: `${fontSize}px` }}
                           >
-                            {renderInteractiveArabicText(verse.arabic, verse.verse_key)}
+                            {renderInteractiveArabicText(verse.arabic, verse.verse_key, currentSurah, verse.ayah)}
                           </p>
                         </div>
 
@@ -1414,6 +1472,32 @@ export default function Quran() {
                 >
                   <span>{t.quranNextSurah}</span>
                   <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ) : !loading ? (
+            <div className="text-center py-16 spiritual-card rounded-3xl border border-neutral-200 dark:border-neutral-800 p-8 shadow-sm max-w-md mx-auto my-12">
+              <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-neutral-900 dark:text-white mb-1">
+                {isArabic ? "تعذر تحميل السورة" : "Unable to load Surah"}
+              </h3>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-5 leading-relaxed">
+                {isArabic
+                  ? "يرجى التحقق من اتصال الإنترنت أو تجربة إعادة المحاولة."
+                  : "Please check your network connection or try reloading."}
+              </p>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => loadSurah(currentSurah)}
+                  className="px-5 py-2.5 bg-[#1A5D3A] text-white rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-colors"
+                >
+                  {isArabic ? "إعادة المحاولة" : "Retry"}
+                </button>
+                <button
+                  onClick={() => handleSelectSurah(1)}
+                  className="px-4 py-2.5 border border-neutral-200 dark:border-neutral-800 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                >
+                  {isArabic ? "العودة للفاتحة" : "Go to Al-Fatiha"}
                 </button>
               </div>
             </div>

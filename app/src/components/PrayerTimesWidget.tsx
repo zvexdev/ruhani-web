@@ -81,7 +81,11 @@ export default function PrayerTimesWidget() {
           method: "Egypt",
         };
         setSelectedCity(detectedCity);
-        localStorage.setItem("ruhani-selected-city", JSON.stringify(detectedCity));
+        try {
+          localStorage.setItem("ruhani-selected-city", JSON.stringify(detectedCity));
+        } catch (e) {
+          console.debug("Failed saving city to localStorage:", e);
+        }
         setLocating(false);
         setShowCityPicker(false);
       },
@@ -94,7 +98,11 @@ export default function PrayerTimesWidget() {
 
   const handleSelectCity = (city: CityPreset) => {
     setSelectedCity(city);
-    localStorage.setItem("ruhani-selected-city", JSON.stringify(city));
+    try {
+      localStorage.setItem("ruhani-selected-city", JSON.stringify(city));
+    } catch (e) {
+      console.debug("Failed saving city to localStorage:", e);
+    }
     setShowCityPicker(false);
   };
 

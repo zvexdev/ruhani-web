@@ -97,7 +97,7 @@ export default function AudioPlayerBar() {
   };
 
   const defaultReciterName = language === "ar" ? "الشيخ ياسر الدوسري" : "Sheikh Yasser Al-Dosari";
-  const progressPercent = duration ? (currentTime / duration) * 100 : 0;
+  const progressPercent = Number.isFinite(duration) && duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
   const isSurahTrack = Boolean(currentTrack.surahNumber);
   const isFadingOut = Boolean(
     sleepTimerSecondsRemaining !== null &&

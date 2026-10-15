@@ -26,14 +26,21 @@ import { searchMatch } from "../lib/arabic";
 export default function Audio() {
   const { t, isArabic } = useLanguage();
   const [searchParams] = useSearchParams();
-  const initialSurah = Number(searchParams.get("surah")) || (() => {
+  const initialSurah = (() => {
+    const param = Number(searchParams.get("surah"));
+    if (!isNaN(param) && param >= 1 && param <= 114) {
+      return param;
+    }
     try {
       const saved = localStorage.getItem("ruhani-last-surah");
       const num = Number(saved);
-      return num >= 1 && num <= 114 ? num : 1;
+      if (!isNaN(num) && num >= 1 && num <= 114) {
+        return num;
+      }
     } catch {
-      return 1;
+      // fallback
     }
+    return 1;
   })();
 
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
@@ -42,10 +49,14 @@ export default function Audio() {
   const [selectedReciter, setSelectedReciter] = useState(() => {
     try {
       const saved = localStorage.getItem("ruhani-favorite-reciter");
-      return saved ? Number(saved) : 1;
+      const num = Number(saved);
+      if (!isNaN(num) && RECITERS_LIST.some((r) => r.id === num)) {
+        return num;
+      }
     } catch {
-      return 1;
+      // fallback
     }
+    return 1;
   }); // Default: Sheikh Yasser Al-Dosari
   const [showReciters, setShowReciters] = useState(false);
   const [showSurahs, setShowSurahs] = useState(false);

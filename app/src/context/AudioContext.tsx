@@ -69,14 +69,11 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
-// Background prefetch pipe helper to ensure seamless cache warming
+// Background prefetch pipe helper to ensure seamless cache warming without detached audio element leaks
 const prefetchAyahAudio = (url: string) => {
   if (!url) return;
   try {
     fetch(url, { mode: "no-cors" }).catch(() => {});
-    const preloader = new Audio();
-    preloader.preload = "auto";
-    preloader.src = url;
   } catch (e) {
     console.debug("Prefetch notice:", e);
   }
@@ -210,6 +207,8 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
 
   // Callbacks refs for event listeners
   const playNextSurahRef = useRef<() => void>(() => {});
+  // Cancellation token / request ID to prevent race conditions during rapid track spamming
+  const playRequestIdRef = useRef<number>(0);
 
   // Sync state into refs
   useEffect(() => {
@@ -605,6 +604,8 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   // METHOD A: Verified Single Continuous Stream + API Timestamps
   // =========================================================================
   const playTrack = useCallback(async (track: AudioTrack) => {
+    const requestId = ++playRequestIdRef.current;
+
     const determinedMode: AudioPlaybackMode =
       track.mode ||
       (track.timestamps && track.timestamps.length > 0
@@ -664,6 +665,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     }
 
     const resolvedSrc = await getCachedAudioUrl(track.src);
+    // If a newer track request started while awaiting cache resolution, drop this stale request
+    if (requestId !== playRequestIdRef.current) return;
+
     activeAudio.src = resolvedSrc;
     activeAudio.playbackRate = playbackRateRef.current;
     activeAudio.volume = volumeRef.current;
@@ -677,6 +681,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     activeAudio
       .play()
       .then(() => {
+        if (requestId !== playRequestIdRef.current) return;
         if (track.initialSeekTime !== undefined && track.initialSeekTime > 0 && activeAudio) {
           activeAudio.currentTime = track.initialSeekTime;
         }
@@ -684,6 +689,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
         setIsLoadingTrack(false);
       })
       .catch((err) => {
+        if (requestId !== playRequestIdRef.current) return;
         if (err?.name === "AbortError") {
           setIsLoadingTrack(false);
           return; // Expected browser interruption when new track is loaded
@@ -699,6 +705,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   // METHOD B: Dual-Buffer Ping-Pong Gapless Ayah Sequence (e.g. Yasser Al-Dosari)
   // =========================================================================
   const playAyahSequence = useCallback((params: AyahSequenceParams) => {
+    ++playRequestIdRef.current; // Invalidate any in-flight playTrack async request
     setPlaybackModeState("AYAH_FOLLOW");
     playbackModeRef.current = "AYAH_FOLLOW";
     ayahSequenceRef.current = params;
@@ -852,9 +859,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
         .catch((err) => {
           if (err?.name === "AbortError") return;
           console.warn("Playback toggle error:", err);
-          if (currentTrackRef.current) {
-            playTrack(currentTrackRef.current);
-          }
+          setIsPlaying(false);
+          setIsLoadingTrack(false);
+          setHasPlaybackError(true);
         });
     }
   }, [isPlaying, playTrack, playAyahSequence]);
@@ -875,14 +882,17 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const stop = useCallback(() => {
+    ++playRequestIdRef.current;
     ayahSequenceRef.current = null;
     if (audioARef.current) {
       audioARef.current.pause();
+      audioARef.current.src = "";
       audioARef.current.currentTime = 0;
       audioARef.current.volume = originalVolumeRef.current;
     }
     if (audioBRef.current) {
       audioBRef.current.pause();
+      audioBRef.current.src = "";
       audioBRef.current.currentTime = 0;
       audioBRef.current.volume = originalVolumeRef.current;
     }
@@ -903,7 +913,11 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const playNextSurah = useCallback(async () => {
     const track = currentTrackRef.current;
     if (!track?.surahNumber) return;
-    const currentNum = track.surahNumber;
+    const currentNum = Math.floor(Number(track.surahNumber));
+    if (isNaN(currentNum) || currentNum < 1 || currentNum > 114) {
+      stop();
+      return;
+    }
     let nextNum: number;
     if (currentNum >= 114) {
       if (loopModeRef.current === "off") {
@@ -992,7 +1006,11 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const playPrevSurah = useCallback(async () => {
     const track = currentTrackRef.current;
     if (!track?.surahNumber) return;
-    const currentNum = track.surahNumber;
+    const currentNum = Math.floor(Number(track.surahNumber));
+    if (isNaN(currentNum) || currentNum < 1 || currentNum > 114) {
+      stop();
+      return;
+    }
     let prevNum: number;
     if (currentNum <= 1) {
       prevNum = loopModeRef.current === "off" ? 1 : 114;

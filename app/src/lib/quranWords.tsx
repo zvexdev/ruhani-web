@@ -191,7 +191,7 @@ const VERIFIED_QURAN_LEXICON: Record<string, { en: string; tr: string; root?: st
  * Strips Arabic diacritics (tashkeel), tatweel, and normalizes dagger alifs
  */
 export function stripTashkeel(text: string): string {
-  if (!text) return "";
+  if (!text || typeof text !== "string") return "";
   return text
     .replace(/[\u0617-\u061A\u064B-\u065F\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED]/g, "")
     .replace(/[\u0640]/g, "") // remove tatweel
@@ -552,6 +552,7 @@ export function getWordDetails(rawWord: string, translation?: string): WordMorph
  * - Idgham & Ikhfa: Amber & Cyan
  */
 export function renderTajweedContent(arabicText: string): React.ReactNode {
+  if (!arabicText || typeof arabicText !== "string") return null;
   const tokens = arabicText.split(/([ن|م]ّ|[قطبجد]ْ|[آ|ـٓ|وٓ|يٓ|ٓ])/g);
 
   return tokens.map((tok, i) => {
