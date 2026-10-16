@@ -15,6 +15,13 @@ dist-ssr
 .env
 .env.*
 
+# Android builds and artifacts
+android/app/build/
+android/.gradle/
+android/build/
+*.apk
+*.aab
+
 # OS and Editor files
 .vscode/*
 !.vscode/extensions.json
