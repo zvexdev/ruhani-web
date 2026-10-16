@@ -1,13 +1,23 @@
 {
   "name": "ruhani-web",
   "version": "1.0.0",
+  "type": "module",
   "description": "Modern Islamic Web Sanctuary — Quran, Audio Recitations, Live Prayer Times, Qibla Compass, Zikr & Asma ul Husna",
   "scripts": {
     "dev": "npm --prefix app run dev",
-    "build": "npm --prefix app run build",
+    "build": "npm --prefix app run build && node -e \"const fs=require('fs'); if(!fs.existsSync('dist')) fs.mkdirSync('dist', {recursive:true}); fs.cpSync('app/dist', 'dist', {recursive:true});\"",
+    "postinstall": "npm --prefix app install",
     "preview": "npm --prefix app run preview",
     "lint": "npm --prefix app run lint"
   },
   "author": "zvex",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
 }
