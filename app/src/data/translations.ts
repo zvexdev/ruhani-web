@@ -114,6 +114,16 @@ export interface Translations {
   qiblaDetecting: string;
   qiblaDegrees: string;
   qiblaCompassTip: string;
+  qiblaLocationPermissionRequired: string;
+  qiblaLocationPermissionDesc: string;
+  qiblaEnableLocationBtn: string;
+  qiblaLocationDenied: string;
+  qiblaFacingKaaba: string;
+  qiblaAlignNeedle: string;
+  qiblaGpsAccurate: string;
+  qiblaEnableCompassBtn: string;
+  qiblaCompassPermissionNeeded: string;
+  qiblaUsingDefaultCity: string;
 
   // Zikr & Duas Page
   zikrTitle: string;
@@ -284,6 +294,16 @@ export const translations: Record<Language, Translations> = {
     qiblaDetecting: "جارٍ تحديد الموقع...",
     qiblaDegrees: "درجة",
     qiblaCompassTip: "على أجهزة الهواتف الذكية، تدور البوصلة تلقائياً وفقاً لحركة مستشعر الهاتف.",
+    qiblaLocationPermissionRequired: "تحديد موقعك الجغرافي (GPS) مطلوب",
+    qiblaLocationPermissionDesc: "لحساب اتجاه القبلة بدقة متناهية من مكانك الفعلي، يرجى تفعيل إذن الموقع الجغرافي بدقة عالية.",
+    qiblaEnableLocationBtn: "تفعيل إذن الموقع الجغرافي (GPS) 📍",
+    qiblaLocationDenied: "تم حظر إذن الموقع في المتصفح. يمكنك اختيار مدينتك يدوياً من القائمة أو تفعيل إذن الموقع من إعدادات المتصفح.",
+    qiblaFacingKaaba: "أنت تواجه القبلة المشرفة الآن نحو الكعبة مباشرة! 🕋",
+    qiblaAlignNeedle: "أدر هاتفك ببطء حتى تتطابق الإبرة مع مؤشر الكعبة في الأعلى",
+    qiblaGpsAccurate: "محدد بدقة متناهية عبر نظام GPS",
+    qiblaEnableCompassBtn: "تفعيل مستشعر بوصلة الهاتف 🧭",
+    qiblaCompassPermissionNeeded: "يتطلب متصفحك إذناً لتشغيل مستشعر البوصلة وتتبع حركة الهاتف.",
+    qiblaUsingDefaultCity: "أنت تستخدم إحداثيات تقريبية. يرجى تفعيل GPS للحصول على زاوية قبلة دقيقة 100%.",
 
     // Zikr & Duas Page
     zikrTitle: "الأذكار والأدعية النبوية",
@@ -453,6 +473,16 @@ export const translations: Record<Language, Translations> = {
     qiblaDetecting: "Detecting location...",
     qiblaDegrees: "degrees",
     qiblaCompassTip: "On supported phones and tablets, the compass automatically tracks your device orientation.",
+    qiblaLocationPermissionRequired: "GPS Location Access Required",
+    qiblaLocationPermissionDesc: "To calculate the 100% exact Qibla direction from where you are standing, please grant high-precision GPS location access.",
+    qiblaEnableLocationBtn: "Enable GPS Location 📍",
+    qiblaLocationDenied: "Location permission is blocked in your browser. Please select your city manually or allow location access in your browser settings.",
+    qiblaFacingKaaba: "You are directly facing the Holy Kaaba now! 🕋",
+    qiblaAlignNeedle: "Rotate your device slowly until the golden needle aligns with the top Kaaba marker",
+    qiblaGpsAccurate: "High-precision GPS verified",
+    qiblaEnableCompassBtn: "Enable Mobile Compass Sensor 🧭",
+    qiblaCompassPermissionNeeded: "Your browser requires permission to access the device orientation and compass sensor.",
+    qiblaUsingDefaultCity: "Using default city coordinates. Enable GPS for 100% precise local Qibla alignment.",
 
     // Zikr & Duas Page
     zikrTitle: "Zikr & Authentic Duas",

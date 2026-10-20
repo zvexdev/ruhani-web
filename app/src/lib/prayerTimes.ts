@@ -35,6 +35,8 @@ export interface CityPreset {
   lng: number;
   timezone: string;
   method?: "Egypt" | "Makkah" | "MWL";
+  accuracy?: number;
+  isGps?: boolean;
 }
 
 // Popular cities with Egypt as default and prominent Egyptian governorates
@@ -99,6 +101,18 @@ export function calculateQibla(lat: number, lng: number): { bearing: number; dis
 
 export const calculateQiblaDirection = (lat: number, lng: number) => calculateQibla(lat, lng).bearing;
 export const calculateDistanceToKaaba = (lat: number, lng: number) => calculateQibla(lat, lng).distanceKm;
+
+export function getCompassDirection(bearing: number, isArabic: boolean): string {
+  const normalized = ((bearing % 360) + 360) % 360;
+  if (normalized >= 337.5 || normalized < 22.5) return isArabic ? "شمال" : "North";
+  if (normalized >= 22.5 && normalized < 67.5) return isArabic ? "شمال شرق" : "Northeast";
+  if (normalized >= 67.5 && normalized < 112.5) return isArabic ? "شرق" : "East";
+  if (normalized >= 112.5 && normalized < 157.5) return isArabic ? "جنوب شرق" : "Southeast";
+  if (normalized >= 157.5 && normalized < 202.5) return isArabic ? "جنوب" : "South";
+  if (normalized >= 202.5 && normalized < 247.5) return isArabic ? "جنوب غرب" : "Southwest";
+  if (normalized >= 247.5 && normalized < 292.5) return isArabic ? "غرب" : "West";
+  return isArabic ? "شمال غرب" : "Northwest";
+}
 
 // Compute prayer times mathematically
 export function computePrayerTimes(
