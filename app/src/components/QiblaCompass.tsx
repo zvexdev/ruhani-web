@@ -50,6 +50,35 @@ function getShortestAngle(target: number, current: number): number {
   return current + delta;
 }
 
+const COMPASS_TICKS = Array.from({ length: 72 }).map((_, i) => {
+  const deg = i * 5;
+  const rad = ((deg - 90) * Math.PI) / 180;
+  const isMajor = deg % 30 === 0;
+  const isMedium = deg % 10 === 0;
+  const rOuter = 138;
+  const rInner = isMajor ? 124 : isMedium ? 128 : 132;
+  return {
+    deg,
+    isMajor,
+    isMedium,
+    x1: 150 + rOuter * Math.cos(rad),
+    y1: 150 + rOuter * Math.sin(rad),
+    x2: 150 + rInner * Math.cos(rad),
+    y2: 150 + rInner * Math.sin(rad),
+  };
+});
+
+const DEGREE_NUMBERS = [
+  { deg: 30, x: 205.0, y: 54.7 },
+  { deg: 60, x: 245.3, y: 95.0 },
+  { deg: 120, x: 245.3, y: 205.0 },
+  { deg: 150, x: 205.0, y: 245.3 },
+  { deg: 210, x: 95.0, y: 245.3 },
+  { deg: 240, x: 54.7, y: 205.0 },
+  { deg: 300, x: 54.7, y: 95.0 },
+  { deg: 330, x: 95.0, y: 54.7 },
+];
+
 export default function QiblaCompass() {
   const { t, isArabic } = useLanguage();
   const dialRef = useRef<HTMLDivElement>(null);
@@ -82,6 +111,8 @@ export default function QiblaCompass() {
   const distanceKm = calculateDistanceToKaaba(selectedCity.lat, selectedCity.lng);
   const compassCardinal = getCompassDirection(qiblaAngle, isArabic);
 
+  const watchIdRef = useRef<number | null>(null);
+
   // Reverse geocoding helper to extract authentic Arabic and English city names
   const reverseGeocode = async (lat: number, lng: number) => {
     try {
@@ -100,7 +131,7 @@ export default function QiblaCompass() {
     }
   };
 
-  // High-precision GPS Detection
+  // High-precision Continuous GPS Detection
   const handleDetectLocation = useCallback((isAutomatic = false) => {
     if (!navigator.geolocation) {
       setLocationStatus("error");
@@ -113,41 +144,56 @@ export default function QiblaCompass() {
     setLocating(true);
     setLocationStatus("acquiring");
 
-    navigator.geolocation.getCurrentPosition(
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+    }
+
+    let isFirstFix = true;
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
       async (pos) => {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
         const accuracy = Math.round(pos.coords.accuracy || 0);
 
-        // Fetch exact city name
-        const geoInfo = await reverseGeocode(lat, lng);
+        if (isFirstFix) {
+          isFirstFix = false;
+          const geoInfo = await reverseGeocode(lat, lng);
 
-        const detected: CityPreset = {
-          name: geoInfo?.city || "My Location",
-          arabicName: geoInfo?.city || "موقعي الحالي",
-          country: geoInfo?.country || "GPS Detected",
-          arabicCountry: geoInfo?.country || "تحديد دقيق (GPS)",
-          lat,
-          lng,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Africa/Cairo",
-          method: "Egypt",
-          accuracy,
-          isGps: true
-        };
+          const detected: CityPreset = {
+            name: geoInfo?.city || "My Location",
+            arabicName: geoInfo?.city || "موقعي الحالي",
+            country: geoInfo?.country || "GPS Detected",
+            arabicCountry: geoInfo?.country || "تحديد دقيق (GPS)",
+            lat,
+            lng,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Africa/Cairo",
+            method: "Egypt",
+            accuracy,
+            isGps: true
+          };
 
-        setSelectedCity(detected);
+          setSelectedCity(detected);
+          try {
+            localStorage.setItem("ruhani-selected-city", JSON.stringify(detected));
+          } catch (e) {
+            console.debug("Failed saving city in QiblaCompass:", e);
+          }
+        } else {
+          setSelectedCity((prev) => ({
+            ...prev,
+            lat,
+            lng,
+            accuracy,
+            isGps: true
+          }));
+        }
+
         setLocationAccuracy(accuracy);
         setIsGpsActive(true);
         setLocationStatus("granted");
         setLocating(false);
         setShowCityPicker(false);
-
-        try {
-          localStorage.setItem("ruhani-selected-city", JSON.stringify(detected));
-        } catch (e) {
-          console.debug("Failed saving city in QiblaCompass:", e);
-        }
-
         triggerCompassLockPulse(dialRef.current);
       },
       (err) => {
@@ -160,11 +206,20 @@ export default function QiblaCompass() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0 // Do not use stale cache: ensure 100% live coordinates
+        timeout: 20000,
+        maximumAge: 0
       }
     );
   }, [isArabic]);
+
+  // Clean up GPS watcher on unmount
+  useEffect(() => {
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+    };
+  }, []);
 
   // AUTO-REQUEST ON MOUNT: If user hasn't explicitly locked in GPS, prompt immediately
   useEffect(() => {
@@ -196,7 +251,7 @@ export default function QiblaCompass() {
     }
   };
 
-  // Device orientation / compass sensor event listener
+  // Device orientation / compass sensor event listener with tilt-compensation & dual listener
   useEffect(() => {
     const DeviceOrientation = window.DeviceOrientationEvent as unknown as {
       requestPermission?: () => Promise<string>;
@@ -206,7 +261,9 @@ export default function QiblaCompass() {
       setIosNeedsPermission(true);
     }
 
-    const handleOrientation = (e: DeviceOrientationEvent) => {
+    let hasAbsoluteFired = false;
+
+    const processOrientation = (e: DeviceOrientationEvent) => {
       const ext = e as ExtendedDeviceOrientationEvent;
       let heading: number | null = null;
 
@@ -217,29 +274,50 @@ export default function QiblaCompass() {
       // 2. Android Chrome absolute compass (or standard alpha)
       else if (typeof e.alpha === "number" && !isNaN(e.alpha)) {
         heading = (360 - e.alpha) % 360;
+
+        // Apply tilt compensation when phone is held in hand at a tilt
+        if (typeof e.beta === "number" && typeof e.gamma === "number") {
+          const b = (e.beta * Math.PI) / 180;
+          const a = (e.alpha * Math.PI) / 180;
+          if (Math.abs(Math.cos(b)) > 0.15) {
+            const x = -Math.sin(a) * Math.cos(b);
+            const y = Math.cos(a) * Math.cos(b);
+            heading = ((Math.atan2(x, y) * 180) / Math.PI + 360) % 360;
+          }
+        }
       }
 
       if (heading !== null && !isNaN(heading)) {
-        const normalized = (heading % 360 + 360) % 360;
+        const normalized = ((heading % 360) + 360) % 360;
         setDeviceHeading(normalized);
         setHasCompassSupport(true);
         setIosNeedsPermission(false);
       }
     };
 
-    // Prefer deviceorientationabsolute on Android Chrome for True North accuracy
+    const handleAbsoluteOrientation = (e: DeviceOrientationEvent) => {
+      hasAbsoluteFired = true;
+      processOrientation(e);
+    };
+
+    const handleStandardOrientation = (e: DeviceOrientationEvent) => {
+      if (hasAbsoluteFired) return;
+      processOrientation(e);
+    };
+
     const hasAbsolute = "ondeviceorientationabsolute" in window;
     if (hasAbsolute) {
-      window.addEventListener("deviceorientationabsolute", handleOrientation as EventListener, true);
-    } else if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", handleOrientation, true);
+      window.addEventListener("deviceorientationabsolute", handleAbsoluteOrientation as EventListener, true);
+    }
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", handleStandardOrientation, true);
     }
 
     return () => {
       if (hasAbsolute) {
-        window.removeEventListener("deviceorientationabsolute", handleOrientation as EventListener, true);
+        window.removeEventListener("deviceorientationabsolute", handleAbsoluteOrientation as EventListener, true);
       }
-      window.removeEventListener("deviceorientation", handleOrientation, true);
+      window.removeEventListener("deviceorientation", handleStandardOrientation, true);
     };
   }, []);
 
@@ -483,51 +561,70 @@ export default function QiblaCompass() {
         >
           {/* ROTATING COMPASS DIAL (Rotates by -deviceHeading so N always points to Earth's True North) */}
           <motion.div
-            className="absolute inset-0 rounded-full border-4 border-emerald-900/30 dark:border-emerald-500/30 flex items-center justify-center bg-gradient-to-b from-neutral-900 via-neutral-950 to-black select-none pointer-events-none"
+            className="absolute inset-0 rounded-full flex items-center justify-center select-none pointer-events-none"
             animate={{ rotate: dialRotation }}
             transition={{ type: "spring", stiffness: 45, damping: 14 }}
           >
-            {/* Degree Ticks around the perimeter */}
-            <div className="absolute inset-2 rounded-full border border-neutral-800" />
-            <div className="absolute inset-5 rounded-full border border-dashed border-emerald-500/20" />
+            <svg viewBox="0 0 300 300" className="w-full h-full drop-shadow-2xl">
+              {/* Dial Background circle */}
+              <circle cx="150" cy="150" r="146" fill="#080808" stroke="#064e3b" strokeWidth="3" opacity="0.95" />
+              <circle cx="150" cy="150" r="138" fill="none" stroke="#262626" strokeWidth="1" />
+              <circle cx="150" cy="150" r="118" fill="none" stroke="#10b981" strokeWidth="1" strokeDasharray="3 3" opacity="0.25" />
 
-            {/* Cardinal Direction Markers */}
-            <span className="absolute top-2.5 font-extrabold text-base text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]">
-              N
-            </span>
-            <span className="absolute bottom-2.5 font-bold text-sm text-neutral-400">
-              S
-            </span>
-            <span className="absolute right-3.5 font-bold text-sm text-neutral-400">
-              E
-            </span>
-            <span className="absolute left-3.5 font-bold text-sm text-neutral-400">
-              W
-            </span>
+              {/* 72 Exact Mathematical Radial Ticks */}
+              {COMPASS_TICKS.map((tick) => (
+                <line
+                  key={tick.deg}
+                  x1={tick.x1}
+                  y1={tick.y1}
+                  x2={tick.x2}
+                  y2={tick.y2}
+                  stroke={tick.isMajor ? "#a3a3a3" : tick.isMedium ? "#525252" : "#2e2e2e"}
+                  strokeWidth={tick.isMajor ? 2 : tick.isMedium ? 1.5 : 1}
+                  strokeLinecap="round"
+                />
+              ))}
 
-            {/* 30-degree Major Numbers */}
-            <span className="absolute top-8 right-12 text-[10px] font-mono text-neutral-500">30°</span>
-            <span className="absolute top-14 right-7 text-[10px] font-mono text-neutral-500">60°</span>
-            <span className="absolute bottom-14 right-7 text-[10px] font-mono text-neutral-500">120°</span>
-            <span className="absolute bottom-8 right-12 text-[10px] font-mono text-neutral-500">150°</span>
-            <span className="absolute bottom-8 left-12 text-[10px] font-mono text-neutral-500">210°</span>
-            <span className="absolute bottom-14 left-7 text-[10px] font-mono text-neutral-500">240°</span>
-            <span className="absolute top-14 left-7 text-[10px] font-mono text-neutral-500">300°</span>
-            <span className="absolute top-8 left-12 text-[10px] font-mono text-neutral-500">330°</span>
+              {/* Degree Numerals */}
+              {DEGREE_NUMBERS.map((num) => (
+                <text
+                  key={num.deg}
+                  x={num.x}
+                  y={num.y}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="#737373"
+                  fontSize="9.5"
+                  fontWeight="600"
+                  fontFamily="monospace"
+                >
+                  {num.deg}°
+                </text>
+              ))}
 
-            {/* Small radial angle ticks */}
-            {Array.from({ length: 36 }).map((_, i) => (
-              <div
-                key={i}
-                className={`absolute w-0.5 origin-bottom ${i % 3 === 0 ? "h-3 bg-neutral-600" : "h-1.5 bg-neutral-800"}`}
-                style={{
-                  top: "4px",
-                  left: "calc(50% - 1px)",
-                  transform: `rotate(${i * 10}deg)`,
-                  transformOrigin: "50% 120px"
-                }}
-              />
-            ))}
+              {/* Cardinal Markers */}
+              <text
+                x="150"
+                y="32"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="#ef4444"
+                fontSize="16"
+                fontWeight="900"
+                style={{ filter: "drop-shadow(0 0 6px rgba(239, 68, 68, 0.7))" }}
+              >
+                N
+              </text>
+              <text x="268" y="151" textAnchor="middle" dominantBaseline="middle" fill="#d4d4d4" fontSize="14" fontWeight="800">
+                E
+              </text>
+              <text x="150" y="268" textAnchor="middle" dominantBaseline="middle" fill="#d4d4d4" fontSize="14" fontWeight="800">
+                S
+              </text>
+              <text x="32" y="151" textAnchor="middle" dominantBaseline="middle" fill="#d4d4d4" fontSize="14" fontWeight="800">
+                W
+              </text>
+            </svg>
           </motion.div>
 
           {/* ROTATING QIBLA NEEDLE (Points directly toward the Kaaba in 360-space) */}
